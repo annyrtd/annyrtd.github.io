@@ -29,6 +29,11 @@ function startGameCreative(header) {
         solutionArea.append(view);
         view.setAttribute('id', 'piece' + index);
 
+        view.ontouchcancel = function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        };
+
         view.ontouchstart = view.onmousedown = function (e) {
             e.stopPropagation();
             e.preventDefault();

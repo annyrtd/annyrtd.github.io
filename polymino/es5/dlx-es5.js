@@ -41,6 +41,12 @@ function startGame(header) {
 
         $(view).find('td.pieceCell').each(function () {
             var cell = this;
+
+            cell.ontouchcancel = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            };
+
             cell.ontouchstart = cell.onmousedown = function (e) {
                 e.stopPropagation();
                 e.preventDefault();
