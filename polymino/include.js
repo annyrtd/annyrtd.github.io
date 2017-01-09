@@ -1,5 +1,10 @@
 'use strict';
 
+window.onerror = function (message, url, lineNo){
+    alert('Error: ' + message + '\n' + 'Line Number: ' + lineNo);
+    return true;
+};
+
 function supportsES6() {
     "use strict";
 
