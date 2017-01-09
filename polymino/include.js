@@ -5,9 +5,6 @@ function supportsES6() {
 
     if (typeof Promise == "undefined") return false;
     try {
-        eval("isNaN(1)");
-        eval("isFinite(1)");
-        eval("isInteger(1)");
         eval("let x = 0");
         eval("const y = 0");
         eval("var z = `abc`");
