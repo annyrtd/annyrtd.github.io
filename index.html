@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<script src="jquery-1.12.0.min.js"></script>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<link rel="stylesheet" href="material.deep_orange-amber.min.css">
+		<script defer src="material.min.js"></script>
+		<script src="include.js"></script>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Polymino</title>
+		<link rel="stylesheet" href="polyominoStyle.css">
+		<link rel="stylesheet" href="polyominoStyleCreative.css">
+		<link rel="icon" type="image/png" href="logo.png"/>
+	</head>
+	<body>
+		<div class="demo-layout-transparent mdl-layout mdl-js-layout">
+			<header class="mdl-layout__header mdl-layout__header--transparent">
+				<div class="mdl-layout__header-row">
+					<!-- Title -->
+					<span class="mdl-layout-title">Polymino</span>
+				</div>
+			</header>
+			<div class="mdl-layout__drawer">
+				<span class="mdl-layout-title">Choose mode:</span>
+				<div class="modeDiv">
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="computed">
+						<input type="radio" id="computed" class="mdl-radio__button" name="options" value="1" checked>
+						<span class="mdl-radio__label">Computed levels</span>
+					</label>
+					<br>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="creative">
+						<input type="radio" id="creative" class="mdl-radio__button" name="options" value="2">
+						<span class="mdl-radio__label">Creative</span>
+					</label>
+				</div>
+			</div>
+		    <main class="mdl-layout__content computed">
+			    <div class="polyomino-area">
+                    <div class="menu">
+                        <div class='statistic'>
+                            Level completed:&nbsp;<span class='levelSpan'></span><br><br>
+                            Score:&nbsp;<span class='scoreSpan'></span><span class="star">&nbsp;&#9733;</span>
+                        </div>
+                        <!-- Colored mini FAB button -->
+						<div class="buttons">
+							<button id="add-piece" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+								Place a piece (<span class="pieceCost"></span><span class="star">&nbsp;&#9733</span>)
+							</button>
+							<button id="give-up" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+								Give up (<span class="giveUpCost"></span><span class="star">&nbsp;&#9733</span>)
+							</button>
+							<button id="next" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect" disabled>
+								Next level
+							</button>
+						</div>
+                    </div>
+                    <div class="solutionArea">
+                        <table class='polytable mdl-shadow--2dp'>
+                        </table>
+                    </div>
+			    </div>
+		    </main>
+			<main style="display: none;" class="mdl-layout__content creative">
+				<div class="polyomino-area">
+					<div class='statistic'> Number of empty cells:&nbsp;<span class='statisticSpan'></span>
+						<button id="resetBarrierCells"
+								class="mdl-button mdl-js-button mdl-button--icon mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+							<i class="material-icons">clear</i>
+						</button>
+						<div class="mdl-tooltip" for="resetBarrierCells">
+							Reset all barrier cells
+						</div>
+					</div>
+					<div class="creative-buttons">
+						<div class='arrow-area'>
+							<table class='arrowtable'>
+								<tr class="arrow-tr">
+									<td class="arrow-td"></td>
+									<td class="arrow-td">
+										<div id="arrow-top" class="arrow-div arrow-top"></div>
+										<div class="mdl-tooltip" for="arrow-top">
+											Remove row
+										</div>
+									</td>
+									<td class="arrow-td"></td>
+								</tr>
+								<tr class="arrow-tr">
+									<td class="arrow-td">
+										<div id="arrow-left" class="arrow-div arrow-left"></div>
+										<div class="mdl-tooltip" for="arrow-left">
+											Remove column
+										</div>
+									</td>
+									<td class="arrow-td"></td>
+									<td class="arrow-td">
+										<div id="arrow-right" class="arrow-div arrow-right"></div>
+										<div class="mdl-tooltip" for="arrow-right">
+											Add column
+										</div>
+									</td>
+								</tr>
+								<tr class="arrow-tr">
+									<td class="arrow-td"></td>
+									<td class="arrow-td">
+										<div id="arrow-bottom" class="arrow-div arrow-bottom"></div>
+										<div class="mdl-tooltip" for="arrow-bottom">
+											Add row
+										</div>
+									</td>
+									<td class="arrow-td"></td>
+								</tr>
+							</table>
+						</div>
+						<button id="go" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+							Go!
+						</button>
+						<button style="display: none;" id="give-up-creative" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+							Give up
+						</button>
+					</div>
+					<div class="solutionArea">
+						<table class='polytable mdl-shadow--2dp'>
+						</table>
+					</div>
+				</div>
+			</main>
+		</div>
+	</body>
+</html>
