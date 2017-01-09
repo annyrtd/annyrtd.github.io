@@ -1,7 +1,7 @@
 'use strict';
 
 window.onerror = function (message, url, lineNo){
-    console.log('Error: ' + message + '\n' + 'Line Number: ' + lineNo);
+    alert('Error: ' + message + '\n' + 'Line Number: ' + lineNo);
     return true;
 }
 
