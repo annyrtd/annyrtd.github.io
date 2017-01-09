@@ -29,6 +29,8 @@ function startGameCreative(header) {
         view.setAttribute('id', `piece${index}`);
 
         view.ontouchstart = view.onmousedown = function(e) {
+            e.stopPropagation();
+            e.preventDefault();
             view.style.display = '';
             const coords = getCoordinates(view);
             const shiftX = e.pageX - coords.left;
@@ -73,6 +75,8 @@ function startGameCreative(header) {
             moveAt(e);
 
             view.ontouchmove = document.onmousemove = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
                 moveAt(e);
             };
 

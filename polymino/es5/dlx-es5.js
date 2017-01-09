@@ -42,6 +42,8 @@ function startGame(header) {
         $(view).find('td.pieceCell').each(function () {
             var cell = this;
             cell.ontouchstart = cell.onmousedown = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
                 view.style.display = '';
                 var coords = getCoordinates(view);
                 var shiftX = e.pageX - coords.left;
@@ -95,6 +97,8 @@ function startGame(header) {
                 moveAt(e);
 
                 cell.ontouchmove = document.onmousemove = function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
                     moveAt(e);
                 };
 
