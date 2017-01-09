@@ -29,7 +29,7 @@ function startGameCreative(header) {
         solutionArea.append(view);
         view.setAttribute('id', 'piece' + index);
 
-        view.onmousedown = function (e) {
+        view.ontouchstart = view.onmousedown = function (e) {
             view.style.display = '';
             var coords = getCoordinates(view);
             var shiftX = e.pageX - coords.left;

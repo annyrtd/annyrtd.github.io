@@ -41,7 +41,7 @@ function startGame(header) {
 
         $(view).find('td.pieceCell').each(function () {
             var cell = this;
-            cell.onmousedown = function (e) {
+            cell.ontouchstart = cell.onmousedown = function (e) {
                 view.style.display = '';
                 var coords = getCoordinates(view);
                 var shiftX = e.pageX - coords.left;

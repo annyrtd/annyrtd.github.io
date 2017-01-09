@@ -1,7 +1,6 @@
 'use strict';
 
 function detectIE() {
-	
 	return true; 
 	
     var ua = window.navigator.userAgent;
@@ -9,8 +8,6 @@ function detectIE() {
     return ua.indexOf('MSIE ') >= 0 ||
         ua.indexOf('Trident/') >= 0 ||
         ua.indexOf('Edge/') >= 0;
-
-
 }
 
 if(detectIE()) {
