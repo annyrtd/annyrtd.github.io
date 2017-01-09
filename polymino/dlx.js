@@ -86,7 +86,7 @@ function startGame(header) {
                 document.body.appendChild(view);
                 moveAt(e);
 
-                document.ontouchmove = document.onmousemove = function (e) {
+                cell.ontouchmove = document.onmousemove = function (e) {
                     moveAt(e);
                 };
 
@@ -132,7 +132,7 @@ function startGame(header) {
                         $(view).removeClass('pieceSet');
                     }
 
-                    document.ontouchmove = document.onmousemove = null;
+                    cell.ontouchmove = document.onmousemove = null;
                     cell.ontouchend = cell.onmouseup = null;
                     view.style.zIndex = '';
 

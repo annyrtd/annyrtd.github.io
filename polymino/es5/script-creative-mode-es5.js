@@ -81,7 +81,7 @@ function startGameCreative(header) {
             document.body.appendChild(view);
             moveAt(e);
 
-            document.ontouchmove = document.onmousemove = function (e) {
+            view.ontouchmove = document.onmousemove = function (e) {
                 moveAt(e);
             };
 
@@ -129,7 +129,7 @@ function startGameCreative(header) {
                     view.style.display = '';
                 }
 
-                document.ontouchmove = document.onmousemove = null;
+                view.ontouchmove = document.onmousemove = null;
                 view.ontouchend = view.onmouseup = null;
                 view.style.zIndex = '';
 
