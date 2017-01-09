@@ -15,7 +15,8 @@ function supportsES6() {
         eval("var z = `abc`");
         eval("var row, column; ({row, column} = {row:1, column:2});");
         eval("var row = 0, column = 0; var obj = {row, column};");
-        eval("class RootObject { constructor({left, right = 0}) { this.left = left; this.right = right; } } ");
+        eval("class RootObject { constructor({left, right}) { this.left = left; this.right = right; } } ");
+        eval("function(a = 3) {}");
         eval("var bar = (x) => x+1");
     } catch (e) { return false; }
 
