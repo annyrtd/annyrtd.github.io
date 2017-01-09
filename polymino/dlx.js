@@ -90,7 +90,7 @@ function startGame(header) {
                     moveAt(e);
                 };
 
-                cell.onmouseup = function (e) {
+                cell.ontouchend = cell.onmouseup = function (e) {
                     let row, column;
                     ({row, column} = getRowAndCol(e));
                     let rowPosition = row * tableCellWidth;
@@ -133,7 +133,7 @@ function startGame(header) {
                     }
 
                     document.ontouchmove = document.onmousemove = null;
-                    cell.onmouseup = null;
+                    cell.ontouchend = cell.onmouseup = null;
                     view.style.zIndex = '';
 
                     console.log(piecesSet);

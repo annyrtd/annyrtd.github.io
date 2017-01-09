@@ -76,7 +76,7 @@ function startGameCreative(header) {
                 moveAt(e);
             };
 
-            view.onmouseup = function (e) {
+            view.ontouchend = view.onmouseup = function (e) {
                 let row, column;
                 ({row, column} = getRowAndCol(e));
                 let rowPosition = row * 35;
@@ -116,7 +116,7 @@ function startGameCreative(header) {
                 }
 
                 document.ontouchmove = document.onmousemove = null;
-                view.onmouseup = null;
+                view.ontouchend = view.onmouseup = null;
                 view.style.zIndex = '';
 
                 console.log(piecesSetCreative);

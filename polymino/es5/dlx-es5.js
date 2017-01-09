@@ -98,7 +98,7 @@ function startGame(header) {
                     moveAt(e);
                 };
 
-                cell.onmouseup = function (e) {
+                cell.ontouchend = cell.onmouseup = function (e) {
                     var row = void 0,
                         column = void 0;
 
@@ -146,7 +146,7 @@ function startGame(header) {
                     }
 
                     document.ontouchmove = document.onmousemove = null;
-                    cell.onmouseup = null;
+                    cell.ontouchend = cell.onmouseup = null;
                     view.style.zIndex = '';
 
                     console.log(piecesSet);
