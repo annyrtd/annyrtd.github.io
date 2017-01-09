@@ -13,7 +13,7 @@ function supportsES6() {
         eval("let x = 0");
         eval("const y = 0");
         eval("var z = `abc`");
-        eval("class RootObject { constructor({left, right}) { this.left = left; this.right = right; } } ");
+        eval("class Foo {}");
         eval("function(a = 3) {}");
         eval("var bar = (x) => x+1");
     } catch (e) { return false; }
