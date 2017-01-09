@@ -3,7 +3,6 @@
 function supportsES6() {
     "use strict";
 
-    if (typeof Symbol == "undefined") return false;
     if (typeof Promise == "undefined") return false;
     try {
         eval("let x = 0");
