@@ -1,6 +1,9 @@
 'use strict';
 
 function detectIE() {
+	
+	return true; 
+	
     var ua = window.navigator.userAgent;
 
     return ua.indexOf('MSIE ') >= 0 ||
