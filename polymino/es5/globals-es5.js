@@ -39,7 +39,16 @@ function saveToLocalStorage() {
 
 function restoreFromLocalStorage() {
     if (localStorage) {
-        level = parseInt(localStorage['level']);
-        score = parseInt(localStorage['score']);
+        if(localStorage.getItem('level')) {
+            level = parseInt(localStorage['level']);
+        } else {
+            localStorage['level'] = level = 0;
+        }
+
+        if(localStorage.getItem('score')) {
+            score = parseInt(localStorage['score']);
+        } else {
+            localStorage['score'] = score = 0;
+        }
     }
 }

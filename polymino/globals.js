@@ -42,13 +42,13 @@ function restoreFromLocalStorage() {
         if(localStorage.getItem('level')) {
             level = parseInt(localStorage['level']);
 		} else {
-			level = 0;
+            localStorage['level'] = level = 0;
 		}
 
         if(localStorage.getItem('score')) {
             score = parseInt(localStorage['score']);
         } else {
-			score = 0;
+            localStorage['score'] = score = 0;
 		}
     }
 }
