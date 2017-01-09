@@ -4,7 +4,7 @@ function startGame(header) {
     isSolutionFound = false;
     stepOfInterval = 0;
     solution = [];
-    timeStart = performance.now();
+    timeStart = performance && performance.now? performance.now() : 0;
 
     search(header, solution, 0);
 
@@ -224,7 +224,7 @@ function getCoordinates(elem) {
 
 // DLX algorithm
 function search(header, solution, k) {
-    if (performance.now() - timeStart > 5000) {
+    if (performance && performance.now && (performance.now() - timeStart > 5000)) {
         console.log("Too long");
         return;
     }

@@ -8,7 +8,7 @@ function startGameCreative(header) {
     isGameFinished = isSolutionFound = false;
     stepOfIntervalCreative = 0;
     solutionCreative = [];
-    timeStart = performance.now();
+    timeStart = performance && performance.now? performance.now() : 0;
 
     search(header, solutionCreative, 0);
 
