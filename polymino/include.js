@@ -8,7 +8,7 @@ function supportsES6() {
     try {
         eval("let x = 0");
         eval("const y = 0");
-        eval("var x = `abc`");
+        eval("var z = `abc`");
         eval("class Foo {}");
         eval("var bar = (x) => x+1");
     } catch (e) { return false; }
