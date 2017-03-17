@@ -34,7 +34,7 @@ function startGameCreative(header) {
             e.preventDefault();
         };
 
-        view.ontouchstart = view.onmousedown = function (e) {
+        /*view.ontouchstart = */view.onmousedown = function (e) {
             e.stopPropagation();
             e.preventDefault();
             view.style.display = '';
@@ -88,13 +88,13 @@ function startGameCreative(header) {
             document.body.appendChild(view);
             moveAt(e);
 
-            view.ontouchmove = document.onmousemove = function (e) {
+            /*view.ontouchmove = */document.onmousemove = function (e) {
                 e.stopPropagation();
                 e.preventDefault();
                 moveAt(e);
             };
 
-            view.ontouchend = view.onmouseup = function (e) {
+            /*view.ontouchend = */view.onmouseup = function (e) {
                 e.stopPropagation();
                 e.preventDefault();
                 var row = void 0,
@@ -140,8 +140,8 @@ function startGameCreative(header) {
                     view.style.display = '';
                 }
 
-                view.ontouchmove = document.onmousemove = null;
-                view.ontouchend = view.onmouseup = null;
+                /*view.ontouchmove = */document.onmousemove = null;
+                /*view.ontouchend = */view.onmouseup = null;
                 view.style.zIndex = '';
 
                 console.log(piecesSetCreative);

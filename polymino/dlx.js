@@ -47,7 +47,7 @@ function startGame(header) {
                 e.preventDefault();
             };
 
-            cell.ontouchstart = cell.onmousedown = function(e) {
+            /*cell.ontouchstart = */cell.onmousedown = function(e) {
                 e.stopPropagation();
                 e.preventDefault();
                 view.style.display = '';
@@ -94,13 +94,13 @@ function startGame(header) {
                 document.body.appendChild(view);
                 moveAt(e);
 
-                cell.ontouchmove = document.onmousemove = function (e) {
+                /*cell.ontouchmove = */document.onmousemove = function (e) {
                     e.stopPropagation();
                     e.preventDefault();
                     moveAt(e);
                 };
 
-                cell.ontouchend = cell.onmouseup = function (e) {
+                /*cell.ontouchend = */cell.onmouseup = function (e) {
                     e.stopPropagation();
                     e.preventDefault();
                     let row, column;
@@ -144,8 +144,8 @@ function startGame(header) {
                         $(view).removeClass('pieceSet');
                     }
 
-                    cell.ontouchmove = document.onmousemove = null;
-                    cell.ontouchend = cell.onmouseup = null;
+                    /*cell.ontouchmove =*/ document.onmousemove = null;
+                    /*cell.ontouchend = */cell.onmouseup = null;
                     view.style.zIndex = '';
 
                     console.log(piecesSet);
