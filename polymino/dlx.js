@@ -101,6 +101,8 @@ function startGame(header) {
                 };
 
                 cell.ontouchend = cell.onmouseup = function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
                     let row, column;
                     ({row, column} = getRowAndCol(e));
                     let rowPosition = row * tableCellWidth;

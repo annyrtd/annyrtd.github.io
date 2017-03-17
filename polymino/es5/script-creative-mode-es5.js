@@ -95,6 +95,8 @@ function startGameCreative(header) {
             };
 
             view.ontouchend = view.onmouseup = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
                 var row = void 0,
                     column = void 0;
 

@@ -86,6 +86,8 @@ function startGameCreative(header) {
             };
 
             view.ontouchend = view.onmouseup = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
                 let row, column;
                 ({row, column} = getRowAndCol(e));
                 let rowPosition = row * 35;
