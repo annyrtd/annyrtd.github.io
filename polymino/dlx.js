@@ -159,12 +159,16 @@ function startGame(header) {
                 };
             };
 
-            cell.ondragstart = function() {
+            cell.ondragstart = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
                 return false;
             };
         });
 
-        view.ondragstart = function() {
+        view.ondragstart = function (e) {
+            e.stopPropagation();
+            e.preventDefault();
             return false;
         };
     });

@@ -137,7 +137,9 @@ function startGameCreative(header) {
             };
         };
 
-        view.ondragstart = function() {
+        view.ondragstart = function (e) {
+            e.stopPropagation();
+            e.preventDefault();
             return false;
         };
     });
