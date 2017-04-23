@@ -70,16 +70,16 @@ function startGameCreative(header) {
             });
 
             function moveAt(e) {
-                view.style.left = e.pageX - shiftX - 4 + 'px';
-                view.style.top = e.pageY - shiftY - 4 + 'px';
+                view.style.left = (e.pageX - shiftX - 8) + 'px';
+                view.style.top = (e.pageY - shiftY) + 'px';
             }
 
             function getRowAndCol(e) {
                 var offset = solutionArea.offset();
                 var containerX = e.pageX - offset.left;
                 var containerY = e.pageY - offset.top;
-                var row = Math.round((containerY - shiftY) / 35);
-                var column = Math.round((containerX - shiftX) / 35);
+                var row = Math.round((containerY - shiftY) / tableCellWidth);
+                var column = Math.round((containerX - shiftX) / tableCellWidth);
                 return { row: row, column: column };
             }
 
@@ -103,8 +103,8 @@ function startGameCreative(header) {
                 row = _getRowAndCol2.row;
                 column = _getRowAndCol2.column;
 
-                var rowPosition = row * 35;
-                var columnPosition = column * 35;
+                var rowPosition = row * tableCellWidth;
+                var columnPosition = column * tableCellWidth;
                 var currentPieceCells = [];
                 currentPieceTdCoordinatesCreative.every(function (item) {
                     var tdRow = parseInt(item.row) + row;
@@ -383,12 +383,12 @@ $(document).ready(function () {
 
     creative.find('#go').click(function () {
         resetFieldCreative();
-        creative.find('#give-up-creative').show();
-        shufflePieces();
         if (creative.find('span.statisticSpan .bad').length > 0) {
             alert("It's impossible to cover table with such number of empty cells!");
             return;
         }
+        creative.find('#give-up-creative').show();
+        shufflePieces();
         var arr = transformTableToMatrix(creative);
         var header = createXListForExactCoverProblem(arr);
         startGameCreative(header);

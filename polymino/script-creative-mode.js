@@ -61,16 +61,16 @@ function startGameCreative(header) {
             });
 
             function moveAt(e) {
-                view.style.left = (e.pageX - shiftX - 4) + 'px';
-                view.style.top = (e.pageY - shiftY - 4) + 'px';
+                view.style.left = (e.pageX - shiftX - 8) + 'px';
+                view.style.top = (e.pageY - shiftY) + 'px';
             }
 
             function getRowAndCol(e) {
                 let offset = solutionArea.offset();
                 let containerX = e.pageX - offset.left;
                 let containerY = e.pageY - offset.top;
-                let row = Math.round((containerY - shiftY) / 35);
-                let column = Math.round((containerX - shiftX) / 35);
+                let row = Math.round((containerY - shiftY) / tableCellWidth);
+                let column = Math.round((containerX - shiftX) / tableCellWidth);
                 return {row, column};
             }
 
@@ -88,8 +88,8 @@ function startGameCreative(header) {
             view.ontouchend = view.onmouseup = function (e) {
                 let row, column;
                 ({row, column} = getRowAndCol(e));
-                let rowPosition = row * 35;
-                let columnPosition = column * 35;
+                let rowPosition = row * tableCellWidth;
+                let columnPosition = column * tableCellWidth;
                 let currentPieceCells = [];
                 currentPieceTdCoordinatesCreative.every(item => {
                     let tdRow = parseInt(item.row) + row;
@@ -390,12 +390,12 @@ $(document).ready(
         creative.find('#go').click(
             function () {
                 resetFieldCreative();
-                creative.find('#give-up-creative').show();
-                shufflePieces();
                 if (creative.find('span.statisticSpan .bad').length > 0) {
                     alert("It's impossible to cover table with such number of empty cells!");
                     return;
                 }
+                creative.find('#give-up-creative').show();
+                shufflePieces();
                 const arr = transformTableToMatrix(creative);
                 const header = createXListForExactCoverProblem(arr);
                 startGameCreative(header);
