@@ -4,10 +4,12 @@
   "scripts": {
     "build": "./node_modules/.bin/webpack"
   },
+  "pre-commit": [ "build" ],
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
     "babel-preset-env": "^1.4.0",
+    "pre-commit": "^1.2.2",
     "webpack": "^2.4.1"
   },
   "dependencies": {

@@ -35,6 +35,8 @@ const tableCellWidth = 35;
 let computed;
 let creative;
 
+console.log('succesful use of precommit!');
+
 
 function saveToLocalStorage() {
     if (localStorage) {
