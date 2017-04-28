@@ -1,5 +1,3 @@
-'use strict';
-
 class RootObject {
     constructor({left, right}) {
         this.left = left;
@@ -77,7 +75,9 @@ class Piece {
         this.minrow = minrow;
         this.maxcol = maxcol;
         this.mincol = mincol;
+        this.root = Piece.getPieceRoot(nodes);
     }
+
     getView() {
         let color = this.color;
         let tbody = document.createElement('tbody');
@@ -93,12 +93,12 @@ class Piece {
         }
 
         this.nodes.forEach(node => {
-           let cell = tbody
-               .children[node.row - this.minrow]
-               .children[node.column - this.mincol];
-           cell.style.backgroundColor = color;
-           cell.setAttribute('class', 'pieceCell');
-           cell.style.border = '1px solid black';
+            let cell = tbody
+                .children[node.row - this.minrow]
+                .children[node.column - this.mincol];
+            cell.style.backgroundColor = color;
+            cell.setAttribute('class', 'pieceCell');
+            cell.style.border = '1px solid black';
         });
 
         table.setAttribute('class', 'piece');
@@ -106,4 +106,34 @@ class Piece {
         table.appendChild(tbody);
         return table;
     }
+
+    static getPieceRoot(nodes) {
+        let minimum = nodes[0];
+
+        for (let k = 1; k < nodes.length; k++) {
+            if (nodes[k].column < minimum.column) {
+                minimum = nodes[k];
+            } else if (nodes[k].column == minimum.column) {
+                if (nodes[k].row < minimum.row) {
+                    minimum = nodes[k];
+                }
+            }
+        }
+
+        return minimum;
+    }
 }
+
+function getRandomColor() {
+    const letters = '0123456789ABCDEF'.split('');
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 12 + 2)];
+    }
+    if (color == '#000000' || color == '#FFFFFF') {
+        return '#333333';
+    }
+    return color;
+}
+
+export {Node, Piece, ColumnObject, DataObject, RootObject};
