@@ -10924,12 +10924,18 @@ var _pieces = __webpack_require__(1);
 
 var _pieceSelection = __webpack_require__(3);
 
+var _transformTableToMatrix = __webpack_require__(6);
+
+var _shufflePieces = __webpack_require__(7);
+
+var _statistics = __webpack_require__(8);
+
+var _getCoordinates = __webpack_require__(9);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var interval = 200;
 var stepOfInterval = 0;
-var currentPieceTdCoordinates = void 0;
-var currentCoordinatesAttribute = void 0;
 var piecesSet = 0;
 var solutionLength = void 0;
 var solution = [];
@@ -10938,10 +10944,7 @@ var timeStart = void 0;
 var scoreForLevel = 500;
 
 var stepOfIntervalCreative = 0;
-var currentPieceTdCoordinatesCreative = void 0;
-var currentCoordinatesAttributeCreative = void 0;
 var piecesSetCreative = 0;
-var solutionLengthCreative = void 0;
 var solutionCreative = [];
 var solutionPiecesCreative = [];
 
@@ -10950,10 +10953,14 @@ var level = 0;
 var score = 0;
 var pieceCost = 400;
 var giveUpCost = void 0;
-
 var tableCellWidth = 35;
+
 var computed = void 0;
 var creative = void 0;
+
+var numberOfRowsCreative = void 0,
+    numberOfColumnsCreative = void 0;
+var isGameFinished = void 0;
 
 function saveToLocalStorage() {
     if (localStorage) {
@@ -10978,7 +10985,80 @@ function restoreFromLocalStorage() {
     }
 }
 
-/***** DLX.JS *****/
+/***** SCRIPT.JS *****/
+function generatePolyminoTable() {
+    saveToLocalStorage();
+    initialSetUp();
+    var table = computed.find('table.polytable');
+
+    var _countNumbersForTable = countNumbersForTable(),
+        numberOfRows = _countNumbersForTable.numberOfRows,
+        numberOfColumns = _countNumbersForTable.numberOfColumns,
+        numberOfBarriers = _countNumbersForTable.numberOfBarriers,
+        area = _countNumbersForTable.area;
+
+    table.empty();
+    for (var i = 0; i < numberOfRows; i++) {
+        var row = (0, _jquery2.default)('<tr class=\'field-row\' id=\'tr-' + i + '\'></tr>');
+        for (var j = 0; j < numberOfColumns; j++) {
+            var td = (0, _jquery2.default)('<td class=\'cell empty-cell\' id=\'td-' + i + '-' + j + '\'></td>');
+            row.append(td);
+        }
+        table.append(row);
+    }
+
+    for (var _i = 0; _i < numberOfBarriers * 4; _i++) {
+        var allCells = computed.find('td.empty-cell');
+        (0, _jquery2.default)(allCells[Math.floor(Math.random() * (area - _i))]).removeClass('empty-cell').addClass('border-cell');
+    }
+
+    (0, _shufflePieces.shufflePieces)(_pieces.pieces);
+    var arr = (0, _transformTableToMatrix.transformTableToMatrix)(computed);
+    var header = (0, _dlx.createXListForExactCoverProblem)(arr);
+    startGame(header);
+}
+
+function countNumbersForTable() {
+    var numberOfPieces = Math.floor(level / repeats) + 3;
+    giveUpCost = Math.floor(pieceCost * numberOfPieces * 0.8 / 100) * 100;
+    computed.find('span.pieceCost').text(pieceCost);
+    computed.find('span.giveUpCost').text(giveUpCost);
+
+    var numberOfBarriers = level % repeats * 2;
+    var area = (numberOfPieces + numberOfBarriers) * 4;
+    var numberOfRows = void 0,
+        numberOfColumns = void 0;
+    var side = void 0,
+        index = void 0;
+    for (numberOfRows = index = 4, side = area / index, numberOfColumns = Math.floor(side); index < numberOfPieces + numberOfBarriers; index++, numberOfRows = index, side = area / index, numberOfColumns = Math.floor(side)) {
+        if (side == numberOfColumns && Math.abs(numberOfColumns - numberOfRows) <= 5) {
+            break;
+        }
+    }
+
+    if (numberOfRows > numberOfColumns) {
+        var _ref = [numberOfColumns, numberOfRows];
+        numberOfRows = _ref[0];
+        numberOfColumns = _ref[1];
+    }
+
+    var tableWidth = tableCellWidth * numberOfColumns + 32 * 2;
+    var tableHeight = tableCellWidth * numberOfRows + 32 * 2;
+    var windowWidth = document.body.scrollWidth;
+
+    if (tableWidth > windowWidth) {
+        if (tableHeight > windowWidth) {
+            numberOfColumns = 4;
+            numberOfRows = numberOfPieces + numberOfBarriers;
+        } else {
+            var _ref2 = [numberOfColumns, numberOfRows];
+            numberOfRows = _ref2[0];
+            numberOfColumns = _ref2[1];
+        }
+    }
+
+    return { numberOfRows: numberOfRows, numberOfColumns: numberOfColumns, numberOfBarriers: numberOfBarriers, area: area };
+}
 
 function startGame(header) {
     stepOfInterval = 0;
@@ -11009,7 +11089,7 @@ function startGame(header) {
         return;
     }
 
-    shufflePieces(solutionPieces);
+    (0, _shufflePieces.shufflePieces)(solutionPieces);
 
     solutionPieces.forEach(function (piece, index) {
         var view = piece.getView();
@@ -11028,13 +11108,13 @@ function startGame(header) {
                 e.stopPropagation();
                 e.preventDefault();
                 view.style.display = '';
-                var coords = getCoordinates(view);
+                var coords = (0, _getCoordinates.getCoordinates)(view);
                 var shiftX = e.pageX - coords.left;
                 var shiftY = e.pageY - coords.top;
 
                 var isPieceSet = true;
-                currentCoordinatesAttribute = view.getAttribute('data-nodes');
-                currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(function (item) {
+                var currentCoordinatesAttribute = view.getAttribute('data-nodes');
+                var currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(function (item) {
                     return _classes.Node.fromString(item);
                 });
 
@@ -11190,29 +11270,6 @@ function placePieceNoInterval() {
     piece.remove();
 }
 
-function getCoordinates(elem) {
-    // (1)
-    var box = elem.getBoundingClientRect();
-
-    var body = document.body;
-    var docEl = document.documentElement;
-
-    // (2)
-    var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
-    var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-
-    // (3)
-    var clientTop = docEl.clientTop || body.clientTop || 0;
-    var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-
-    // (4)
-    var top = box.top + scrollTop - clientTop;
-    var left = box.left + scrollLeft - clientLeft;
-
-    // (5)
-    return { top: Math.round(top), left: Math.round(left) };
-}
-
 function setTimeoutForCoveringPiece(piece, removedPiece) {
     return new Promise(function (resolve) {
         if (!piece) return;
@@ -11248,115 +11305,12 @@ function alertWithInterval(message) {
     }, interval);
 }
 
-/***** SCRIPT.JS *****/
-
-// algo: https://en.wikipedia.org/wiki/Fisher-Yates_shuffle
-function shufflePieces() {
-    var arrayOfPieces = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _pieces.pieces;
-
-    var currentIndex = arrayOfPieces.length,
-        randomIndex = void 0;
-
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // And swap it with the current element.
-        var _ref = [arrayOfPieces[randomIndex], arrayOfPieces[currentIndex]];
-        arrayOfPieces[currentIndex] = _ref[0];
-        arrayOfPieces[randomIndex] = _ref[1];
-    }
-}
-
-function generatePolyminoTable() {
-    saveToLocalStorage();
-    initialSetUp();
-    var table = computed.find('table.polytable');
-    var numberOfPieces = Math.floor(level / repeats) + 3;
-
-    giveUpCost = Math.floor(pieceCost * numberOfPieces * 0.8 / 100) * 100;
-    computed.find('span.pieceCost').text(pieceCost);
-    computed.find('span.giveUpCost').text(giveUpCost);
-
-    var numberOfBarriers = level % repeats * 2;
-    var area = (numberOfPieces + numberOfBarriers) * 4;
-    var numberOfRows = void 0,
-        numberOfColumns = void 0;
-    var side = void 0;
-    var index = void 0;
-    for (numberOfRows = index = 4, side = area / index, numberOfColumns = Math.floor(side); index < numberOfPieces + numberOfBarriers; index++, numberOfRows = index, side = area / index, numberOfColumns = Math.floor(side)) {
-        if (side == numberOfColumns && Math.abs(numberOfColumns - numberOfRows) <= 5) {
-            break;
-        }
-    }
-
-    if (numberOfRows > numberOfColumns) {
-        var _ref2 = [numberOfColumns, numberOfRows];
-        numberOfRows = _ref2[0];
-        numberOfColumns = _ref2[1];
-    }
-
-    var tableWidth = tableCellWidth * numberOfColumns + 32 * 2;
-    var tableHeight = tableCellWidth * numberOfRows + 32 * 2;
-    var windowWidth = document.body.scrollWidth;
-
-    if (tableWidth > windowWidth) {
-        if (tableHeight > windowWidth) {
-            numberOfColumns = 4;
-            numberOfRows = numberOfPieces + numberOfBarriers;
-        } else {
-            var _ref3 = [numberOfColumns, numberOfRows];
-            numberOfRows = _ref3[0];
-            numberOfColumns = _ref3[1];
-        }
-    }
-
-    table.empty();
-    for (var i = 0; i < numberOfRows; i++) {
-        var row = (0, _jquery2.default)('<tr class=\'field-row\' id=\'tr-' + i + '\'></tr>');
-        for (var j = 0; j < numberOfColumns; j++) {
-            var td = (0, _jquery2.default)('<td class=\'cell empty-cell\' id=\'td-' + i + '-' + j + '\'></td>');
-            row.append(td);
-        }
-        table.append(row);
-    }
-
-    for (var _i = 0; _i < numberOfBarriers * 4; _i++) {
-        var allCells = computed.find('td.empty-cell');
-        (0, _jquery2.default)(allCells[Math.floor(Math.random() * (area - _i))]).removeClass('empty-cell').addClass('border-cell');
-    }
-
-    shufflePieces();
-    var arr = transformTableToMatrix(computed);
-    var header = (0, _dlx.createXListForExactCoverProblem)(arr);
-    startGame(header);
-}
-
 function printLevel() {
     computed.find(".levelSpan").html(level);
 }
 
 function printScore() {
     computed.find(".scoreSpan").html(score);
-}
-
-function transformTableToMatrix(container) {
-    var arr = [];
-    container.find("table.polytable tr.field-row").each(function (row) {
-        arr[arr.length] = [];
-        //noinspection JSValidateTypes
-        (0, _jquery2.default)(this).children('td.cell').each(function () {
-            var item = 0;
-            if ((0, _jquery2.default)(this).hasClass('border-cell')) {
-                item = 1;
-            }
-            arr[row][arr[row].length] = item;
-        });
-    });
-    return arr;
 }
 
 function initialSetUp() {
@@ -11398,12 +11352,12 @@ function resetField() {
             var top = parseInt(removedPiece.css('top'));
             var row = Math.round(top / tableCellWidth);
             var column = Math.round((left + 8) / tableCellWidth);
-            var _currentCoordinatesAttribute = removedPiece.attr('data-nodes');
-            var _currentPieceTdCoordinates = _currentCoordinatesAttribute.split('-').map(function (item) {
+            var currentCoordinatesAttribute = removedPiece.attr('data-nodes');
+            var currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(function (item) {
                 return _classes.Node.fromString(item);
             });
 
-            _currentPieceTdCoordinates.every(function (item) {
+            currentPieceTdCoordinates.every(function (item) {
                 var tdRow = parseInt(item.row) + row;
                 var tdCol = parseInt(item.column) + column;
                 var td = computed.find('#td-' + tdRow + '-' + tdCol);
@@ -11529,10 +11483,6 @@ function resetField() {
 
 /***** SCRIPT-CREATIVE.JS *****/
 
-var numberOfRowsCreative = void 0,
-    numberOfColumnsCreative = void 0;
-var isGameFinished = void 0;
-
 function startGameCreative(header) {
     isGameFinished = false;
     stepOfIntervalCreative = 0;
@@ -11549,11 +11499,11 @@ function startGameCreative(header) {
     }
 
     piecesSetCreative = 0;
-    solutionLengthCreative = solutionCreative.length;
+    var solutionLengthCreative = solutionCreative.length;
 
     var solutionArea = creative.find('div.solutionArea');
     solutionPiecesCreative = (0, _dlx.printDLX)(solutionCreative);
-    shufflePieces(solutionPiecesCreative);
+    (0, _shufflePieces.shufflePieces)(solutionPiecesCreative);
 
     solutionPiecesCreative.forEach(function (piece, index) {
         var view = piece.getView();
@@ -11572,13 +11522,13 @@ function startGameCreative(header) {
                 e.stopPropagation();
                 e.preventDefault();
                 view.style.display = '';
-                var coords = getCoordinates(view);
+                var coords = (0, _getCoordinates.getCoordinates)(view);
                 var shiftX = e.pageX - coords.left;
                 var shiftY = e.pageY - coords.top;
 
                 var isPieceSet = true;
-                currentCoordinatesAttributeCreative = view.getAttribute('data-nodes');
-                currentPieceTdCoordinatesCreative = currentCoordinatesAttributeCreative.split('-').map(function (item) {
+                var currentCoordinatesAttributeCreative = view.getAttribute('data-nodes');
+                var currentPieceTdCoordinatesCreative = currentCoordinatesAttributeCreative.split('-').map(function (item) {
                     return _classes.Node.fromString(item);
                 });
 
@@ -11742,41 +11692,243 @@ function setInitialPolyminoTable() {
     table.find('#td-3-3, #td-3-4, #td-4-3, #td-4-4').removeClass('empty-cell').addClass('border-cell');
 }
 
+// Transform table
+function addColumn() {
+    creative.find('tr.field-row').each(function (row) {
+        (0, _jquery2.default)(this).append((0, _jquery2.default)('<td class=\'cell empty-cell\' id=\'td-' + row + '-' + numberOfColumnsCreative + '\'></td>'));
+    });
+    numberOfColumnsCreative++;
+}
+
+function addRow() {
+    var row = (0, _jquery2.default)('<tr class="field-row" id="tr-' + numberOfRowsCreative + '"></tr>');
+    for (var i = 0; i < numberOfColumnsCreative; i++) {
+        row.append((0, _jquery2.default)('<td class=\'cell empty-cell\' id=\'td-' + numberOfRowsCreative + '-' + i + '\'></td>'));
+    }
+
+    creative.find('table.polytable tr.field-row').last().after(row);
+    numberOfRowsCreative++;
+}
+
+function removeColumn() {
+    if (numberOfColumnsCreative < 2) {
+        return;
+    }
+    creative.find('tr.field-row').each(function () {
+        //noinspection JSValidateTypes
+        (0, _jquery2.default)(this).children('td.cell').last().remove();
+    });
+    numberOfColumnsCreative--;
+}
+
+function removeRow() {
+    if (numberOfRowsCreative < 2) {
+        return;
+    }
+    creative.find('tr.field-row').last().remove();
+    numberOfRowsCreative--;
+}
+
+function resetFieldCreative() {
+    creative.find('td.cell').removeClass('set').css('backgroundColor', '').css('border', '');
+    creative.find('.piece').remove();
+    creative.find('#give-up-creative').hide();
+}
+
+(0, _jquery2.default)(document).ready(function () {
+    setInitialPolyminoTable();
+    (0, _statistics.countStatistic)(creative);
+    var solutionArea = creative.find('div.solutionArea');
+    var pieceSelectionArea = (0, _jquery2.default)('.pieceSelectionArea');
+
+    creative.find('#go').click(function () {
+        resetFieldCreative();
+        if (creative.find('span.statisticSpan .bad').length > 0) {
+            alert("It's impossible to cover table with such number of empty cells!");
+            return;
+        }
+        (0, _shufflePieces.shufflePieces)(_pieces.pieces);
+        creative.find('#give-up-creative').show();
+
+        var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
+        var header = (0, _dlx.createXListForExactCoverProblem)(arr);
+        startGameCreative(header, solution);
+    });
+
+    creative.find('#give-up-creative').click(function () {
+        function placePiece() {
+            var index = parseInt((0, _jquery2.default)(this).attr('id').replace('piece', ''));
+            setTimeoutForCoveringPieceCreative(solutionPiecesCreative[index], (0, _jquery2.default)(this));
+        }
+
+        stepOfIntervalCreative = 0;
+        creative.find('.piece[style]').each(placePiece);
+        creative.find('.piece').each(placePiece);
+        (0, _jquery2.default)(this).hide();
+    });
+
+    (0, _jquery2.default)(document).on('click', '.creative td.cell', function () {
+        resetFieldCreative();
+
+        if ((0, _jquery2.default)(this).hasClass('empty-cell')) {
+            (0, _jquery2.default)(this).removeClass('empty-cell').addClass('border-cell');
+            (0, _statistics.countStatistic)(creative);
+        } else {
+            (0, _jquery2.default)(this).removeClass('border-cell').addClass('empty-cell');
+            (0, _statistics.countStatistic)(creative);
+        }
+    });
+
+    creative.find("#resetBarrierCells").click(function () {
+        resetFieldCreative();
+        creative.find(".polytable td").removeClass('border-cell').addClass('empty-cell').css('backgroundColor', '');
+        (0, _statistics.countStatistic)(creative);
+    });
+
+    creative.find('div.arrow-div').click(function () {
+        resetFieldCreative();
+        var direction = (0, _jquery2.default)(this).removeClass('arrow-div').attr('class').replace('arrow-', '');
+
+        switch (direction) {
+            case 'left':
+                removeColumn();
+                break;
+            case 'right':
+                addColumn();
+                break;
+            case 'top':
+                removeRow();
+                break;
+            case 'bottom':
+                addRow();
+                break;
+        }
+
+        (0, _jquery2.default)(this).addClass('arrow-div');
+        (0, _statistics.countStatistic)(creative);
+    });
+});
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.transformTableToMatrix = undefined;
+
+var _jquery = __webpack_require__(4);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function transformTableToMatrix(container) {
+    var arr = [];
+    container.find("table.polytable tr.field-row").each(function (index, row) {
+        arr[arr.length] = [];
+        (0, _jquery2.default)(row).children('td.cell').each(function (index2, cell) {
+            var item = 0;
+            if ((0, _jquery2.default)(cell).hasClass('border-cell')) {
+                item = 1;
+            }
+            arr[index][arr[index].length] = item;
+        });
+    });
+    return arr;
+}
+
+exports.transformTableToMatrix = transformTableToMatrix;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+// algo: https://en.wikipedia.org/wiki/Fisher-Yates_shuffle
+function shufflePieces(arrayOfPieces) {
+    var currentIndex = arrayOfPieces.length,
+        randomIndex = void 0;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        var _ref = [arrayOfPieces[randomIndex], arrayOfPieces[currentIndex]];
+        arrayOfPieces[currentIndex] = _ref[0];
+        arrayOfPieces[randomIndex] = _ref[1];
+    }
+}
+
+exports.shufflePieces = shufflePieces;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.countStatistic = undefined;
+
+var _classes = __webpack_require__(0);
+
+var _transformTableToMatrix = __webpack_require__(6);
+
+var _pieces = __webpack_require__(1);
+
 // Counting connected components in a table
-function countStatistic() {
-    var arr = transformTableToMatrix(creative);
+function countStatistic(creative) {
+    var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
+    var sizes = getComponentsSizes(arr);
+
+    //TODO: add proper check if number of empty cells can be divided by pieces
+    var messages = sizes.map(function (size) {
+        return '<span class="' + (checkIfProperNumber(size) ? 'good' : 'bad') + '">' + size + '</span>';
+    });
+    var html = '';
+
+    switch (messages.length) {
+        case 0:
+            html = '0';
+            break;
+        case 1:
+            html = messages[0];
+            break;
+        default:
+            html = messages.join(' + ') + ' = ' + sizes.reduce(function (a, b) {
+                return a + b;
+            });
+            break;
+    }
+
+    creative.find(".statisticSpan").html(html);
+}
+
+function getComponentsSizes(arr) {
     var startNode = void 0,
-        size = [];
+        sizes = [];
     while (!isAllVisited(arr)) {
         startNode = getStartNode(arr);
-        size[size.length] = 1 + countOneComponent(startNode, arr);
+        sizes[sizes.length] = 1 + countOneComponent(startNode, arr);
     }
-
-    for (var s = 0, temp; s < size.length; s++) {
-        //TODO: add proper check if number of empty cells can be divided by pieces
-        if (checkIfProperNumber(size[s])) {
-            temp = '<span class="good">' + size[s] + '</span>';
-        } else {
-            temp = '<span class="bad">' + size[s] + '</span>';
-        }
-        size[s] = temp;
-    }
-
-    var txt = '';
-    if (size.length <= 0) {
-        txt = '0';
-    } else {
-        if (size.length == 1) {
-            txt = size[0];
-        } else {
-            for (var i = 0; i < size.length - 1; i++) {
-                txt += size[i] + ' + ';
-            }
-            txt += size[size.length - 1] + ' = ' + creative.find(".empty-cell").length.toString();
-        }
-    }
-
-    creative.find(".statisticSpan").html(txt);
+    return sizes;
 }
 
 function isAllVisited(arr) {
@@ -11848,7 +12000,7 @@ function getNeighbours(node, arr) {
     return neighbours;
 }
 
-//TODO
+//TODO: add proper check if number of empty cells can be divided by pieces
 function checkIfProperNumber(number) {
     for (var i = 0; i < _pieces.piecesLength.length; i++) {
         if (number % _pieces.piecesLength[i] == 0) {
@@ -11858,122 +12010,42 @@ function checkIfProperNumber(number) {
     return false;
 }
 
-// Transform table
-function addColumn() {
-    creative.find('tr.field-row').each(function (row) {
-        (0, _jquery2.default)(this).append((0, _jquery2.default)('<td class=\'cell empty-cell\' id=\'td-' + row + '-' + numberOfColumnsCreative + '\'></td>'));
-    });
-    numberOfColumnsCreative++;
-}
+exports.countStatistic = countStatistic;
 
-function addRow() {
-    var row = (0, _jquery2.default)('<tr class="field-row" id="tr-' + numberOfRowsCreative + '"></tr>');
-    for (var i = 0; i < numberOfColumnsCreative; i++) {
-        row.append((0, _jquery2.default)('<td class=\'cell empty-cell\' id=\'td-' + numberOfRowsCreative + '-' + i + '\'></td>'));
-    }
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
 
-    creative.find('table.polytable tr.field-row').last().after(row);
-    numberOfRowsCreative++;
-}
+"use strict";
 
-function removeColumn() {
-    if (numberOfColumnsCreative < 2) {
-        return;
-    }
-    creative.find('tr.field-row').each(function () {
-        //noinspection JSValidateTypes
-        (0, _jquery2.default)(this).children('td.cell').last().remove();
-    });
-    numberOfColumnsCreative--;
-}
 
-function removeRow() {
-    if (numberOfRowsCreative < 2) {
-        return;
-    }
-    creative.find('tr.field-row').last().remove();
-    numberOfRowsCreative--;
-}
-
-function resetFieldCreative() {
-    creative.find('td.cell').removeClass('set').css('backgroundColor', '').css('border', '');
-    creative.find('.piece').remove();
-    creative.find('#give-up-creative').hide();
-}
-
-(0, _jquery2.default)(document).ready(function () {
-    setInitialPolyminoTable();
-    countStatistic();
-    var solutionArea = creative.find('div.solutionArea');
-    var pieceSelectionArea = (0, _jquery2.default)('.pieceSelectionArea');
-
-    creative.find('#go').click(function () {
-        resetFieldCreative();
-        if (creative.find('span.statisticSpan .bad').length > 0) {
-            alert("It's impossible to cover table with such number of empty cells!");
-            return;
-        }
-        shufflePieces();
-        creative.find('#give-up-creative').show();
-
-        var arr = transformTableToMatrix(creative);
-        var header = (0, _dlx.createXListForExactCoverProblem)(arr);
-        startGameCreative(header, solution);
-    });
-
-    creative.find('#give-up-creative').click(function () {
-        function placePiece() {
-            var index = parseInt((0, _jquery2.default)(this).attr('id').replace('piece', ''));
-            setTimeoutForCoveringPieceCreative(solutionPiecesCreative[index], (0, _jquery2.default)(this));
-        }
-
-        stepOfIntervalCreative = 0;
-        creative.find('.piece[style]').each(placePiece);
-        creative.find('.piece').each(placePiece);
-        (0, _jquery2.default)(this).hide();
-    });
-
-    (0, _jquery2.default)(document).on('click', '.creative td.cell', function () {
-        resetFieldCreative();
-
-        if ((0, _jquery2.default)(this).hasClass('empty-cell')) {
-            (0, _jquery2.default)(this).removeClass('empty-cell').addClass('border-cell');
-            countStatistic();
-        } else {
-            (0, _jquery2.default)(this).removeClass('border-cell').addClass('empty-cell');
-            countStatistic();
-        }
-    });
-
-    creative.find("#resetBarrierCells").click(function () {
-        resetFieldCreative();
-        creative.find(".polytable td").removeClass('border-cell').addClass('empty-cell').css('backgroundColor', '');
-        countStatistic();
-    });
-
-    creative.find('div.arrow-div').click(function () {
-        resetFieldCreative();
-        var direction = (0, _jquery2.default)(this).removeClass('arrow-div').attr('class').replace('arrow-', '');
-
-        switch (direction) {
-            case 'left':
-                removeColumn();
-                break;
-            case 'right':
-                addColumn();
-                break;
-            case 'top':
-                removeRow();
-                break;
-            case 'bottom':
-                addRow();
-                break;
-        }
-
-        (0, _jquery2.default)(this).addClass('arrow-div');
-        countStatistic();
-    });
+Object.defineProperty(exports, "__esModule", {
+    value: true
 });
+function getCoordinates(elem) {
+    // (1)
+    var box = elem.getBoundingClientRect();
+
+    var body = document.body;
+    var docEl = document.documentElement;
+
+    // (2)
+    var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+    var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+
+    // (3)
+    var clientTop = docEl.clientTop || body.clientTop || 0;
+    var clientLeft = docEl.clientLeft || body.clientLeft || 0;
+
+    // (4)
+    var top = box.top + scrollTop - clientTop;
+    var left = box.left + scrollLeft - clientLeft;
+
+    // (5)
+    return { top: Math.round(top), left: Math.round(left) };
+}
+
+exports.getCoordinates = getCoordinates;
 
 /***/ })
 /******/ ]);

@@ -3,13 +3,15 @@
 import $ from "jquery";
 import {Node, Piece} from './js/classes';
 import {createXListForExactCoverProblem, searchDLX, printDLX} from './js/dlx';
-import {pieces, piecesLength} from './js/pieces';
+import {pieces} from './js/pieces';
 import {setUpPieceSelectionArea} from './js/pieceSelection';
+import {transformTableToMatrix} from './js/transformTableToMatrix';
+import {shufflePieces} from './js/shufflePieces';
+import {countStatistic} from './js/statistics';
+import {getCoordinates} from './js/getCoordinates';
 
 const interval = 200;
 let stepOfInterval = 0;
-let currentPieceTdCoordinates;
-let currentCoordinatesAttribute;
 let piecesSet = 0;
 let solutionLength;
 let solution = [];
@@ -18,10 +20,7 @@ let timeStart;
 const scoreForLevel = 500;
 
 let stepOfIntervalCreative = 0;
-let currentPieceTdCoordinatesCreative;
-let currentCoordinatesAttributeCreative;
 let piecesSetCreative = 0;
-let solutionLengthCreative;
 let solutionCreative = [];
 let solutionPiecesCreative = [];
 
@@ -30,10 +29,13 @@ let level = 0;
 let score = 0;
 let pieceCost = 400;
 let giveUpCost;
-
 const tableCellWidth = 35;
+
 let computed;
 let creative;
+
+let numberOfRowsCreative, numberOfColumnsCreative;
+let isGameFinished;
 
 function saveToLocalStorage() {
     if (localStorage) {
@@ -58,7 +60,75 @@ function restoreFromLocalStorage() {
     }
 }
 
-/***** DLX.JS *****/
+/***** SCRIPT.JS *****/
+function generatePolyminoTable() {
+    saveToLocalStorage();
+    initialSetUp();
+    const table = computed.find('table.polytable');
+    let {numberOfRows, numberOfColumns, numberOfBarriers, area} = countNumbersForTable();
+
+    table.empty();
+    for (let i = 0; i < numberOfRows; i++) {
+        const row = $(`<tr class='field-row' id='tr-${i}'></tr>`);
+        for (let j = 0; j < numberOfColumns; j++) {
+            let td = $(`<td class='cell empty-cell' id='td-${i}-${j}'></td>`);
+            row.append(td);
+        }
+        table.append(row);
+    }
+
+    for (let i = 0; i < numberOfBarriers * 4; i++) {
+        let allCells = computed.find('td.empty-cell');
+        $(allCells[Math.floor(Math.random() * (area - i))])
+            .removeClass('empty-cell')
+            .addClass('border-cell');
+    }
+
+    shufflePieces(pieces);
+    const arr = transformTableToMatrix(computed);
+    const header = createXListForExactCoverProblem(arr);
+    startGame(header);
+}
+
+function countNumbersForTable() {
+    const numberOfPieces = Math.floor(level / repeats) + 3;
+    giveUpCost = Math.floor(pieceCost * numberOfPieces * 0.8 / 100) * 100;
+    computed.find('span.pieceCost').text(pieceCost);
+    computed.find('span.giveUpCost').text(giveUpCost);
+
+    const numberOfBarriers = (level % repeats) * 2;
+    const area = (numberOfPieces + numberOfBarriers) * 4;
+    let numberOfRows, numberOfColumns;
+    let side, index;
+    for (
+        numberOfRows = index = 4, side = area / index, numberOfColumns = Math.floor(side);
+        index < numberOfPieces + numberOfBarriers;
+        index++, numberOfRows = index, side = area / index, numberOfColumns = Math.floor(side)
+    ) {
+        if (side == numberOfColumns && Math.abs(numberOfColumns - numberOfRows) <= 5) {
+            break;
+        }
+    }
+
+    if (numberOfRows > numberOfColumns) {
+        [numberOfRows, numberOfColumns] = [numberOfColumns, numberOfRows];
+    }
+
+    let tableWidth = tableCellWidth * numberOfColumns + 32 * 2;
+    let tableHeight = tableCellWidth * numberOfRows + 32 * 2;
+    let windowWidth = document.body.scrollWidth;
+
+    if (tableWidth > windowWidth) {
+        if (tableHeight > windowWidth) {
+            numberOfColumns = 4;
+            numberOfRows = numberOfPieces + numberOfBarriers;
+        } else {
+            [numberOfRows, numberOfColumns] = [numberOfColumns, numberOfRows];
+        }
+    }
+
+    return {numberOfRows, numberOfColumns, numberOfBarriers, area};
+}
 
 function startGame(header) {
     stepOfInterval = 0;
@@ -113,8 +183,8 @@ function startGame(header) {
                 const shiftY = e.pageY - coords.top;
 
                 let isPieceSet = true;
-                currentCoordinatesAttribute = view.getAttribute('data-nodes');
-                currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(item => Node.fromString(item));
+                let currentCoordinatesAttribute = view.getAttribute('data-nodes');
+                let currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(item => Node.fromString(item));
 
                 let row, column;
                 ({row, column} = getRowAndCol(e));
@@ -260,29 +330,6 @@ function placePieceNoInterval() {
     piece.remove();
 }
 
-function getCoordinates(elem) {
-    // (1)
-    const box = elem.getBoundingClientRect();
-
-    const body = document.body;
-    const docEl = document.documentElement;
-
-    // (2)
-    const scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
-    const scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-
-    // (3)
-    const clientTop = docEl.clientTop || body.clientTop || 0;
-    const clientLeft = docEl.clientLeft || body.clientLeft || 0;
-
-    // (4)
-    const top = box.top + scrollTop - clientTop;
-    const left = box.left + scrollLeft - clientLeft;
-
-    // (5)
-    return {top: Math.round(top), left: Math.round(left)};
-}
-
 function setTimeoutForCoveringPiece(piece, removedPiece) {
     return new Promise((resolve) => {
         if (!piece)
@@ -317,115 +364,12 @@ function alertWithInterval(message, interval = 50) {
     }, interval);
 }
 
-/***** SCRIPT.JS *****/
-
-// algo: https://en.wikipedia.org/wiki/Fisher-Yates_shuffle
-function shufflePieces(arrayOfPieces = pieces) {
-    let currentIndex = arrayOfPieces.length, randomIndex;
-
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // And swap it with the current element.
-        [arrayOfPieces[currentIndex], arrayOfPieces[randomIndex]] = [arrayOfPieces[randomIndex], arrayOfPieces[currentIndex]];
-    }
-}
-
-function generatePolyminoTable() {
-    saveToLocalStorage();
-    initialSetUp();
-    const table = computed.find('table.polytable');
-    const numberOfPieces = Math.floor(level / repeats) + 3;
-
-    giveUpCost = Math.floor(pieceCost * numberOfPieces * 0.8 / 100) * 100;
-    computed.find('span.pieceCost').text(pieceCost);
-    computed.find('span.giveUpCost').text(giveUpCost);
-
-    const numberOfBarriers = (level % repeats) * 2;
-    const area = (numberOfPieces + numberOfBarriers) * 4;
-    let numberOfRows, numberOfColumns;
-    let side;
-    let index;
-    for (
-        numberOfRows = index = 4, side = area / index, numberOfColumns = Math.floor(side);
-        index < numberOfPieces + numberOfBarriers;
-        index++, numberOfRows = index, side = area / index, numberOfColumns = Math.floor(side)
-    ) {
-        if (side == numberOfColumns && Math.abs(numberOfColumns - numberOfRows) <= 5) {
-            break;
-        }
-    }
-
-    if (numberOfRows > numberOfColumns) {
-        [numberOfRows, numberOfColumns] = [numberOfColumns, numberOfRows];
-    }
-
-    let tableWidth = tableCellWidth * numberOfColumns + 32 * 2;
-    let tableHeight = tableCellWidth * numberOfRows + 32 * 2;
-    let windowWidth = document.body.scrollWidth;
-
-    if (tableWidth > windowWidth) {
-        if (tableHeight > windowWidth) {
-            numberOfColumns = 4;
-            numberOfRows = numberOfPieces + numberOfBarriers;
-        } else {
-            [numberOfRows, numberOfColumns] = [numberOfColumns, numberOfRows];
-        }
-    }
-
-    table.empty();
-    for (let i = 0; i < numberOfRows; i++) {
-        const row = $(`<tr class='field-row' id='tr-${i}'></tr>`);
-        for (let j = 0; j < numberOfColumns; j++) {
-            let td = $(`<td class='cell empty-cell' id='td-${i}-${j}'></td>`);
-            row.append(td);
-        }
-        table.append(row);
-    }
-
-    for (let i = 0; i < numberOfBarriers * 4; i++) {
-        let allCells = computed.find('td.empty-cell');
-        $(allCells[Math.floor(Math.random() * (area - i))])
-            .removeClass('empty-cell')
-            .addClass('border-cell');
-    }
-
-    shufflePieces();
-    const arr = transformTableToMatrix(computed);
-    const header = createXListForExactCoverProblem(arr);
-    startGame(header);
-}
-
 function printLevel() {
     computed.find(".levelSpan").html(level);
 }
 
 function printScore() {
     computed.find(".scoreSpan").html(score);
-}
-
-function transformTableToMatrix(container) {
-    const arr = [];
-    container.find("table.polytable tr.field-row").each(
-        function (row) {
-            arr[arr.length] = [];
-            //noinspection JSValidateTypes
-            $(this).children('td.cell').each(
-                function () {
-                    let item = 0;
-                    if ($(this).hasClass('border-cell')) {
-                        item = 1;
-                    }
-                    arr[row][arr[row].length] = item;
-                }
-            );
-        }
-    );
-    return arr;
 }
 
 function initialSetUp() {
@@ -583,7 +527,6 @@ $(document).ready(
             }
         );
 
-
         $('#computed').change(
             function() {
                 if($(this).prop( "checked" )) {
@@ -610,9 +553,6 @@ $(document).ready(
 
 /***** SCRIPT-CREATIVE.JS *****/
 
-let numberOfRowsCreative, numberOfColumnsCreative;
-let isGameFinished;
-
 function startGameCreative(header) {
     isGameFinished = false;
     stepOfIntervalCreative = 0;
@@ -629,7 +569,7 @@ function startGameCreative(header) {
     }
 
     piecesSetCreative = 0;
-    solutionLengthCreative = solutionCreative.length;
+    let solutionLengthCreative = solutionCreative.length;
 
     const solutionArea = creative.find('div.solutionArea');
     solutionPiecesCreative = printDLX(solutionCreative);
@@ -657,8 +597,8 @@ function startGameCreative(header) {
                 const shiftY = e.pageY - coords.top;
 
                 let isPieceSet = true;
-                currentCoordinatesAttributeCreative = view.getAttribute('data-nodes');
-                currentPieceTdCoordinatesCreative = currentCoordinatesAttributeCreative.split('-').map(item => Node.fromString(item));
+                let currentCoordinatesAttributeCreative = view.getAttribute('data-nodes');
+                let currentPieceTdCoordinatesCreative = currentCoordinatesAttributeCreative.split('-').map(item => Node.fromString(item));
 
                 let row, column;
                 ({row, column} = getRowAndCol(e));
@@ -810,127 +750,6 @@ function setInitialPolyminoTable() {
     table.find('#td-3-3, #td-3-4, #td-4-3, #td-4-4').removeClass('empty-cell').addClass('border-cell');
 }
 
-// Counting connected components in a table
-function countStatistic() {
-    const arr = transformTableToMatrix(creative);
-    let startNode, size = [];
-    while (!isAllVisited(arr)) {
-        startNode = getStartNode(arr);
-        size[size.length] = 1 + countOneComponent(startNode, arr);
-    }
-
-    for (let s = 0, temp; s < size.length; s++) {
-        //TODO: add proper check if number of empty cells can be divided by pieces
-        if (checkIfProperNumber(size[s])) {
-            temp = `<span class="good">${size[s]}</span>`;
-        }
-        else {
-            temp = `<span class="bad">${size[s]}</span>`;
-        }
-        size[s] = temp;
-    }
-
-
-    let txt = '';
-    if (size.length <= 0) {
-        txt = '0';
-    }
-    else {
-        if (size.length == 1) {
-            txt = size[0];
-        }
-        else {
-            for (let i = 0; i < size.length - 1; i++) {
-                txt += size[i] + ' + ';
-            }
-            txt += size[size.length - 1] + ' = ' + creative.find(".empty-cell").length.toString();
-        }
-    }
-
-    creative.find(".statisticSpan").html(txt);
-}
-
-function isAllVisited(arr) {
-    for (let i = 0; i < arr.length; i++) {
-        for (let j = 0; j < arr[i].length; j++) {
-            if (arr[i][j] == 0) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-function getStartNode(arr) {
-    for (let i = 0; i < arr.length; i++) {
-        for (let j = 0; j < arr[i].length; j++) {
-            if (arr[i][j] == 0) {
-                return new Node(i, j);
-            }
-        }
-    }
-}
-
-function countOneComponent(startNode, arr) {
-    let size = 0;
-    arr[startNode.row][startNode.column] = 1;
-    const neighbours = getNeighbours(startNode, arr);
-
-    if (neighbours.length == 0) {
-        return 0;
-    }
-
-    for (let t = 0; t < neighbours.length; t++) {
-        arr[neighbours[t].row][neighbours[t].column] = 1;
-        size++;
-    }
-
-    for (let i = 0; i < neighbours.length; i++) {
-        size += countOneComponent(neighbours[i], arr);
-    }
-
-    return size;
-}
-
-function getNeighbours(node, arr) {
-    const neighbours = [];
-    // connect diagonal cells
-    //neighbours[neighbours.length] = new Node(node.row - 1, node.column - 1);
-    //neighbours[neighbours.length] = new Node(node.row - 1, node.column + 1);
-    //neighbours[neighbours.length] = new Node(node.row + 1, node.column - 1);
-    //neighbours[neighbours.length] = new Node(node.row + 1, node.column + 1);
-
-    neighbours[neighbours.length] = new Node(node.row - 1, node.column);
-    neighbours[neighbours.length] = new Node(node.row, node.column - 1);
-    neighbours[neighbours.length] = new Node(node.row, node.column + 1);
-    neighbours[neighbours.length] = new Node(node.row + 1, node.column);
-
-    for (let i = 0; i < neighbours.length; i++) {
-        if (neighbours[i].row < 0 || neighbours[i].column < 0
-            || neighbours[i].row >= arr.length || neighbours[i].column >= arr[0].length
-            || arr[neighbours[i].row][neighbours[i].column] == 1) {
-            neighbours[i] = undefined;
-        }
-    }
-    let position = neighbours.indexOf(undefined);
-    while (position > -1) {
-        neighbours.splice(position, 1);
-        position = neighbours.indexOf(undefined);
-    }
-
-    return neighbours;
-}
-
-//TODO
-function checkIfProperNumber(number) {
-    for (let i = 0; i < piecesLength.length; i++) {
-        if (number % piecesLength[i] == 0) {
-            return true;
-        }
-    }
-    return false;
-}
-
 // Transform table
 function addColumn() {
     creative.find('tr.field-row').each(
@@ -985,7 +804,7 @@ function resetFieldCreative() {
 $(document).ready(
     function() {
         setInitialPolyminoTable();
-        countStatistic();
+        countStatistic(creative);
         let solutionArea = creative.find('div.solutionArea');
         let pieceSelectionArea = $('.pieceSelectionArea');
 
@@ -996,7 +815,7 @@ $(document).ready(
                     alert("It's impossible to cover table with such number of empty cells!");
                     return;
                 }
-                shufflePieces();
+                shufflePieces(pieces);
                 creative.find('#give-up-creative').show();
 
                 const arr = transformTableToMatrix(creative);
@@ -1025,11 +844,11 @@ $(document).ready(
 
                 if ($(this).hasClass('empty-cell')) {
                     $(this).removeClass('empty-cell').addClass('border-cell');
-                    countStatistic();
+                    countStatistic(creative);
                 }
                 else {
                     $(this).removeClass('border-cell').addClass('empty-cell');
-                    countStatistic();
+                    countStatistic(creative);
                 }
             }
         );
@@ -1038,7 +857,7 @@ $(document).ready(
             function () {
                 resetFieldCreative();
                 creative.find(".polytable td").removeClass('border-cell').addClass('empty-cell').css('backgroundColor', '');
-                countStatistic();
+                countStatistic(creative);
             }
         );
 
@@ -1063,7 +882,7 @@ $(document).ready(
                 }
 
                 $(this).addClass('arrow-div');
-                countStatistic();
+                countStatistic(creative);
             }
         );
     }
