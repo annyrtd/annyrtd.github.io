@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -351,115 +351,6 @@ exports.deactivatePiece = deactivatePiece;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.printBruijn = exports.searchBruijn = undefined;
-
-var _pieces = __webpack_require__(1);
-
-var _classes = __webpack_require__(0);
-
-function getNextBruijnHole(arr) {
-    for (var column = 0; column < arr[0].length; column++) {
-        for (var row = 0; row < arr.length; row++) {
-            if (arr[row][column] == 0) return { row: row, column: column };
-        }
-    }
-}
-
-function searchBruijn(arr, solution) {
-    var next = getNextBruijnHole(arr);
-    if (next) {
-        for (var index = 0; index < _pieces.pieces.length; index++) {
-            var piece = _pieces.pieces[index];
-            var nodes = piece.nodes;
-            var root = piece.root;
-            var offsetX = next.row - root.row;
-            var offsetY = next.column - root.column;
-            if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
-                // TODO: add offset
-                solution.push({ index: index, offsetX: offsetX, offsetY: offsetY });
-                placePiece(arr, nodes, next.row - root.row, next.column - root.column);
-                if (searchBruijn(arr, solution)) {
-                    removePiece(arr, nodes, next.row - root.row, next.column - root.column);
-                    return true;
-                }
-                removePiece(arr, nodes, next.row - root.row, next.column - root.column);
-                solution.pop();
-            }
-        }
-    } else {
-        return true;
-    }
-}
-
-function isPossibleToPlace(arr, nodes, i, j) {
-    for (var k = 0; k < nodes.length; k++) {
-        if (arr[i + nodes[k].row] === undefined || arr[i + nodes[k].row][j + nodes[k].column] === undefined || arr[i + nodes[k].row][j + nodes[k].column] === 1) {
-            return false;
-        }
-    }
-    return true;
-}
-
-function placePiece(arr, nodes, i, j) {
-    for (var k = 0; k < nodes.length; k++) {
-        arr[i + nodes[k].row][j + nodes[k].column] = 1;
-    }
-}
-
-function removePiece(arr, nodes, i, j) {
-    for (var k = 0; k < nodes.length; k++) {
-        arr[i + nodes[k].row][j + nodes[k].column] = 0;
-    }
-}
-
-// TODO: add forming array of Pieces
-function printBruijn(solution) {
-    var newPieces = [];
-
-    /*for(let i = 0; i < solution.length; i++) {
-        let config = solution[i];
-        let index = config.index;
-        let offsetX = config.offsetX;
-        let offsetY = config.offsetY;
-        let nodes = pieces[index].nodes;
-        const coordinates = [];
-          for(let j = 0; j < nodes.length; j++) {
-            let node = nodes[j];
-            coordinates.push([node.row + offsetX, node.column + offsetY]);
-        }
-          newPieces.push(new Piece(coordinates));
-    }*/
-
-    solution.forEach(function (config) {
-        var index = config.index;
-        var offsetX = config.offsetX;
-        var offsetY = config.offsetY;
-        var nodes = _pieces.pieces[index].nodes;
-        var coordinates = [];
-
-        nodes.forEach(function (node) {
-            return coordinates.push([node.row + offsetX, node.column + offsetY]);
-        });
-
-        newPieces.push(new _classes.Piece(coordinates));
-    });
-
-    return newPieces;
-}
-
-exports.searchBruijn = searchBruijn;
-exports.printBruijn = printBruijn;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
 exports.printDLX = exports.searchDLX = exports.createXListForExactCoverProblem = undefined;
 
 var _pieces = __webpack_require__(1);
@@ -677,7 +568,7 @@ exports.searchDLX = searchDLX;
 exports.printDLX = printDLX;
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -714,7 +605,7 @@ function setUpPieceSelectionArea(area) {
 exports.setUpPieceSelectionArea = setUpPieceSelectionArea;
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10974,25 +10865,23 @@ return jQuery;
 
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _jquery = __webpack_require__(5);
+var _jquery = __webpack_require__(4);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
 var _classes = __webpack_require__(0);
 
-var _debruijn = __webpack_require__(2);
-
-var _dlx = __webpack_require__(3);
+var _dlx = __webpack_require__(2);
 
 var _pieces = __webpack_require__(1);
 
-var _pieceSelection = __webpack_require__(4);
+var _pieceSelection = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11968,141 +11857,6 @@ function resetFieldCreative() {
     creative.find('td.cell').removeClass('set').css('backgroundColor', '').css('border', '');
     creative.find('.piece').remove();
     creative.find('#give-up-creative').hide();
-}
-
-function runTestOnce(arr) {
-    var timeStart = void 0,
-        timeStop = void 0,
-        header = void 0,
-        solutionBruijn = [],
-        solutionDLX = [];
-
-    timeStart = new Date();
-    (0, _debruijn.searchBruijn)(arr, solutionBruijn);
-    timeStop = new Date();
-    console.log('de Bruijn - search: ' + (timeStop - timeStart) + 'ms');
-
-    timeStart = new Date();
-    (0, _debruijn.printBruijn)(solutionBruijn);
-    timeStop = new Date();
-    console.log('de Bruijn - print: ' + (timeStop - timeStart) + 'ms');
-
-    timeStart = new Date();
-    header = (0, _dlx.createXListForExactCoverProblem)(arr);
-    timeStop = new Date();
-    console.log('DLX - list forming: ' + (timeStop - timeStart) + 'ms');
-
-    timeStart = new Date();
-    (0, _dlx.searchDLX)(header, solutionDLX, 0);
-    timeStop = new Date();
-    console.log('DLX - search: ' + (timeStop - timeStart) + 'ms');
-
-    timeStart = new Date();
-    (0, _dlx.printDLX)(solutionDLX);
-    timeStop = new Date();
-    console.log('DLX - print: ' + (timeStop - timeStart) + 'ms');
-}
-
-function runTestsAll(arr, N) {
-    var timeStart = void 0,
-        timeStop = void 0,
-        header = void 0;
-    var solutionBruijn = [],
-        solutionDLX = [];
-    var bruijnSearch = [],
-        bruijnPrint = [];
-    var DLXcreatList = [],
-        DLXSearch = [],
-        DLXPrint = [];
-
-    for (var i = 0; i < N; i++) {
-        timeStart = new Date();
-        (0, _debruijn.searchBruijn)(arr, solutionBruijn);
-        timeStop = new Date();
-        bruijnSearch.push(timeStop - timeStart);
-
-        timeStart = new Date();
-        (0, _debruijn.printBruijn)(solutionBruijn);
-        timeStop = new Date();
-        bruijnPrint.push(timeStop - timeStart);
-
-        timeStart = new Date();
-        header = (0, _dlx.createXListForExactCoverProblem)(arr);
-        timeStop = new Date();
-        DLXcreatList.push(timeStop - timeStart);
-
-        timeStart = new Date();
-        (0, _dlx.searchDLX)(header, solutionDLX, 0);
-        timeStop = new Date();
-        DLXSearch.push(timeStop - timeStart);
-
-        timeStart = new Date();
-        (0, _dlx.printDLX)(solutionDLX);
-        timeStop = new Date();
-        DLXPrint.push(timeStop - timeStart);
-    }
-
-    var avg = function avg(arr) {
-        return arr.reduce(function (result, current) {
-            return result + current;
-        }) / parseFloat(arr.length);
-    };
-
-    var message = '        De Bruijn       DLX\nsetup                   ' + avg(DLXcreatList) + 'ms\nsearch  ' + avg(bruijnSearch) + 'ms\t\t\t' + avg(DLXSearch) + 'ms\nprint   ' + avg(bruijnPrint) + 'ms\t\t\t' + avg(DLXPrint) + 'ms\n---------------------------------\ntotal   ' + (avg(bruijnSearch) + avg(bruijnPrint)) + 'ms\t\t\t' + (avg(DLXcreatList) + avg(DLXSearch) + avg(DLXPrint)) + 'ms';
-
-    console.log(message);
-}
-
-function runTests(arr, N) {
-    var timeStart = void 0,
-        timeStop = void 0,
-        header = void 0;
-    var solutionBruijn = [],
-        solutionDLX = [];
-    var bruijnSearch = void 0,
-        bruijnPrint = void 0;
-    var DLXcreatList = void 0,
-        DLXSearch = void 0,
-        DLXPrint = void 0;
-
-    timeStart = new Date();
-    for (var i = 0; i < N; i++) {
-        (0, _debruijn.searchBruijn)(arr, solutionBruijn);
-    }
-    timeStop = new Date();
-    bruijnSearch = (timeStop - timeStart) / N;
-
-    timeStart = new Date();
-    for (var _i2 = 0; _i2 < N; _i2++) {
-        (0, _debruijn.printBruijn)(solutionBruijn);
-    }
-    timeStop = new Date();
-    bruijnPrint = (timeStop - timeStart) / N;
-
-    timeStart = new Date();
-    for (var _i3 = 0; _i3 < N; _i3++) {
-        header = (0, _dlx.createXListForExactCoverProblem)(arr);
-    }
-    timeStop = new Date();
-    DLXcreatList = (timeStop - timeStart) / N;
-
-    timeStart = new Date();
-    for (var _i4 = 0; _i4 < N; _i4++) {
-        (0, _dlx.searchDLX)(header, solutionDLX, 0);
-    }
-    timeStop = new Date();
-    DLXSearch = (timeStop - timeStart) / N;
-
-    timeStart = new Date();
-    for (var _i5 = 0; _i5 < N; _i5++) {
-        (0, _dlx.printDLX)(solutionDLX);
-    }
-    timeStop = new Date();
-    DLXPrint = (timeStop - timeStart) / N;
-
-    var message = '        De Bruijn       DLX\nsetup                   ' + DLXcreatList + 'ms\nsearch  ' + bruijnSearch + 'ms\t\t\t' + DLXSearch + 'ms\nprint   ' + bruijnPrint + 'ms\t\t\t' + DLXPrint + 'ms\n---------------------------------\ntotal   ' + (bruijnSearch + bruijnPrint) + 'ms\t\t\t' + (DLXcreatList + DLXSearch + DLXPrint) + 'ms';
-
-    console.log(message);
 }
 
 (0, _jquery2.default)(document).ready(function () {

@@ -21,8 +21,7 @@ function searchBruijn(arr, solution) {
             let offsetY = next.column - root.column;
             if(isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
                 // TODO: add offset
-                solution.push({index, offsetX, offsetY});
-                placePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                solution.push(placePiece(arr, nodes, next.row - root.row, next.column - root.column));
                 if(searchBruijn(arr, solution)) {
                     removePiece(arr, nodes, next.row - root.row, next.column - root.column);
                     return true;
@@ -48,9 +47,16 @@ function isPossibleToPlace(arr, nodes, i, j) {
 }
 
 function placePiece(arr, nodes, i, j) {
+    const newNodes = [];
+
     for (let k = 0; k < nodes.length; k++) {
-        arr[i + nodes[k].row][j + nodes[k].column] = 1;
+        let row = i + nodes[k].row;
+        let col = j + nodes[k].column;
+        newNodes.push([row, col]);
+        arr[row][col] = 1;
     }
+
+    return new Piece(newNodes);
 }
 
 function removePiece(arr, nodes, i, j) {
@@ -59,39 +65,4 @@ function removePiece(arr, nodes, i, j) {
     }
 }
 
-// TODO: add forming array of Pieces
-function printBruijn(solution) {
-    const newPieces = [];
-
-    /*for(let i = 0; i < solution.length; i++) {
-        let config = solution[i];
-        let index = config.index;
-        let offsetX = config.offsetX;
-        let offsetY = config.offsetY;
-        let nodes = pieces[index].nodes;
-        const coordinates = [];
-
-        for(let j = 0; j < nodes.length; j++) {
-            let node = nodes[j];
-            coordinates.push([node.row + offsetX, node.column + offsetY]);
-        }
-
-        newPieces.push(new Piece(coordinates));
-    }*/
-
-    solution.forEach(config => {
-        let index = config.index;
-        let offsetX = config.offsetX;
-        let offsetY = config.offsetY;
-        let nodes = pieces[index].nodes;
-        const coordinates = [];
-
-        nodes.forEach(node => coordinates.push([node.row + offsetX, node.column + offsetY]));
-
-        newPieces.push(new Piece(coordinates));
-    });
-
-    return newPieces;
-}
-
-export {searchBruijn, printBruijn};
+export {searchBruijn};
