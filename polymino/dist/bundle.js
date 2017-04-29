@@ -306,12 +306,18 @@ exports.RootObject = RootObject;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.deactivatePiece = exports.activatePiece = exports.pieces = undefined;
+exports.piecesLength = exports.deactivatePiece = exports.activatePiece = exports.pieces = undefined;
 
 var _classes = __webpack_require__(0);
 
-var piecesDatabase = [new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 1]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 0], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 2]]), new _classes.Piece([[0, 1], [1, 1], [2, 0], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [0, 2], [1, 0], [1, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [0, 3]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0]])];
+var piecesDatabase = [
+// Size 3
+new _classes.Piece([[0, 0], [0, 1], [0, 2]]), new _classes.Piece([[0, 0], [1, 0], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [1, 0]]), new _classes.Piece([[0, 0], [0, 1], [1, 1]]), new _classes.Piece([[0, 1], [1, 0], [1, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1]]),
+
+// Size 4
+new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 1]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 0], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 2]]), new _classes.Piece([[0, 1], [1, 1], [2, 0], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [0, 2], [1, 0], [1, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [0, 3]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0]])];
 var pieces = [];
+var piecesLength = [3, 4];
 
 setInitialActivePieces();
 
@@ -340,6 +346,7 @@ function deactivatePiece(piece) {
 exports.pieces = pieces;
 exports.activatePiece = activatePiece;
 exports.deactivatePiece = deactivatePiece;
+exports.piecesLength = piecesLength;
 
 /***/ }),
 /* 2 */
@@ -581,25 +588,59 @@ exports.setUpPieceSelectionArea = undefined;
 
 var _pieces = __webpack_require__(1);
 
-function setUpPieceSelectionArea(area) {
+function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
+    var containerPieceMap = new WeakMap();
+    var containers = [];
+
     _pieces.pieces.forEach(function (piece) {
         var view = piece.getView();
         var container = document.createElement('div');
         container.classList.add('pieceContainer');
         container.classList.add('selected');
+        container.classList.add('mdl-card');
+        container.classList.add('mdl-shadow--8dp');
         container.appendChild(view);
         area.appendChild(container);
+
+        containers.push(container);
+        containerPieceMap.set(container, piece);
 
         container.onclick = function () {
             if (container.classList.contains('selected')) {
                 container.classList.remove('selected');
+                container.classList.remove('mdl-card');
+                container.classList.remove('mdl-shadow--8dp');
                 (0, _pieces.deactivatePiece)(piece);
             } else {
                 container.classList.add('selected');
+                container.classList.add('mdl-card');
+                container.classList.add('mdl-shadow--8dp');
                 (0, _pieces.activatePiece)(piece);
             }
         };
     });
+
+    document.getElementById(selectAllId).onclick = function () {
+        containers.forEach(function (container) {
+            if (!container.classList.contains('selected')) {
+                container.classList.add('selected');
+                container.classList.add('mdl-card');
+                container.classList.add('mdl-shadow--8dp');
+                (0, _pieces.activatePiece)(containerPieceMap.get(container));
+            }
+        });
+    };
+
+    document.getElementById(deselectAllId).onclick = function () {
+        containers.forEach(function (container) {
+            if (container.classList.contains('selected')) {
+                container.classList.remove('selected');
+                container.classList.remove('mdl-card');
+                container.classList.remove('mdl-shadow--8dp');
+                (0, _pieces.deactivatePiece)(containerPieceMap.get(container));
+            }
+        });
+    };
 }
 
 exports.setUpPieceSelectionArea = setUpPieceSelectionArea;
@@ -11331,7 +11372,7 @@ function resetField() {
 
 (0, _jquery2.default)(document).ready(function () {
     var pieceSelectionArea = (0, _jquery2.default)('.pieceSelectionArea');
-    (0, _pieceSelection.setUpPieceSelectionArea)(pieceSelectionArea.get(0));
+    (0, _pieceSelection.setUpPieceSelectionArea)(pieceSelectionArea.get(0), 'select-all', 'deselect-all');
     pieceSelectionArea.hide();
 
     computed = (0, _jquery2.default)('.computed');
@@ -11490,7 +11531,6 @@ function resetField() {
 
 var numberOfRowsCreative = void 0,
     numberOfColumnsCreative = void 0;
-var piecesLength = [4];
 var isGameFinished = void 0;
 
 function startGameCreative(header) {
@@ -11504,6 +11544,7 @@ function startGameCreative(header) {
     if (!isSolutionFound) {
         alertWithInterval('There is no solution!', interval * (stepOfIntervalCreative + 1));
         solutionCreative.splice(0, solutionCreative.length);
+        creative.find('#give-up-creative').hide();
         return;
     }
 
@@ -11512,6 +11553,7 @@ function startGameCreative(header) {
 
     var solutionArea = creative.find('div.solutionArea');
     solutionPiecesCreative = (0, _dlx.printDLX)(solutionCreative);
+    shufflePieces(solutionPiecesCreative);
 
     solutionPiecesCreative.forEach(function (piece, index) {
         var view = piece.getView();
@@ -11808,8 +11850,8 @@ function getNeighbours(node, arr) {
 
 //TODO
 function checkIfProperNumber(number) {
-    for (var i = 0; i < piecesLength.length; i++) {
-        if (number % piecesLength[i] == 0) {
+    for (var i = 0; i < _pieces.piecesLength.length; i++) {
+        if (number % _pieces.piecesLength[i] == 0) {
             return true;
         }
     }
@@ -11863,6 +11905,7 @@ function resetFieldCreative() {
     setInitialPolyminoTable();
     countStatistic();
     var solutionArea = creative.find('div.solutionArea');
+    var pieceSelectionArea = (0, _jquery2.default)('.pieceSelectionArea');
 
     creative.find('#go').click(function () {
         resetFieldCreative();

@@ -2,6 +2,7 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
+    watch: true,
     entry: './src/index.js',
     output: {
         filename: 'bundle.js',

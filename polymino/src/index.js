@@ -3,7 +3,7 @@
 import $ from "jquery";
 import {Node, Piece} from './js/classes';
 import {createXListForExactCoverProblem, searchDLX, printDLX} from './js/dlx';
-import {pieces} from './js/pieces';
+import {pieces, piecesLength} from './js/pieces';
 import {setUpPieceSelectionArea} from './js/pieceSelection';
 
 const interval = 200;
@@ -445,7 +445,7 @@ function resetField() {
 $(document).ready(
     function() {
         let pieceSelectionArea = $('.pieceSelectionArea');
-        setUpPieceSelectionArea(pieceSelectionArea.get(0));
+        setUpPieceSelectionArea(pieceSelectionArea.get(0), 'select-all', 'deselect-all');
         pieceSelectionArea.hide();
 
         computed =  $('.computed');
@@ -611,7 +611,6 @@ $(document).ready(
 /***** SCRIPT-CREATIVE.JS *****/
 
 let numberOfRowsCreative, numberOfColumnsCreative;
-const piecesLength = [4];
 let isGameFinished;
 
 function startGameCreative(header) {
@@ -625,6 +624,7 @@ function startGameCreative(header) {
     if (!isSolutionFound) {
         alertWithInterval('There is no solution!', interval * (stepOfIntervalCreative + 1));
         solutionCreative.splice(0, solutionCreative.length);
+        creative.find('#give-up-creative').hide();
         return;
     }
 
@@ -633,6 +633,7 @@ function startGameCreative(header) {
 
     const solutionArea = creative.find('div.solutionArea');
     solutionPiecesCreative = printDLX(solutionCreative);
+    shufflePieces(solutionPiecesCreative);
 
     solutionPiecesCreative.forEach((piece, index) => {
         let view = piece.getView();
@@ -986,6 +987,7 @@ $(document).ready(
         setInitialPolyminoTable();
         countStatistic();
         let solutionArea = creative.find('div.solutionArea');
+        let pieceSelectionArea = $('.pieceSelectionArea');
 
         creative.find('#go').click(
             function () {

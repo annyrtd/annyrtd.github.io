@@ -165,12 +165,13 @@ is-small-screen .creative .polyomino-area {
 	padding: 16px;
 	cursor: pointer;
 	margin: 8px;
+	width: auto;
+	min-height: initial;
 }
 
 .pieceSelectionArea .pieceContainer.selected {
-	border: 4px double black;
-	padding: 12px;
-	background: rgb(255, 205, 112);
+	padding-top: 14px;
+	padding-bottom: 18px;
 }
 
 .pieceSelectionArea-header {
@@ -178,12 +179,12 @@ is-small-screen .creative .polyomino-area {
     padding-bottom: 16px;
     padding-top: 40px;
 	line-height: 24px;
+	font-size: 16px;
 }
 
 .selected-sample {
-    border: 4px double black;
     padding: 0 12px;
-    background: rgb(255, 205, 112);
+	display: inline;
 }
 
 .bold {
@@ -192,4 +193,8 @@ is-small-screen .creative .polyomino-area {
 
 .instruction {
     font-style: italic;
+}
+
+#select-all, #deselect-all {
+	margin: 12px 0;
 }

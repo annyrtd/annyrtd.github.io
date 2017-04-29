@@ -1,6 +1,29 @@
 import {Piece} from './classes';
 
 const piecesDatabase = [
+    // Size 3
+    new Piece([
+        [0, 0], [0, 1], [0, 2]
+    ]),
+    new Piece([
+        [0, 0], [1, 0], [2, 0]
+    ]),
+
+
+    new Piece([
+        [0, 0], [0, 1], [1, 0]
+    ]),
+    new Piece([
+        [0, 0], [0, 1], [1, 1]
+    ]),
+    new Piece([
+        [0, 1], [1, 0], [1, 1]
+    ]),
+    new Piece([
+        [0, 0], [1, 0], [1, 1]
+    ]),
+
+    // Size 4
     new Piece([
         [0, 0], [1, 0], [1, 1], [2, 0]
     ]),
@@ -51,6 +74,7 @@ const piecesDatabase = [
     ]),
 ];
 const pieces = [];
+const piecesLength = [3, 4];
 
 setInitialActivePieces();
 
@@ -72,4 +96,4 @@ function deactivatePiece(piece) {
     piecesDatabase.push(piece);
 }
 
-export {pieces, activatePiece, deactivatePiece};
+export {pieces, activatePiece, deactivatePiece, piecesLength};
