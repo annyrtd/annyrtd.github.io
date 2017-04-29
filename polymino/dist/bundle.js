@@ -10938,14 +10938,12 @@ var interval = 200;
 var stepOfInterval = 0;
 var piecesSet = 0;
 var solutionLength = void 0;
-var solution = [];
 var solutionPieces = [];
 var timeStart = void 0;
 var scoreForLevel = 500;
 
 var stepOfIntervalCreative = 0;
 var piecesSetCreative = 0;
-var solutionCreative = [];
 var solutionPiecesCreative = [];
 
 var repeats = 2;
@@ -10960,7 +10958,6 @@ var creative = void 0;
 
 var numberOfRowsCreative = void 0,
     numberOfColumnsCreative = void 0;
-var isGameFinished = void 0;
 
 function saveToLocalStorage() {
     if (localStorage) {
@@ -11062,7 +11059,7 @@ function countNumbersForTable() {
 
 function startGame(header) {
     stepOfInterval = 0;
-    solution = [];
+    var solution = [];
     timeStart = performance && performance.now ? performance.now() : 0;
 
     var isSolutionFound = (0, _dlx.searchDLX)(header, solution, 0);
@@ -11127,7 +11124,7 @@ function startGame(header) {
                 column = _getRowAndCol.column;
 
                 var isPieceRemoved = false;
-                currentPieceTdCoordinates.every(function (item) {
+                currentPieceTdCoordinates.forEach(function (item) {
                     var tdRow = parseInt(item.row) + row;
                     var tdCol = parseInt(item.column) + column;
                     var td = computed.find('#td-' + tdRow + '-' + tdCol);
@@ -11137,7 +11134,6 @@ function startGame(header) {
                     }
                     td.removeClass('set');
                     td.removeAttr('data-piece');
-                    return true;
                 });
 
                 function moveAt(e) {
@@ -11242,11 +11238,6 @@ function startGame(header) {
             return false;
         };
     });
-}
-
-function placePiece() {
-    var index = parseInt((0, _jquery2.default)(this).attr('id').replace('piece', ''));
-    setTimeoutForCoveringPiece(solutionPieces[index], (0, _jquery2.default)(this));
 }
 
 function placePieceNoInterval() {
@@ -11357,13 +11348,12 @@ function resetField() {
                 return _classes.Node.fromString(item);
             });
 
-            currentPieceTdCoordinates.every(function (item) {
+            currentPieceTdCoordinates.forEach(function (item) {
                 var tdRow = parseInt(item.row) + row;
                 var tdCol = parseInt(item.column) + column;
                 var td = computed.find('#td-' + tdRow + '-' + tdCol);
                 td.removeClass('set');
                 td.removeAttr('data-piece');
-                return true;
             });
 
             removedPiece.css({
@@ -11380,13 +11370,13 @@ function resetField() {
         var index = parseInt(removedPiece.attr('id').replace('piece', ''));
         var solutionPiece = solutionPieces[index];
 
-        solutionPiece.nodes.every(function (node) {
+        solutionPiece.nodes.forEach(function (node) {
             var solutionRow = node.row;
             var solutionColumn = node.column;
             var td = computed.find('#td-' + solutionRow + '-' + solutionColumn);
             var pieceId = td.attr('data-piece');
             if (!pieceId) {
-                return true;
+                return;
             }
             piecesSet--;
             console.log(piecesSet);
@@ -11400,13 +11390,12 @@ function resetField() {
                 return _classes.Node.fromString(item);
             });
 
-            currentPieceTdCoordinates.every(function (item) {
+            currentPieceTdCoordinates.forEach(function (item) {
                 var tdRow = parseInt(item.row) + row;
                 var tdCol = parseInt(item.column) + column;
                 var td = computed.find('#td-' + tdRow + '-' + tdCol);
                 td.removeClass('set');
                 td.removeAttr('data-piece');
-                return true;
             });
 
             coveringPiece.css({
@@ -11416,8 +11405,6 @@ function resetField() {
                 display: ''
             });
             coveringPiece.removeClass('pieceSet');
-
-            return true;
         });
 
         stepOfInterval = 0;
@@ -11484,9 +11471,9 @@ function resetField() {
 /***** SCRIPT-CREATIVE.JS *****/
 
 function startGameCreative(header) {
-    isGameFinished = false;
+    var isGameFinished = false;
     stepOfIntervalCreative = 0;
-    solutionCreative = [];
+    var solutionCreative = [];
     //timeStart = performance && performance.now? performance.now() : 0;
 
     var isSolutionFound = (0, _dlx.searchDLX)(header, solutionCreative, 0);
@@ -11532,16 +11519,12 @@ function startGameCreative(header) {
                     return _classes.Node.fromString(item);
                 });
 
-                var row = void 0,
-                    column = void 0;
-
-                var _getRowAndCol3 = getRowAndCol(e);
-
-                row = _getRowAndCol3.row;
-                column = _getRowAndCol3.column;
+                var _getRowAndCol3 = getRowAndCol(e),
+                    row = _getRowAndCol3.row,
+                    column = _getRowAndCol3.column;
 
                 var isPieceRemoved = false;
-                currentPieceTdCoordinatesCreative.every(function (item) {
+                currentPieceTdCoordinatesCreative.forEach(function (item) {
                     var tdRow = parseInt(item.row) + row;
                     var tdCol = parseInt(item.column) + column;
                     var td = creative.find('#td-' + tdRow + '-' + tdCol);
@@ -11550,7 +11533,6 @@ function startGameCreative(header) {
                         piecesSetCreative--;
                     }
                     td.removeClass('set');
-                    return true;
                 });
 
                 function moveAt(e) {
@@ -11752,7 +11734,7 @@ function resetFieldCreative() {
 
         var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
         var header = (0, _dlx.createXListForExactCoverProblem)(arr);
-        startGameCreative(header, solution);
+        startGameCreative(header);
     });
 
     creative.find('#give-up-creative').click(function () {

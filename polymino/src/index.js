@@ -14,14 +14,12 @@ const interval = 200;
 let stepOfInterval = 0;
 let piecesSet = 0;
 let solutionLength;
-let solution = [];
 let solutionPieces = [];
 let timeStart;
 const scoreForLevel = 500;
 
 let stepOfIntervalCreative = 0;
 let piecesSetCreative = 0;
-let solutionCreative = [];
 let solutionPiecesCreative = [];
 
 const repeats = 2;
@@ -35,7 +33,6 @@ let computed;
 let creative;
 
 let numberOfRowsCreative, numberOfColumnsCreative;
-let isGameFinished;
 
 function saveToLocalStorage() {
     if (localStorage) {
@@ -132,7 +129,7 @@ function countNumbersForTable() {
 
 function startGame(header) {
     stepOfInterval = 0;
-    solution = [];
+    let solution = [];
     timeStart = performance && performance.now? performance.now() : 0;
 
     let isSolutionFound = searchDLX(header, solution, 0);
@@ -189,7 +186,7 @@ function startGame(header) {
                 let row, column;
                 ({row, column} = getRowAndCol(e));
                 let isPieceRemoved = false;
-                currentPieceTdCoordinates.every(item => {
+                currentPieceTdCoordinates.forEach(item => {
                     let tdRow = parseInt(item.row) + row;
                     let tdCol = parseInt(item.column) + column;
                     let td = computed.find(`#td-${tdRow}-${tdCol}`);
@@ -199,7 +196,6 @@ function startGame(header) {
                     }
                     td.removeClass('set');
                     td.removeAttr('data-piece');
-                    return true;
                 });
 
                 function moveAt(e) {
@@ -299,11 +295,6 @@ function startGame(header) {
             return false;
         };
     });
-}
-
-function placePiece() {
-    let index = parseInt($(this).attr('id').replace('piece', ''));
-    setTimeoutForCoveringPiece(solutionPieces[index], $(this));
 }
 
 function placePieceNoInterval() {
@@ -419,13 +410,12 @@ $(document).ready(
                     let currentCoordinatesAttribute = removedPiece.attr('data-nodes');
                     let currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(item => Node.fromString(item));
 
-                    currentPieceTdCoordinates.every(item => {
+                    currentPieceTdCoordinates.forEach(item => {
                         let tdRow = parseInt(item.row) + row;
                         let tdCol = parseInt(item.column) + column;
                         let td = computed.find(`#td-${tdRow}-${tdCol}`);
                         td.removeClass('set');
                         td.removeAttr('data-piece');
-                        return true;
                     });
 
                     removedPiece.css({
@@ -442,13 +432,13 @@ $(document).ready(
                 let index = parseInt(removedPiece.attr('id').replace('piece', ''));
                 let solutionPiece = solutionPieces[index];
 
-                solutionPiece.nodes.every(function(node) {
+                solutionPiece.nodes.forEach(function(node) {
                     const solutionRow = node.row;
                     const solutionColumn = node.column;
                     const td = computed.find(`#td-${solutionRow}-${solutionColumn}`);
                     let pieceId = td.attr('data-piece');
                     if (!pieceId) {
-                        return true;
+                        return;
                     }
                     piecesSet--;
                     console.log(piecesSet);
@@ -460,13 +450,12 @@ $(document).ready(
                     let currentCoordinatesAttribute = coveringPiece.attr('data-nodes');
                     let currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(item => Node.fromString(item));
 
-                    currentPieceTdCoordinates.every(item => {
+                    currentPieceTdCoordinates.forEach(item => {
                         let tdRow = parseInt(item.row) + row;
                         let tdCol = parseInt(item.column) + column;
                         let td = computed.find(`#td-${tdRow}-${tdCol}`);
                         td.removeClass('set');
                         td.removeAttr('data-piece');
-                        return true;
                     });
 
                     coveringPiece.css({
@@ -476,8 +465,6 @@ $(document).ready(
                         display: ''
                     });
                     coveringPiece.removeClass('pieceSet');
-
-                    return true;
                 });
 
                 stepOfInterval = 0;
@@ -554,9 +541,9 @@ $(document).ready(
 /***** SCRIPT-CREATIVE.JS *****/
 
 function startGameCreative(header) {
-    isGameFinished = false;
+    let isGameFinished = false;
     stepOfIntervalCreative = 0;
-    solutionCreative = [];
+    let solutionCreative = [];
     //timeStart = performance && performance.now? performance.now() : 0;
 
     let isSolutionFound = searchDLX(header, solutionCreative, 0);
@@ -600,10 +587,9 @@ function startGameCreative(header) {
                 let currentCoordinatesAttributeCreative = view.getAttribute('data-nodes');
                 let currentPieceTdCoordinatesCreative = currentCoordinatesAttributeCreative.split('-').map(item => Node.fromString(item));
 
-                let row, column;
-                ({row, column} = getRowAndCol(e));
+                let {row, column} = getRowAndCol(e);
                 let isPieceRemoved = false;
-                currentPieceTdCoordinatesCreative.every(item => {
+                currentPieceTdCoordinatesCreative.forEach(item => {
                     let tdRow = parseInt(item.row) + row;
                     let tdCol = parseInt(item.column) + column;
                     let td = creative.find(`#td-${tdRow}-${tdCol}`);
@@ -612,7 +598,6 @@ function startGameCreative(header) {
                         piecesSetCreative--;
                     }
                     td.removeClass('set');
-                    return true;
                 });
 
                 function moveAt(e) {
@@ -820,7 +805,7 @@ $(document).ready(
 
                 const arr = transformTableToMatrix(creative);
                 const header = createXListForExactCoverProblem(arr);
-                startGameCreative(header, solution);
+                startGameCreative(header);
             }
         );
 
