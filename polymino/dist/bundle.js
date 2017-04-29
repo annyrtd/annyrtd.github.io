@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -223,6 +223,10 @@ var Piece = function () {
         value: function getView() {
             var _this3 = this;
 
+            if (this.view) {
+                return this.view;
+            }
+
             var color = this.color;
             var tbody = document.createElement('tbody');
             var table = document.createElement('table');
@@ -248,6 +252,8 @@ var Piece = function () {
                 return new Node(item.row - _this3.minrow, item.column - _this3.mincol).toString();
             }).join('-'));
             table.appendChild(tbody);
+
+            this.view = table;
             return table;
         }
     }], [{
@@ -300,13 +306,40 @@ exports.RootObject = RootObject;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.pieces = undefined;
+exports.deactivatePiece = exports.activatePiece = exports.pieces = undefined;
 
 var _classes = __webpack_require__(0);
 
-var pieces = [new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 1]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 0], [2, 0]]), new _classes.Piece([[0, 1], [0, 2], [1, 0], [1, 1]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 2]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 0], [0, 1], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 1], [2, 0], [2, 1]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [0, 3]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0]])];
+var piecesDatabase = [new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 1]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 0], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 2]]), new _classes.Piece([[0, 1], [1, 1], [2, 0], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [0, 2], [1, 0], [1, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [0, 3]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0]])];
+var pieces = [];
+
+setInitialActivePieces();
+
+function setInitialActivePieces() {
+    while (piecesDatabase.length > 0) {
+        pieces.push(piecesDatabase.shift());
+    }
+}
+
+function activatePiece(piece) {
+    var index = piecesDatabase.findIndex(function (item) {
+        return item === piece;
+    });
+    piecesDatabase.splice(index, 1);
+    pieces.push(piece);
+}
+
+function deactivatePiece(piece) {
+    var index = pieces.findIndex(function (item) {
+        return item === piece;
+    });
+    pieces.splice(index, 1);
+    piecesDatabase.push(piece);
+}
 
 exports.pieces = pieces;
+exports.activatePiece = activatePiece;
+exports.deactivatePiece = deactivatePiece;
 
 /***/ }),
 /* 2 */
@@ -645,6 +678,43 @@ exports.printDLX = printDLX;
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.setUpPieceSelectionArea = undefined;
+
+var _pieces = __webpack_require__(1);
+
+function setUpPieceSelectionArea(area) {
+    _pieces.pieces.forEach(function (piece) {
+        var view = piece.getView();
+        var container = document.createElement('div');
+        container.classList.add('pieceContainer');
+        container.classList.add('selected');
+        container.appendChild(view);
+        area.appendChild(container);
+
+        container.onclick = function () {
+            if (container.classList.contains('selected')) {
+                container.classList.remove('selected');
+                (0, _pieces.deactivatePiece)(piece);
+            } else {
+                container.classList.add('selected');
+                (0, _pieces.activatePiece)(piece);
+            }
+        };
+    });
+}
+
+exports.setUpPieceSelectionArea = setUpPieceSelectionArea;
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10904,13 +10974,13 @@ return jQuery;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _jquery = __webpack_require__(4);
+var _jquery = __webpack_require__(5);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -10921,6 +10991,8 @@ var _debruijn = __webpack_require__(2);
 var _dlx = __webpack_require__(3);
 
 var _pieces = __webpack_require__(1);
+
+var _pieceSelection = __webpack_require__(4);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11369,6 +11441,10 @@ function resetField() {
 }
 
 (0, _jquery2.default)(document).ready(function () {
+    var pieceSelectionArea = (0, _jquery2.default)('.pieceSelectionArea');
+    (0, _pieceSelection.setUpPieceSelectionArea)(pieceSelectionArea.get(0));
+    pieceSelectionArea.hide();
+
     computed = (0, _jquery2.default)('.computed');
     creative = (0, _jquery2.default)('.creative');
     restoreFromLocalStorage();
@@ -11507,6 +11583,7 @@ function resetField() {
             //setup computed mode
             (0, _jquery2.default)('main.mdl-layout__content.computed').show();
             (0, _jquery2.default)('main.mdl-layout__content.creative').hide();
+            pieceSelectionArea.hide();
         }
     });
 
@@ -11515,6 +11592,7 @@ function resetField() {
             //setup creative mode
             (0, _jquery2.default)('main.mdl-layout__content.computed').hide();
             (0, _jquery2.default)('main.mdl-layout__content.creative').show();
+            pieceSelectionArea.show();
         }
     });
 });

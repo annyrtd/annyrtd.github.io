@@ -5,6 +5,7 @@ import {Node, Piece} from './js/classes';
 import {searchBruijn, printBruijn} from './js/debruijn';
 import {createXListForExactCoverProblem, searchDLX, printDLX} from './js/dlx';
 import {pieces} from './js/pieces';
+import {setUpPieceSelectionArea} from './js/pieceSelection';
 
 const interval = 200;
 let stepOfInterval = 0;
@@ -34,9 +35,6 @@ let giveUpCost;
 const tableCellWidth = 35;
 let computed;
 let creative;
-
-console.log('succesful use of precommit!');
-
 
 function saveToLocalStorage() {
     if (localStorage) {
@@ -447,6 +445,10 @@ function resetField() {
 
 $(document).ready(
     function() {
+        let pieceSelectionArea = $('.pieceSelectionArea');
+        setUpPieceSelectionArea(pieceSelectionArea.get(0));
+        pieceSelectionArea.hide();
+
         computed =  $('.computed');
         creative =  $('.creative');
         restoreFromLocalStorage();
@@ -589,6 +591,7 @@ $(document).ready(
                     //setup computed mode
                     $('main.mdl-layout__content.computed').show();
                     $('main.mdl-layout__content.creative').hide();
+                    pieceSelectionArea.hide();
                 }
             }
         );
@@ -599,6 +602,7 @@ $(document).ready(
                     //setup creative mode
                     $('main.mdl-layout__content.computed').hide();
                     $('main.mdl-layout__content.creative').show();
+                    pieceSelectionArea.show();
                 }
             }
         );

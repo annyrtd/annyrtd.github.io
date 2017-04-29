@@ -150,3 +150,41 @@ is-small-screen .creative .polyomino-area {
 .creative .creative-buttons > * {
 	margin-right: 32px;
 }
+
+.pieceSelectionArea {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.pieceSelectionArea .pieceContainer {
+	padding: 16px;
+	cursor: pointer;
+	margin: 8px;
+}
+
+.pieceSelectionArea .pieceContainer.selected {
+	border: 4px double black;
+	padding: 12px;
+	background: rgba(255, 171, 64, 0.5);
+}
+
+.pieceSelectionArea-header {
+    padding-left: 40px;
+    padding-bottom: 16px;
+    padding-top: 40px;
+}
+
+.selected-sample {
+    border: 4px double black;
+    padding: 0 12px;
+    background: rgba(255, 171, 64, 0.5);
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.instruction {
+    font-style: italic;
+}

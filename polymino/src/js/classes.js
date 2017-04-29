@@ -79,6 +79,10 @@ class Piece {
     }
 
     getView() {
+        if(this.view) {
+            return this.view;
+        }
+
         let color = this.color;
         let tbody = document.createElement('tbody');
         let table = document.createElement('table');
@@ -104,6 +108,8 @@ class Piece {
         table.setAttribute('class', 'piece');
         table.setAttribute('data-nodes', this.nodes.map(item => new Node(item.row - this.minrow, item.column - this.mincol).toString()).join('-'));
         table.appendChild(tbody);
+
+        this.view = table;
         return table;
     }
 
