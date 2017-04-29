@@ -157,6 +157,10 @@ is-small-screen .creative .polyomino-area {
 	align-items: center;
 }
 
+.pieceSelectionArea .piece {
+    margin: 0;
+}
+
 .pieceSelectionArea .pieceContainer {
 	padding: 16px;
 	cursor: pointer;
@@ -166,7 +170,7 @@ is-small-screen .creative .polyomino-area {
 .pieceSelectionArea .pieceContainer.selected {
 	border: 4px double black;
 	padding: 12px;
-	background: rgba(255, 171, 64, 0.5);
+	background: rgb(255, 205, 112);
 }
 
 .pieceSelectionArea-header {
@@ -178,7 +182,7 @@ is-small-screen .creative .polyomino-area {
 .selected-sample {
     border: 4px double black;
     padding: 0 12px;
-    background: rgba(255, 171, 64, 0.5);
+    background: rgb(255, 205, 112);
 }
 
 .bold {
