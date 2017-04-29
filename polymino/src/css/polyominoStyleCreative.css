@@ -177,6 +177,7 @@ is-small-screen .creative .polyomino-area {
     padding-left: 40px;
     padding-bottom: 16px;
     padding-top: 40px;
+	line-height: 24px;
 }
 
 .selected-sample {
