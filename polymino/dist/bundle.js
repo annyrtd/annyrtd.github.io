@@ -10938,13 +10938,13 @@ var interval = 200;
 var stepOfInterval = 0;
 var piecesSet = 0;
 var solutionLength = void 0;
-var solutionPieces = [];
+var solutionPieces = void 0;
 var timeStart = void 0;
 var scoreForLevel = 500;
 
 var stepOfIntervalCreative = 0;
 var piecesSetCreative = 0;
-var solutionPiecesCreative = [];
+var solutionPiecesCreative = void 0;
 
 var repeats = 2;
 var level = 0;
@@ -10982,6 +10982,18 @@ function restoreFromLocalStorage() {
     }
 }
 
+function findSolution(arr) {
+    var header = (0, _dlx.createXListForExactCoverProblem)(arr);
+    var solution = [];
+    var isSolutionFound = (0, _dlx.searchDLX)(header, solution, 0);
+
+    if (!isSolutionFound) {
+        return;
+    }
+
+    return (0, _dlx.printDLX)(solution);;
+}
+
 /***** SCRIPT.JS *****/
 function generatePolyminoTable() {
     saveToLocalStorage();
@@ -11011,8 +11023,7 @@ function generatePolyminoTable() {
 
     (0, _shufflePieces.shufflePieces)(_pieces.pieces);
     var arr = (0, _transformTableToMatrix.transformTableToMatrix)(computed);
-    var header = (0, _dlx.createXListForExactCoverProblem)(arr);
-    startGame(header);
+    startGame(arr);
 }
 
 function countNumbersForTable() {
@@ -11057,24 +11068,20 @@ function countNumbersForTable() {
     return { numberOfRows: numberOfRows, numberOfColumns: numberOfColumns, numberOfBarriers: numberOfBarriers, area: area };
 }
 
-function startGame(header) {
+function startGame(arr) {
     stepOfInterval = 0;
-    var solution = [];
     timeStart = performance && performance.now ? performance.now() : 0;
+    piecesSet = 0;
+    var solutionArea = computed.find('div.solutionArea');
 
-    var isSolutionFound = (0, _dlx.searchDLX)(header, solution, 0);
-
-    if (!isSolutionFound) {
-        generatePolyminoTable();
+    solutionPieces = findSolution(arr);
+    if (!solutionPieces) {
         console.log('no solution');
+        generatePolyminoTable();
         return;
     }
 
-    piecesSet = 0;
-    solutionLength = solution.length;
-
-    var solutionArea = computed.find('div.solutionArea');
-    solutionPieces = (0, _dlx.printDLX)(solution);
+    solutionLength = solutionPieces.length;
 
     var numberOfRows = solutionPieces[0].maxrow - solutionPieces[0].minrow;
     var numberOfCols = solutionPieces[0].maxcol - solutionPieces[0].mincol;
@@ -11238,6 +11245,11 @@ function startGame(header) {
             return false;
         };
     });
+}
+
+function placePiece() {
+    var index = parseInt((0, _jquery2.default)(this).attr('id').replace('piece', ''));
+    setTimeoutForCoveringPiece(solutionPieces[index], (0, _jquery2.default)(this));
 }
 
 function placePieceNoInterval() {
@@ -11470,26 +11482,21 @@ function resetField() {
 
 /***** SCRIPT-CREATIVE.JS *****/
 
-function startGameCreative(header) {
+function startGameCreative(arr) {
     var isGameFinished = false;
+    var solutionArea = creative.find('div.solutionArea');
     stepOfIntervalCreative = 0;
-    var solutionCreative = [];
+    piecesSetCreative = 0;
     //timeStart = performance && performance.now? performance.now() : 0;
+    solutionPiecesCreative = findSolution(arr);
 
-    var isSolutionFound = (0, _dlx.searchDLX)(header, solutionCreative, 0);
-
-    if (!isSolutionFound) {
+    if (!solutionPiecesCreative) {
         alertWithInterval('There is no solution!', interval * (stepOfIntervalCreative + 1));
-        solutionCreative.splice(0, solutionCreative.length);
         creative.find('#give-up-creative').hide();
         return;
     }
 
-    piecesSetCreative = 0;
-    var solutionLengthCreative = solutionCreative.length;
-
-    var solutionArea = creative.find('div.solutionArea');
-    solutionPiecesCreative = (0, _dlx.printDLX)(solutionCreative);
+    var solutionLengthCreative = solutionPiecesCreative.length;
     (0, _shufflePieces.shufflePieces)(solutionPiecesCreative);
 
     solutionPiecesCreative.forEach(function (piece, index) {
@@ -11733,8 +11740,7 @@ function resetFieldCreative() {
         creative.find('#give-up-creative').show();
 
         var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
-        var header = (0, _dlx.createXListForExactCoverProblem)(arr);
-        startGameCreative(header);
+        startGameCreative(arr);
     });
 
     creative.find('#give-up-creative').click(function () {

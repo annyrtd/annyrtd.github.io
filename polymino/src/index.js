@@ -14,13 +14,13 @@ const interval = 200;
 let stepOfInterval = 0;
 let piecesSet = 0;
 let solutionLength;
-let solutionPieces = [];
+let solutionPieces;
 let timeStart;
 const scoreForLevel = 500;
 
 let stepOfIntervalCreative = 0;
 let piecesSetCreative = 0;
-let solutionPiecesCreative = [];
+let solutionPiecesCreative;
 
 const repeats = 2;
 let level = 0;
@@ -57,6 +57,18 @@ function restoreFromLocalStorage() {
     }
 }
 
+function findSolution(arr) {
+    const header = createXListForExactCoverProblem(arr);
+    const solution = [];
+    let isSolutionFound = searchDLX(header, solution, 0);
+
+    if (!isSolutionFound) {
+        return;
+    }
+
+    return printDLX(solution);;
+}
+
 /***** SCRIPT.JS *****/
 function generatePolyminoTable() {
     saveToLocalStorage();
@@ -83,8 +95,7 @@ function generatePolyminoTable() {
 
     shufflePieces(pieces);
     const arr = transformTableToMatrix(computed);
-    const header = createXListForExactCoverProblem(arr);
-    startGame(header);
+    startGame(arr);
 }
 
 function countNumbersForTable() {
@@ -127,24 +138,20 @@ function countNumbersForTable() {
     return {numberOfRows, numberOfColumns, numberOfBarriers, area};
 }
 
-function startGame(header) {
+function startGame(arr) {
     stepOfInterval = 0;
-    let solution = [];
     timeStart = performance && performance.now? performance.now() : 0;
+    piecesSet = 0;
+    const solutionArea = computed.find('div.solutionArea');
 
-    let isSolutionFound = searchDLX(header, solution, 0);
-
-    if (!isSolutionFound) {
-        generatePolyminoTable();
+    solutionPieces = findSolution(arr);
+    if (!solutionPieces) {
         console.log('no solution');
+        generatePolyminoTable();
         return;
     }
 
-    piecesSet = 0;
-    solutionLength = solution.length;
-
-    const solutionArea = computed.find('div.solutionArea');
-    solutionPieces = printDLX(solution);
+    solutionLength = solutionPieces.length;
 
     let numberOfRows = solutionPieces[0].maxrow - solutionPieces[0].minrow;
     let numberOfCols = solutionPieces[0].maxcol - solutionPieces[0].mincol;
@@ -295,6 +302,11 @@ function startGame(header) {
             return false;
         };
     });
+}
+
+function placePiece() {
+    let index = parseInt($(this).attr('id').replace('piece', ''));
+    setTimeoutForCoveringPiece(solutionPieces[index], $(this));
 }
 
 function placePieceNoInterval() {
@@ -540,26 +552,21 @@ $(document).ready(
 
 /***** SCRIPT-CREATIVE.JS *****/
 
-function startGameCreative(header) {
+function startGameCreative(arr) {
     let isGameFinished = false;
+    const solutionArea = creative.find('div.solutionArea');
     stepOfIntervalCreative = 0;
-    let solutionCreative = [];
+    piecesSetCreative = 0;
     //timeStart = performance && performance.now? performance.now() : 0;
+    solutionPiecesCreative = findSolution(arr);
 
-    let isSolutionFound = searchDLX(header, solutionCreative, 0);
-
-    if (!isSolutionFound) {
+    if (!solutionPiecesCreative) {
         alertWithInterval('There is no solution!', interval * (stepOfIntervalCreative + 1));
-        solutionCreative.splice(0, solutionCreative.length);
         creative.find('#give-up-creative').hide();
         return;
     }
 
-    piecesSetCreative = 0;
-    let solutionLengthCreative = solutionCreative.length;
-
-    const solutionArea = creative.find('div.solutionArea');
-    solutionPiecesCreative = printDLX(solutionCreative);
+    let solutionLengthCreative = solutionPiecesCreative.length;
     shufflePieces(solutionPiecesCreative);
 
     solutionPiecesCreative.forEach((piece, index) => {
@@ -804,8 +811,7 @@ $(document).ready(
                 creative.find('#give-up-creative').show();
 
                 const arr = transformTableToMatrix(creative);
-                const header = createXListForExactCoverProblem(arr);
-                startGameCreative(header);
+                startGameCreative(arr);
             }
         );
 
