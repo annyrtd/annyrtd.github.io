@@ -3,7 +3,7 @@
 import $ from "jquery";
 import {Node, Piece} from './js/classes';
 import {createXListForExactCoverProblem, searchDLX, printDLX} from './js/dlx';
-import {pieces} from './js/pieces';
+import {pieces, activatePiece, deactivatePiece} from './js/pieces';
 import {setUpPieceSelectionArea} from './js/pieceSelection';
 import {transformTableToMatrix} from './js/transformTableToMatrix';
 import {shufflePieces} from './js/shufflePieces';
@@ -15,7 +15,7 @@ let stepOfInterval = 0;
 let piecesSet = 0;
 let solutionLength;
 let solutionPieces;
-let timeStart;
+//let timeStart;
 const scoreForLevel = 500;
 
 let stepOfIntervalCreative = 0;
@@ -57,7 +57,22 @@ function restoreFromLocalStorage() {
     }
 }
 
-function findSolution(arr) {
+function findSolution(arr)  {
+    let freeCells = 0, barriers = 0;
+
+    for(let i = 0; i < arr.length; i++) {
+        for(let j = 0; j < arr[i].length; j++) {
+            if(arr[i][j] == 0) {
+                freeCells++
+            } else {
+                barriers++;
+            }
+        }
+    }
+
+    console.log('free cells:', freeCells);
+    console.log('barriers:', barriers);
+
     const header = createXListForExactCoverProblem(arr);
     const solution = [];
     let isSolutionFound = searchDLX(header, solution, 0);
@@ -66,7 +81,7 @@ function findSolution(arr) {
         return;
     }
 
-    return printDLX(solution);;
+    return printDLX(solution);
 }
 
 /***** SCRIPT.JS *****/
@@ -140,7 +155,7 @@ function countNumbersForTable() {
 
 function startGame(arr) {
     stepOfInterval = 0;
-    timeStart = performance && performance.now? performance.now() : 0;
+    //timeStart = performance && performance.now? performance.now() : 0;
     piecesSet = 0;
     const solutionArea = computed.find('div.solutionArea');
 
@@ -526,13 +541,20 @@ $(document).ready(
             }
         );
 
+        let uncheckedPieces = [];
+
         $('#computed').change(
             function() {
                 if($(this).prop( "checked" )) {
                     //setup computed mode
                     $('main.mdl-layout__content.computed').show();
                     $('main.mdl-layout__content.creative').hide();
+
                     pieceSelectionArea.hide();
+                    pieceSelectionArea.find('.pieceContainer').not('.selected').each((i, piece) => {
+                        uncheckedPieces.push($(piece));
+                        $(piece).click();
+                    });
                 }
             }
         );
@@ -543,6 +565,9 @@ $(document).ready(
                     //setup creative mode
                     $('main.mdl-layout__content.computed').hide();
                     $('main.mdl-layout__content.creative').show();
+
+                    uncheckedPieces.forEach(piece => piece.click());
+                    uncheckedPieces = [];
                     pieceSelectionArea.show();
                 }
             }

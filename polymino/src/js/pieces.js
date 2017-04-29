@@ -2,7 +2,7 @@ import {Piece} from './classes';
 
 const piecesDatabase = [
     // Size 3
-    new Piece([
+    /*new Piece([
         [0, 0], [0, 1], [0, 2]
     ]),
     new Piece([
@@ -21,7 +21,7 @@ const piecesDatabase = [
     ]),
     new Piece([
         [0, 0], [1, 0], [1, 1]
-    ]),
+    ]),*/
 
     // Size 4
     new Piece([
@@ -74,7 +74,7 @@ const piecesDatabase = [
     ]),
 ];
 const pieces = [];
-const piecesLength = [3, 4];
+const piecesLength = [/*3, */4];
 
 setInitialActivePieces();
 

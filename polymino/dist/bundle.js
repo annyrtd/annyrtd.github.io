@@ -312,12 +312,29 @@ var _classes = __webpack_require__(0);
 
 var piecesDatabase = [
 // Size 3
-new _classes.Piece([[0, 0], [0, 1], [0, 2]]), new _classes.Piece([[0, 0], [1, 0], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [1, 0]]), new _classes.Piece([[0, 0], [0, 1], [1, 1]]), new _classes.Piece([[0, 1], [1, 0], [1, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1]]),
+/*new Piece([
+    [0, 0], [0, 1], [0, 2]
+]),
+new Piece([
+    [0, 0], [1, 0], [2, 0]
+]),
+    new Piece([
+    [0, 0], [0, 1], [1, 0]
+]),
+new Piece([
+    [0, 0], [0, 1], [1, 1]
+]),
+new Piece([
+    [0, 1], [1, 0], [1, 1]
+]),
+new Piece([
+    [0, 0], [1, 0], [1, 1]
+]),*/
 
 // Size 4
 new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 1]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 0], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 2]]), new _classes.Piece([[0, 1], [1, 1], [2, 0], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [0, 2], [1, 0], [1, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [0, 3]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0]])];
 var pieces = [];
-var piecesLength = [3, 4];
+var piecesLength = [/*3, */4];
 
 setInitialActivePieces();
 
@@ -10939,7 +10956,7 @@ var stepOfInterval = 0;
 var piecesSet = 0;
 var solutionLength = void 0;
 var solutionPieces = void 0;
-var timeStart = void 0;
+//let timeStart;
 var scoreForLevel = 500;
 
 var stepOfIntervalCreative = 0;
@@ -10983,6 +11000,22 @@ function restoreFromLocalStorage() {
 }
 
 function findSolution(arr) {
+    var freeCells = 0,
+        barriers = 0;
+
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < arr[i].length; j++) {
+            if (arr[i][j] == 0) {
+                freeCells++;
+            } else {
+                barriers++;
+            }
+        }
+    }
+
+    console.log('free cells:', freeCells);
+    console.log('barriers:', barriers);
+
     var header = (0, _dlx.createXListForExactCoverProblem)(arr);
     var solution = [];
     var isSolutionFound = (0, _dlx.searchDLX)(header, solution, 0);
@@ -10991,7 +11024,7 @@ function findSolution(arr) {
         return;
     }
 
-    return (0, _dlx.printDLX)(solution);;
+    return (0, _dlx.printDLX)(solution);
 }
 
 /***** SCRIPT.JS *****/
@@ -11070,7 +11103,7 @@ function countNumbersForTable() {
 
 function startGame(arr) {
     stepOfInterval = 0;
-    timeStart = performance && performance.now ? performance.now() : 0;
+    //timeStart = performance && performance.now? performance.now() : 0;
     piecesSet = 0;
     var solutionArea = computed.find('div.solutionArea');
 
@@ -11461,12 +11494,19 @@ function resetField() {
         generatePolyminoTable();
     });
 
+    var uncheckedPieces = [];
+
     (0, _jquery2.default)('#computed').change(function () {
         if ((0, _jquery2.default)(this).prop("checked")) {
             //setup computed mode
             (0, _jquery2.default)('main.mdl-layout__content.computed').show();
             (0, _jquery2.default)('main.mdl-layout__content.creative').hide();
+
             pieceSelectionArea.hide();
+            pieceSelectionArea.find('.pieceContainer').not('.selected').each(function (i, piece) {
+                uncheckedPieces.push((0, _jquery2.default)(piece));
+                (0, _jquery2.default)(piece).click();
+            });
         }
     });
 
@@ -11475,6 +11515,11 @@ function resetField() {
             //setup creative mode
             (0, _jquery2.default)('main.mdl-layout__content.computed').hide();
             (0, _jquery2.default)('main.mdl-layout__content.creative').show();
+
+            uncheckedPieces.forEach(function (piece) {
+                return piece.click();
+            });
+            uncheckedPieces = [];
             pieceSelectionArea.show();
         }
     });
