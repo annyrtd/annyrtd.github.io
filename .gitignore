@@ -12,3 +12,4 @@ ehthumbs.db
 
 .idea
 */node_modules
+*debug.log
