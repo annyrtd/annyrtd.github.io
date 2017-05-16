@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -332,9 +332,12 @@ new Piece([
 ]),*/
 
 // Size 4
-new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 1]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 0], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 2]]), new _classes.Piece([[0, 1], [1, 1], [2, 0], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [0, 2], [1, 0], [1, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [0, 3]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0]])];
+new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 1]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 0], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 2]]), new _classes.Piece([[0, 1], [1, 1], [2, 0], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [0, 2], [1, 0], [1, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [0, 3]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0]]),
+
+// Size 5
+new _classes.Piece([[0, 1], [0, 2], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]]), new _classes.Piece([[0, 1], [1, 1], [2, 0], [2, 1], [3, 0]]), new _classes.Piece([[0, 0], [0, 1], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 2], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [2, 1], [2, 2]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 1], [2, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [2, 1], [3, 0]]), new _classes.Piece([[0, 0], [0, 1], [1, 1], [2, 1], [2, 2]])];
 var pieces = [];
-var piecesLength = [/*3, */4];
+var piecesLength = [/*3, */4, 5];
 
 setInitialActivePieces();
 
@@ -375,295 +378,33 @@ exports.piecesLength = piecesLength;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.printDLX = exports.searchDLX = exports.createXListForExactCoverProblem = undefined;
+exports.transformTableToMatrix = undefined;
 
-var _pieces = __webpack_require__(1);
+var _jquery = __webpack_require__(3);
 
-var _classes = __webpack_require__(0);
+var _jquery2 = _interopRequireDefault(_jquery);
 
-// Prepare for DLX
-function createXListForExactCoverProblem(arr) {
-    var header = createInitialXList(arr);
-    for (var p = 0, piece, nodes; p < _pieces.pieces.length; p++) {
-        piece = _pieces.pieces[p];
-        nodes = piece.nodes;
-        for (var i = 0; i + piece.maxrow < arr.length; i++) {
-            for (var j = 0; j + piece.maxcol < arr[i].length; j++) {
-                if (isMatch(arr, nodes, i, j)) {
-                    addNewRow(header, nodes, i, j);
-                }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function transformTableToMatrix(container) {
+    var arr = [];
+    container.find("table.polytable tr.field-row").each(function (index, row) {
+        arr[arr.length] = [];
+        (0, _jquery2.default)(row).children('td.cell').each(function (index2, cell) {
+            var item = 0;
+            if ((0, _jquery2.default)(cell).hasClass('border-cell')) {
+                item = 1;
             }
-        }
-    }
-
-    return header;
+            arr[index][arr[index].length] = item;
+        });
+    });
+    return arr;
 }
 
-//create initial Xlist with header and empty columns
-function createInitialXList(arr) {
-    var header = new _classes.RootObject({});
-    var previousColumn = header;
-    var currentColumn = void 0,
-        node = void 0;
-    for (var i = 0; i < arr.length; i++) {
-        for (var j = 0; j < arr[i].length; j++) {
-            if (arr[i][j] == 0) {
-                // do I need nodeToString and stringToNode???
-                node = new _classes.Node(i, j);
-                currentColumn = new _classes.ColumnObject({ left: previousColumn, name: node });
-                currentColumn.up = currentColumn;
-                currentColumn.down = currentColumn;
-                currentColumn.column = currentColumn;
-                previousColumn.right = currentColumn;
-                previousColumn = currentColumn;
-            }
-        }
-    }
-    currentColumn.right = header;
-    header.left = currentColumn;
-    return header;
-}
-
-function isMatch(arr, nodes, i, j) {
-    for (var k = 0; k < nodes.length; k++) {
-        if (arr[i + nodes[k].row][j + nodes[k].column] == 1) {
-            return false;
-        }
-    }
-    return true;
-}
-
-//TODO nodes should be sorted in a right order
-function addNewRow(header, nodes, row, column) {
-    var node = nodes[0];
-    var currentNode = new _classes.Node(node.row + row, node.column + column);
-
-    var data = void 0,
-        startRowData = addNewDataObject(header, currentNode);
-    var previousData = startRowData;
-
-    for (var n = 1; n < nodes.length; n++) {
-        node = nodes[n];
-        currentNode = new _classes.Node(node.row + row, node.column + column);
-        data = addNewDataObject(header, currentNode, previousData);
-        previousData.right = data;
-        previousData = data;
-    }
-
-    startRowData.left = data;
-    data.right = startRowData;
-}
-
-function addNewDataObject(header, currentNode, previousData) {
-    var current = findColumnForNode(header, currentNode);
-    if (current === undefined) {
-        return;
-    }
-
-    var data = new _classes.DataObject({ column: current, down: current, up: current.up, left: previousData });
-
-    data.up.down = data;
-    data.down.up = data;
-    current.size++;
-
-    return data;
-}
-
-function findColumnForNode(header, node) {
-    var current = header.right;
-    while (current != header) {
-        if (current.name.equalsTo(node)) {
-            return current;
-        }
-        current = current.right;
-    }
-    return undefined;
-}
-
-// DLX algorithm
-function searchDLX(header, solution, k) {
-    if (header.right == header) {
-        return true;
-    } else {
-        var isSolutionFound = false;
-        var current = chooseColumn(header);
-        coverColumn(current);
-        var row = current.down;
-
-        while (row != current && !isSolutionFound) {
-            solution[k] = row;
-
-            var j = row.right;
-            while (j != row) {
-                coverColumn(j.column);
-                j = j.right;
-            }
-            isSolutionFound = searchDLX(header, solution, k + 1);
-            row = solution[k];
-            current = row.column;
-            j = row.left;
-            while (j != row) {
-                uncoverColumn(j.column);
-                j = j.left;
-            }
-            row = row.down;
-        }
-
-        uncoverColumn(current);
-        return isSolutionFound;
-    }
-}
-
-function chooseColumn(header) {
-    var j = header.right;
-    var current = j;
-    var size = j.size;
-
-    while (j != header) {
-        if (j.size < size) {
-            current = j;
-            size = j.size;
-        }
-        j = j.right;
-    }
-
-    return current;
-}
-
-function coverColumn(current) {
-    current.right.left = current.left;
-    current.left.right = current.right;
-    var i = current.down;
-    while (i != current) {
-        var j = i.right;
-        while (j != i) {
-            j.down.up = j.up;
-            j.up.down = j.down;
-            j.column.size--;
-
-            j = j.right;
-        }
-
-        i = i.down;
-    }
-}
-
-function uncoverColumn(current) {
-    var i = current.up;
-    while (i != current) {
-        var j = i.left;
-        while (j != i) {
-            j.column.size++;
-            j.down.up = j;
-            j.up.down = j;
-
-            j = j.left;
-        }
-
-        i = i.up;
-    }
-    current.right.left = current;
-    current.left.right = current;
-}
-
-function printDLX(solution) {
-    var pieces = [];
-    //console.log(`Solution(${solution.length} pieces):`);
-    for (var i = 0; i < solution.length; i++) {
-        var o = solution[i];
-        var f = solution[i].left;
-        var str = '';
-        var nodes = [];
-        while (o != f) {
-            nodes.push(o.column.name.toArray());
-            str += o.column.name.toString() + '   ';
-            o = o.right;
-        }
-        nodes.push(o.column.name.toArray());
-        str += o.column.name.toString();
-        pieces.push(new _classes.Piece(nodes));
-        //console.log(str);
-    }
-    return pieces;
-}
-
-exports.createXListForExactCoverProblem = createXListForExactCoverProblem;
-exports.searchDLX = searchDLX;
-exports.printDLX = printDLX;
+exports.transformTableToMatrix = transformTableToMatrix;
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.setUpPieceSelectionArea = undefined;
-
-var _pieces = __webpack_require__(1);
-
-function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
-    var containerPieceMap = new WeakMap();
-    var containers = [];
-
-    _pieces.pieces.forEach(function (piece) {
-        var view = piece.getView();
-        var container = document.createElement('div');
-        container.classList.add('pieceContainer');
-        container.classList.add('selected');
-        container.classList.add('mdl-card');
-        container.classList.add('mdl-shadow--8dp');
-        container.appendChild(view);
-        area.appendChild(container);
-
-        containers.push(container);
-        containerPieceMap.set(container, piece);
-
-        container.onclick = function () {
-            if (container.classList.contains('selected')) {
-                container.classList.remove('selected');
-                container.classList.remove('mdl-card');
-                container.classList.remove('mdl-shadow--8dp');
-                (0, _pieces.deactivatePiece)(piece);
-            } else {
-                container.classList.add('selected');
-                container.classList.add('mdl-card');
-                container.classList.add('mdl-shadow--8dp');
-                (0, _pieces.activatePiece)(piece);
-            }
-        };
-    });
-
-    document.getElementById(selectAllId).onclick = function () {
-        containers.forEach(function (container) {
-            if (!container.classList.contains('selected')) {
-                container.classList.add('selected');
-                container.classList.add('mdl-card');
-                container.classList.add('mdl-shadow--8dp');
-                (0, _pieces.activatePiece)(containerPieceMap.get(container));
-            }
-        });
-    };
-
-    document.getElementById(deselectAllId).onclick = function () {
-        containers.forEach(function (container) {
-            if (container.classList.contains('selected')) {
-                container.classList.remove('selected');
-                container.classList.remove('mdl-card');
-                container.classList.remove('mdl-shadow--8dp');
-                (0, _pieces.deactivatePiece)(containerPieceMap.get(container));
-            }
-        });
-    };
-}
-
-exports.setUpPieceSelectionArea = setUpPieceSelectionArea;
-
-/***/ }),
-/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10923,31 +10664,612 @@ return jQuery;
 
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.searchBruijn = undefined;
+
+var _pieces = __webpack_require__(1);
+
+var _classes = __webpack_require__(0);
+
+function getNextBruijnHole(arr) {
+    for (var column = 0; column < arr[0].length; column++) {
+        for (var row = 0; row < arr.length; row++) {
+            if (arr[row][column] == 0) return { row: row, column: column };
+        }
+    }
+}
+
+function searchBruijn(arr, solution) {
+    var next = getNextBruijnHole(arr);
+    if (next) {
+        for (var index = 0; index < _pieces.pieces.length; index++) {
+            var piece = _pieces.pieces[index];
+            var nodes = piece.nodes;
+            var root = piece.root;
+            var offsetX = next.row - root.row;
+            var offsetY = next.column - root.column;
+            if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
+                // TODO: add offset
+                solution.push(placePiece(arr, nodes, next.row - root.row, next.column - root.column));
+                if (searchBruijn(arr, solution)) {
+                    removePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                    return true;
+                }
+                removePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                solution.pop();
+            }
+        }
+    } else {
+        return true;
+    }
+}
+
+function isPossibleToPlace(arr, nodes, i, j) {
+    for (var k = 0; k < nodes.length; k++) {
+        if (arr[i + nodes[k].row] === undefined || arr[i + nodes[k].row][j + nodes[k].column] === undefined || arr[i + nodes[k].row][j + nodes[k].column] === 1) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function placePiece(arr, nodes, i, j) {
+    var newNodes = [];
+
+    for (var k = 0; k < nodes.length; k++) {
+        var row = i + nodes[k].row;
+        var col = j + nodes[k].column;
+        newNodes.push([row, col]);
+        arr[row][col] = 1;
+    }
+
+    return new _classes.Piece(newNodes);
+}
+
+function removePiece(arr, nodes, i, j) {
+    for (var k = 0; k < nodes.length; k++) {
+        arr[i + nodes[k].row][j + nodes[k].column] = 0;
+    }
+}
+
+exports.searchBruijn = searchBruijn;
+
+/***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _jquery = __webpack_require__(4);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.printDLX = exports.searchDLX = exports.createXListForExactCoverProblem = undefined;
+
+var _pieces = __webpack_require__(1);
+
+var _classes = __webpack_require__(0);
+
+// Prepare for DLX
+function createXListForExactCoverProblem(arr) {
+    var header = createInitialXList(arr);
+    for (var p = 0, piece, nodes; p < _pieces.pieces.length; p++) {
+        piece = _pieces.pieces[p];
+        nodes = piece.nodes;
+        for (var i = 0; i + piece.maxrow < arr.length; i++) {
+            for (var j = 0; j + piece.maxcol < arr[i].length; j++) {
+                if (isMatch(arr, nodes, i, j)) {
+                    addNewRow(header, nodes, i, j);
+                }
+            }
+        }
+    }
+
+    return header;
+}
+
+//create initial Xlist with header and empty columns
+function createInitialXList(arr) {
+    var header = new _classes.RootObject({});
+    var previousColumn = header;
+    var currentColumn = void 0,
+        node = void 0;
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < arr[i].length; j++) {
+            if (arr[i][j] == 0) {
+                // do I need nodeToString and stringToNode???
+                node = new _classes.Node(i, j);
+                currentColumn = new _classes.ColumnObject({ left: previousColumn, name: node });
+                currentColumn.up = currentColumn;
+                currentColumn.down = currentColumn;
+                currentColumn.column = currentColumn;
+                previousColumn.right = currentColumn;
+                previousColumn = currentColumn;
+            }
+        }
+    }
+    currentColumn.right = header;
+    header.left = currentColumn;
+    return header;
+}
+
+function isMatch(arr, nodes, i, j) {
+    for (var k = 0; k < nodes.length; k++) {
+        if (arr[i + nodes[k].row][j + nodes[k].column] == 1) {
+            return false;
+        }
+    }
+    return true;
+}
+
+//TODO nodes should be sorted in a right order
+function addNewRow(header, nodes, row, column) {
+    var node = nodes[0];
+    var currentNode = new _classes.Node(node.row + row, node.column + column);
+
+    var data = void 0,
+        startRowData = addNewDataObject(header, currentNode);
+    var previousData = startRowData;
+
+    for (var n = 1; n < nodes.length; n++) {
+        node = nodes[n];
+        currentNode = new _classes.Node(node.row + row, node.column + column);
+        data = addNewDataObject(header, currentNode, previousData);
+        previousData.right = data;
+        previousData = data;
+    }
+
+    startRowData.left = data;
+    data.right = startRowData;
+}
+
+function addNewDataObject(header, currentNode, previousData) {
+    var current = findColumnForNode(header, currentNode);
+    if (current === undefined) {
+        return;
+    }
+
+    var data = new _classes.DataObject({ column: current, down: current, up: current.up, left: previousData });
+
+    data.up.down = data;
+    data.down.up = data;
+    current.size++;
+
+    return data;
+}
+
+function findColumnForNode(header, node) {
+    var current = header.right;
+    while (current != header) {
+        if (current.name.equalsTo(node)) {
+            return current;
+        }
+        current = current.right;
+    }
+    return undefined;
+}
+
+// DLX algorithm
+function searchDLX(header, solution, k) {
+    if (header.right == header) {
+        return true;
+    } else {
+        var isSolutionFound = false;
+        var current = chooseColumn(header);
+        coverColumn(current);
+        var row = current.down;
+
+        while (row != current && !isSolutionFound) {
+            solution[k] = row;
+
+            var j = row.right;
+            while (j != row) {
+                coverColumn(j.column);
+                j = j.right;
+            }
+            isSolutionFound = searchDLX(header, solution, k + 1);
+            row = solution[k];
+            current = row.column;
+            j = row.left;
+            while (j != row) {
+                uncoverColumn(j.column);
+                j = j.left;
+            }
+            row = row.down;
+        }
+
+        uncoverColumn(current);
+        return isSolutionFound;
+    }
+}
+
+function chooseColumn(header) {
+    var j = header.right;
+    var current = j;
+    var size = j.size;
+
+    while (j != header) {
+        if (j.size < size) {
+            current = j;
+            size = j.size;
+        }
+        j = j.right;
+    }
+
+    return current;
+}
+
+function coverColumn(current) {
+    current.right.left = current.left;
+    current.left.right = current.right;
+    var i = current.down;
+    while (i != current) {
+        var j = i.right;
+        while (j != i) {
+            j.down.up = j.up;
+            j.up.down = j.down;
+            j.column.size--;
+
+            j = j.right;
+        }
+
+        i = i.down;
+    }
+}
+
+function uncoverColumn(current) {
+    var i = current.up;
+    while (i != current) {
+        var j = i.left;
+        while (j != i) {
+            j.column.size++;
+            j.down.up = j;
+            j.up.down = j;
+
+            j = j.left;
+        }
+
+        i = i.up;
+    }
+    current.right.left = current;
+    current.left.right = current;
+}
+
+function printDLX(solution) {
+    var pieces = [];
+    //console.log(`Solution(${solution.length} pieces):`);
+    for (var i = 0; i < solution.length; i++) {
+        var o = solution[i];
+        var f = solution[i].left;
+        var str = '';
+        var nodes = [];
+        while (o != f) {
+            nodes.push(o.column.name.toArray());
+            str += o.column.name.toString() + '   ';
+            o = o.right;
+        }
+        nodes.push(o.column.name.toArray());
+        str += o.column.name.toString();
+        pieces.push(new _classes.Piece(nodes));
+        //console.log(str);
+    }
+    return pieces;
+}
+
+exports.createXListForExactCoverProblem = createXListForExactCoverProblem;
+exports.searchDLX = searchDLX;
+exports.printDLX = printDLX;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function getCoordinates(elem) {
+    // (1)
+    var box = elem.getBoundingClientRect();
+
+    var body = document.body;
+    var docEl = document.documentElement;
+
+    // (2)
+    var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+    var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+
+    // (3)
+    var clientTop = docEl.clientTop || body.clientTop || 0;
+    var clientLeft = docEl.clientLeft || body.clientLeft || 0;
+
+    // (4)
+    var top = box.top + scrollTop - clientTop;
+    var left = box.left + scrollLeft - clientLeft;
+
+    // (5)
+    return { top: Math.round(top), left: Math.round(left) };
+}
+
+exports.getCoordinates = getCoordinates;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.setUpPieceSelectionArea = undefined;
+
+var _pieces = __webpack_require__(1);
+
+function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
+    var containerPieceMap = new WeakMap();
+    var containers = [];
+
+    _pieces.pieces.forEach(function (piece) {
+        var view = piece.getView();
+        var container = document.createElement('div');
+        container.classList.add('pieceContainer');
+        container.classList.add('selected');
+        container.classList.add('mdl-card');
+        container.classList.add('mdl-shadow--8dp');
+        container.appendChild(view);
+        area.appendChild(container);
+
+        containers.push(container);
+        containerPieceMap.set(container, piece);
+
+        container.onclick = function () {
+            if (container.classList.contains('selected')) {
+                container.classList.remove('selected');
+                container.classList.remove('mdl-card');
+                container.classList.remove('mdl-shadow--8dp');
+                (0, _pieces.deactivatePiece)(piece);
+            } else {
+                container.classList.add('selected');
+                container.classList.add('mdl-card');
+                container.classList.add('mdl-shadow--8dp');
+                (0, _pieces.activatePiece)(piece);
+            }
+        };
+    });
+
+    document.getElementById(selectAllId).onclick = function () {
+        containers.forEach(function (container) {
+            if (!container.classList.contains('selected')) {
+                container.classList.add('selected');
+                container.classList.add('mdl-card');
+                container.classList.add('mdl-shadow--8dp');
+                (0, _pieces.activatePiece)(containerPieceMap.get(container));
+            }
+        });
+    };
+
+    document.getElementById(deselectAllId).onclick = function () {
+        containers.forEach(function (container) {
+            if (container.classList.contains('selected')) {
+                container.classList.remove('selected');
+                container.classList.remove('mdl-card');
+                container.classList.remove('mdl-shadow--8dp');
+                (0, _pieces.deactivatePiece)(containerPieceMap.get(container));
+            }
+        });
+    };
+}
+
+exports.setUpPieceSelectionArea = setUpPieceSelectionArea;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+// algo: https://en.wikipedia.org/wiki/Fisher-Yates_shuffle
+function shufflePieces(arrayOfPieces) {
+    var currentIndex = arrayOfPieces.length,
+        randomIndex = void 0;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        var _ref = [arrayOfPieces[randomIndex], arrayOfPieces[currentIndex]];
+        arrayOfPieces[currentIndex] = _ref[0];
+        arrayOfPieces[randomIndex] = _ref[1];
+    }
+}
+
+exports.shufflePieces = shufflePieces;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.countStatistic = undefined;
+
+var _classes = __webpack_require__(0);
+
+var _transformTableToMatrix = __webpack_require__(2);
+
+var _pieces = __webpack_require__(1);
+
+// Counting connected components in a table
+function countStatistic(creative) {
+    var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
+    var sizes = getComponentsSizes(arr);
+
+    //TODO: add proper check if number of empty cells can be divided by pieces
+    var messages = sizes.map(function (size) {
+        return '<span class="' + (checkIfProperNumber(size) ? 'good' : 'bad') + '">' + size + '</span>';
+    });
+    var html = '';
+
+    switch (messages.length) {
+        case 0:
+            html = '0';
+            break;
+        case 1:
+            html = messages[0];
+            break;
+        default:
+            html = messages.join(' + ') + ' = ' + sizes.reduce(function (a, b) {
+                return a + b;
+            });
+            break;
+    }
+
+    creative.find(".statisticSpan").html(html);
+}
+
+function getComponentsSizes(arr) {
+    var startNode = void 0,
+        sizes = [];
+    while (!isAllVisited(arr)) {
+        startNode = getStartNode(arr);
+        sizes[sizes.length] = 1 + countOneComponent(startNode, arr);
+    }
+    return sizes;
+}
+
+function isAllVisited(arr) {
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < arr[i].length; j++) {
+            if (arr[i][j] == 0) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+function getStartNode(arr) {
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < arr[i].length; j++) {
+            if (arr[i][j] == 0) {
+                return new _classes.Node(i, j);
+            }
+        }
+    }
+}
+
+function countOneComponent(startNode, arr) {
+    var size = 0;
+    arr[startNode.row][startNode.column] = 1;
+    var neighbours = getNeighbours(startNode, arr);
+
+    if (neighbours.length == 0) {
+        return 0;
+    }
+
+    for (var t = 0; t < neighbours.length; t++) {
+        arr[neighbours[t].row][neighbours[t].column] = 1;
+        size++;
+    }
+
+    for (var i = 0; i < neighbours.length; i++) {
+        size += countOneComponent(neighbours[i], arr);
+    }
+
+    return size;
+}
+
+function getNeighbours(node, arr) {
+    var neighbours = [];
+    // connect diagonal cells
+    //neighbours[neighbours.length] = new Node(node.row - 1, node.column - 1);
+    //neighbours[neighbours.length] = new Node(node.row - 1, node.column + 1);
+    //neighbours[neighbours.length] = new Node(node.row + 1, node.column - 1);
+    //neighbours[neighbours.length] = new Node(node.row + 1, node.column + 1);
+
+    neighbours[neighbours.length] = new _classes.Node(node.row - 1, node.column);
+    neighbours[neighbours.length] = new _classes.Node(node.row, node.column - 1);
+    neighbours[neighbours.length] = new _classes.Node(node.row, node.column + 1);
+    neighbours[neighbours.length] = new _classes.Node(node.row + 1, node.column);
+
+    for (var i = 0; i < neighbours.length; i++) {
+        if (neighbours[i].row < 0 || neighbours[i].column < 0 || neighbours[i].row >= arr.length || neighbours[i].column >= arr[0].length || arr[neighbours[i].row][neighbours[i].column] == 1) {
+            neighbours[i] = undefined;
+        }
+    }
+    var position = neighbours.indexOf(undefined);
+    while (position > -1) {
+        neighbours.splice(position, 1);
+        position = neighbours.indexOf(undefined);
+    }
+
+    return neighbours;
+}
+
+//TODO: add proper check if number of empty cells can be divided by pieces
+function checkIfProperNumber(number) {
+    for (var i = 0; i < _pieces.piecesLength.length; i++) {
+        if (number % _pieces.piecesLength[i] == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+exports.countStatistic = countStatistic;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _jquery = __webpack_require__(3);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
 var _classes = __webpack_require__(0);
 
-var _dlx = __webpack_require__(2);
+var _dlx = __webpack_require__(5);
+
+var _debruijn = __webpack_require__(4);
 
 var _pieces = __webpack_require__(1);
 
-var _pieceSelection = __webpack_require__(3);
+var _pieceSelection = __webpack_require__(7);
 
-var _transformTableToMatrix = __webpack_require__(6);
+var _transformTableToMatrix = __webpack_require__(2);
 
-var _shufflePieces = __webpack_require__(7);
+var _shufflePieces = __webpack_require__(8);
 
-var _statistics = __webpack_require__(8);
+var _statistics = __webpack_require__(9);
 
-var _getCoordinates = __webpack_require__(9);
+var _getCoordinates = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11013,18 +11335,25 @@ function findSolution(arr) {
         }
     }
 
-    console.log('free cells:', freeCells);
-    console.log('barriers:', barriers);
+    //console.log('free cells:', freeCells);
+    //console.log('barriers:', barriers);
 
-    var header = (0, _dlx.createXListForExactCoverProblem)(arr);
-    var solution = [];
-    var isSolutionFound = (0, _dlx.searchDLX)(header, solution, 0);
-
-    if (!isSolutionFound) {
-        return;
+    if (barriers < 8) {
+        console.log('debruijn');
+        var solution = [];
+        if (!(0, _debruijn.searchBruijn)(arr, solution)) {
+            return;
+        }
+        return solution;
+    } else {
+        console.log('dlx');
+        var header = (0, _dlx.createXListForExactCoverProblem)(arr);
+        var _solution = [];
+        if (!(0, _dlx.searchDLX)(header, _solution, 0)) {
+            return;
+        }
+        return (0, _dlx.printDLX)(_solution);
     }
-
-    return (0, _dlx.printDLX)(solution);
 }
 
 /***** SCRIPT.JS *****/
@@ -11481,11 +11810,14 @@ function resetField() {
         computed.find('.piece[style]').each(placePiece);
         computed.find('.piece').each(placePiece);
 
+        setTimeout(function () {
+            computed.find('#next').prop('disabled', false);
+        }, interval * stepOfInterval);
+
         level++;
         score = parseInt(score) + parseInt(scoreForLevel);
         saveToLocalStorage();
         computed.find('#give-up, #add-piece').prop('disabled', true);
-        computed.find('#next').prop('disabled', false);
     });
 
     computed.find('#next').click(function () {
@@ -11841,244 +12173,6 @@ function resetFieldCreative() {
         (0, _statistics.countStatistic)(creative);
     });
 });
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.transformTableToMatrix = undefined;
-
-var _jquery = __webpack_require__(4);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function transformTableToMatrix(container) {
-    var arr = [];
-    container.find("table.polytable tr.field-row").each(function (index, row) {
-        arr[arr.length] = [];
-        (0, _jquery2.default)(row).children('td.cell').each(function (index2, cell) {
-            var item = 0;
-            if ((0, _jquery2.default)(cell).hasClass('border-cell')) {
-                item = 1;
-            }
-            arr[index][arr[index].length] = item;
-        });
-    });
-    return arr;
-}
-
-exports.transformTableToMatrix = transformTableToMatrix;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-// algo: https://en.wikipedia.org/wiki/Fisher-Yates_shuffle
-function shufflePieces(arrayOfPieces) {
-    var currentIndex = arrayOfPieces.length,
-        randomIndex = void 0;
-
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // And swap it with the current element.
-        var _ref = [arrayOfPieces[randomIndex], arrayOfPieces[currentIndex]];
-        arrayOfPieces[currentIndex] = _ref[0];
-        arrayOfPieces[randomIndex] = _ref[1];
-    }
-}
-
-exports.shufflePieces = shufflePieces;
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.countStatistic = undefined;
-
-var _classes = __webpack_require__(0);
-
-var _transformTableToMatrix = __webpack_require__(6);
-
-var _pieces = __webpack_require__(1);
-
-// Counting connected components in a table
-function countStatistic(creative) {
-    var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
-    var sizes = getComponentsSizes(arr);
-
-    //TODO: add proper check if number of empty cells can be divided by pieces
-    var messages = sizes.map(function (size) {
-        return '<span class="' + (checkIfProperNumber(size) ? 'good' : 'bad') + '">' + size + '</span>';
-    });
-    var html = '';
-
-    switch (messages.length) {
-        case 0:
-            html = '0';
-            break;
-        case 1:
-            html = messages[0];
-            break;
-        default:
-            html = messages.join(' + ') + ' = ' + sizes.reduce(function (a, b) {
-                return a + b;
-            });
-            break;
-    }
-
-    creative.find(".statisticSpan").html(html);
-}
-
-function getComponentsSizes(arr) {
-    var startNode = void 0,
-        sizes = [];
-    while (!isAllVisited(arr)) {
-        startNode = getStartNode(arr);
-        sizes[sizes.length] = 1 + countOneComponent(startNode, arr);
-    }
-    return sizes;
-}
-
-function isAllVisited(arr) {
-    for (var i = 0; i < arr.length; i++) {
-        for (var j = 0; j < arr[i].length; j++) {
-            if (arr[i][j] == 0) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-function getStartNode(arr) {
-    for (var i = 0; i < arr.length; i++) {
-        for (var j = 0; j < arr[i].length; j++) {
-            if (arr[i][j] == 0) {
-                return new _classes.Node(i, j);
-            }
-        }
-    }
-}
-
-function countOneComponent(startNode, arr) {
-    var size = 0;
-    arr[startNode.row][startNode.column] = 1;
-    var neighbours = getNeighbours(startNode, arr);
-
-    if (neighbours.length == 0) {
-        return 0;
-    }
-
-    for (var t = 0; t < neighbours.length; t++) {
-        arr[neighbours[t].row][neighbours[t].column] = 1;
-        size++;
-    }
-
-    for (var i = 0; i < neighbours.length; i++) {
-        size += countOneComponent(neighbours[i], arr);
-    }
-
-    return size;
-}
-
-function getNeighbours(node, arr) {
-    var neighbours = [];
-    // connect diagonal cells
-    //neighbours[neighbours.length] = new Node(node.row - 1, node.column - 1);
-    //neighbours[neighbours.length] = new Node(node.row - 1, node.column + 1);
-    //neighbours[neighbours.length] = new Node(node.row + 1, node.column - 1);
-    //neighbours[neighbours.length] = new Node(node.row + 1, node.column + 1);
-
-    neighbours[neighbours.length] = new _classes.Node(node.row - 1, node.column);
-    neighbours[neighbours.length] = new _classes.Node(node.row, node.column - 1);
-    neighbours[neighbours.length] = new _classes.Node(node.row, node.column + 1);
-    neighbours[neighbours.length] = new _classes.Node(node.row + 1, node.column);
-
-    for (var i = 0; i < neighbours.length; i++) {
-        if (neighbours[i].row < 0 || neighbours[i].column < 0 || neighbours[i].row >= arr.length || neighbours[i].column >= arr[0].length || arr[neighbours[i].row][neighbours[i].column] == 1) {
-            neighbours[i] = undefined;
-        }
-    }
-    var position = neighbours.indexOf(undefined);
-    while (position > -1) {
-        neighbours.splice(position, 1);
-        position = neighbours.indexOf(undefined);
-    }
-
-    return neighbours;
-}
-
-//TODO: add proper check if number of empty cells can be divided by pieces
-function checkIfProperNumber(number) {
-    for (var i = 0; i < _pieces.piecesLength.length; i++) {
-        if (number % _pieces.piecesLength[i] == 0) {
-            return true;
-        }
-    }
-    return false;
-}
-
-exports.countStatistic = countStatistic;
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-function getCoordinates(elem) {
-    // (1)
-    var box = elem.getBoundingClientRect();
-
-    var body = document.body;
-    var docEl = document.documentElement;
-
-    // (2)
-    var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
-    var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-
-    // (3)
-    var clientTop = docEl.clientTop || body.clientTop || 0;
-    var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-
-    // (4)
-    var top = box.top + scrollTop - clientTop;
-    var left = box.left + scrollLeft - clientLeft;
-
-    // (5)
-    return { top: Math.round(top), left: Math.round(left) };
-}
-
-exports.getCoordinates = getCoordinates;
 
 /***/ })
 /******/ ]);

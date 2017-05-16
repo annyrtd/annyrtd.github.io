@@ -3,7 +3,8 @@
 import $ from "jquery";
 import {Node, Piece} from './js/classes';
 import {createXListForExactCoverProblem, searchDLX, printDLX} from './js/dlx';
-import {pieces, activatePiece, deactivatePiece} from './js/pieces';
+import {searchBruijn} from './js/debruijn';
+import {pieces} from './js/pieces';
 import {setUpPieceSelectionArea} from './js/pieceSelection';
 import {transformTableToMatrix} from './js/transformTableToMatrix';
 import {shufflePieces} from './js/shufflePieces';
@@ -70,18 +71,25 @@ function findSolution(arr)  {
         }
     }
 
-    console.log('free cells:', freeCells);
-    console.log('barriers:', barriers);
+    //console.log('free cells:', freeCells);
+    //console.log('barriers:', barriers);
 
-    const header = createXListForExactCoverProblem(arr);
-    const solution = [];
-    let isSolutionFound = searchDLX(header, solution, 0);
-
-    if (!isSolutionFound) {
-        return;
+    if(barriers < 8) {
+        console.log('debruijn');
+        const solution = [];
+        if(!searchBruijn(arr, solution)) {
+            return;
+        }
+        return solution;
+    } else {
+        console.log('dlx');
+        const header = createXListForExactCoverProblem(arr);
+        const solution = [];
+        if (!searchDLX(header, solution, 0)) {
+            return;
+        }
+        return printDLX(solution);
     }
-
-    return printDLX(solution);
 }
 
 /***** SCRIPT.JS *****/
@@ -525,11 +533,14 @@ $(document).ready(
                 computed.find('.piece[style]').each(placePiece);
                 computed.find('.piece').each(placePiece);
 
+                setTimeout(() => {
+                    computed.find('#next').prop('disabled', false);
+                }, interval * stepOfInterval);
+
                 level++;
                 score = parseInt(score) + parseInt(scoreForLevel);
                 saveToLocalStorage();
                 computed.find('#give-up, #add-piece').prop('disabled', true);
-                computed.find('#next').prop('disabled', false);
             }
         );
 
