@@ -151,10 +151,16 @@ is-small-screen .creative .polyomino-area {
 	margin-right: 32px;
 }
 
+.mdl-layout__drawer {
+	width: 600px;
+}
+
 .pieceSelectionArea {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
+	flex-wrap: wrap;
 	align-items: center;
+	justify-content: center;
 }
 
 .pieceSelectionArea .piece {
@@ -180,6 +186,7 @@ is-small-screen .creative .polyomino-area {
     padding-top: 40px;
 	line-height: 24px;
 	font-size: 16px;
+	width: 100%;
 }
 
 .selected-sample {
