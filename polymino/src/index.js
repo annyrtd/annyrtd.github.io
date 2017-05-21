@@ -71,10 +71,8 @@ function findSolution(arr)  {
         }
     }
 
-    //console.log('free cells:', freeCells);
-    //console.log('barriers:', barriers);
-
-    if(barriers < 8) {
+    if(barriers <= 8 ||
+        (barriers > 8 && barriers <= 12 && (freeCells + barriers) < 96)) {
         console.log('debruijn');
         const solution = [];
         if(!searchBruijn(arr, solution)) {

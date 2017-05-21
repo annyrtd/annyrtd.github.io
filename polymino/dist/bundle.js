@@ -10842,7 +10842,7 @@ function isMatch(arr, nodes, i, j) {
     return true;
 }
 
-//TODO nodes should be sorted in a right order
+//TODO: (only  a note for a programmer) nodes should be sorted in a right order
 function addNewRow(header, nodes, row, column) {
     var node = nodes[0];
     var currentNode = new _classes.Node(node.row + row, node.column + column);
@@ -11159,8 +11159,6 @@ var _pieces = __webpack_require__(1);
 function countStatistic(creative) {
     var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
     var sizes = getComponentsSizes(arr);
-
-    //TODO: add proper check if number of empty cells can be divided by pieces
     var messages = sizes.map(function (size) {
         return '<span class="' + (checkIfProperNumber(size) ? 'good' : 'bad') + '">' + size + '</span>';
     });
@@ -11372,10 +11370,7 @@ function findSolution(arr) {
         }
     }
 
-    //console.log('free cells:', freeCells);
-    //console.log('barriers:', barriers);
-
-    if (barriers < 8) {
+    if (barriers <= 8 || barriers > 8 && barriers <= 12 && freeCells + barriers < 96) {
         console.log('debruijn');
         var solution = [];
         if (!(0, _debruijn.searchBruijn)(arr, solution)) {

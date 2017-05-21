@@ -6,8 +6,6 @@ import {piecesLength} from './pieces';
 function countStatistic(creative) {
     const arr = transformTableToMatrix(creative);
     let sizes = getComponentsSizes(arr);
-
-    //TODO: add proper check if number of empty cells can be divided by pieces
     let messages = sizes.map(size => `<span class="${checkIfProperNumber(size) ? 'good' : 'bad'}">${size}</span>`);
     let html = '';
 

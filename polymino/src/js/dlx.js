@@ -52,7 +52,7 @@ function isMatch(arr, nodes, i, j) {
     return true;
 }
 
-//TODO nodes should be sorted in a right order
+//TODO: (only  a note for a programmer) nodes should be sorted in a right order
 function addNewRow(header, nodes, row, column) {
     let node = nodes[0];
     let currentNode = new Node(node.row + row, node.column + column);
