@@ -11232,6 +11232,7 @@ function getNeighbours(node, arr) {
 
 //TODO: add proper check if number of empty cells can be divided by pieces
 function checkIfProperNumber(number) {
+    return true;
     for (var i = 0; i < _pieces.piecesLength.length; i++) {
         if (number % _pieces.piecesLength[i] == 0) {
             return true;
