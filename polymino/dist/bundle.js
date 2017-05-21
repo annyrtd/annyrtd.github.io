@@ -310,6 +310,20 @@ exports.piecesLength = exports.deactivatePiece = exports.activatePiece = exports
 
 var _classes = __webpack_require__(0);
 
+Array.prototype.remove = function () {
+    var what = void 0,
+        a = arguments,
+        L = a.length,
+        ax = void 0;
+    while (L && this.length) {
+        what = a[--L];
+        while ((ax = this.indexOf(what)) !== -1) {
+            this.splice(ax, 1);
+        }
+    }
+    return this;
+};
+
 var piecesDatabase = [
 // Size 3
 /*new Piece([
@@ -337,14 +351,24 @@ new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0]
 // Size 5
 new _classes.Piece([[0, 1], [0, 2], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]]), new _classes.Piece([[0, 1], [1, 1], [2, 0], [2, 1], [3, 0]]), new _classes.Piece([[0, 0], [0, 1], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 2], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [2, 1], [2, 2]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 1], [2, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [2, 1], [3, 0]]), new _classes.Piece([[0, 0], [0, 1], [1, 1], [2, 1], [2, 2]])];
 var pieces = [];
-var piecesLength = [/*3, */4, 5];
+var piecesLength = [];
 
 setInitialActivePieces();
 
 function setInitialActivePieces() {
     while (piecesDatabase.length > 0) {
-        pieces.push(piecesDatabase.shift());
+        var piece = piecesDatabase.shift();
+
+        pieces.push(piece);
+
+        var length = piece.nodes.length;
+        if (piecesLength.indexOf(length) < 0) {
+            piecesLength.push(length);
+        }
     }
+
+    console.log('piecesLength:');
+    console.log(piecesLength);
 }
 
 function activatePiece(piece) {
@@ -353,6 +377,13 @@ function activatePiece(piece) {
     });
     piecesDatabase.splice(index, 1);
     pieces.push(piece);
+
+    var length = piece.nodes.length;
+    if (piecesLength.indexOf(length) < 0) {
+        piecesLength.push(length);
+    }
+    console.log('piecesLength:');
+    console.log(piecesLength);
 }
 
 function deactivatePiece(piece) {
@@ -361,6 +392,16 @@ function deactivatePiece(piece) {
     });
     pieces.splice(index, 1);
     piecesDatabase.push(piece);
+
+    var length = piece.nodes.length;
+    if (!pieces.find(function (pieceInner) {
+        return length == pieceInner.nodes.length;
+    })) {
+        piecesLength.remove(length);
+    }
+
+    console.log('piecesLength:');
+    console.log(piecesLength);
 }
 
 exports.pieces = pieces;
@@ -11231,14 +11272,28 @@ function getNeighbours(node, arr) {
 }
 
 //TODO: add proper check if number of empty cells can be divided by pieces
-function checkIfProperNumber(number) {
-    return true;
-    for (var i = 0; i < _pieces.piecesLength.length; i++) {
-        if (number % _pieces.piecesLength[i] == 0) {
+/*function checkIfProperNumber(number) {
+    for (let i = 0; i < piecesLength.length; i++) {
+        if (number % piecesLength[i] == 0) {
             return true;
         }
     }
     return false;
+}*/
+
+function checkIfProperNumber(number) {
+    if (number < 0) {
+        return false;
+    } else if (number == 0) {
+        return true;
+    } else {
+        var result = false;
+        for (var i = 0; i < _pieces.piecesLength.length; i++) {
+            result = result || checkIfProperNumber(number - _pieces.piecesLength[i]);
+        }
+
+        return result;
+    }
 }
 
 exports.countStatistic = countStatistic;

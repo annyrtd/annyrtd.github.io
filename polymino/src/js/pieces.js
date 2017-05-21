@@ -1,4 +1,14 @@
 import {Piece} from './classes';
+Array.prototype.remove = function() {
+    let what, a = arguments, L = a.length, ax;
+    while (L && this.length) {
+        what = a[--L];
+        while ((ax = this.indexOf(what)) !== -1) {
+            this.splice(ax, 1);
+        }
+    }
+    return this;
+};
 
 const piecesDatabase = [
     // Size 3
@@ -128,26 +138,52 @@ const piecesDatabase = [
     ]),
 ];
 const pieces = [];
-const piecesLength = [/*3, */4, 5];
+const piecesLength = [];
 
 setInitialActivePieces();
 
 function setInitialActivePieces() {
     while(piecesDatabase.length > 0) {
-        pieces.push(piecesDatabase.shift());
+        const piece = piecesDatabase.shift();
+
+        pieces.push(piece);
+
+        const length = piece.nodes.length;
+        if(piecesLength.indexOf(length) < 0) {
+            piecesLength.push(length);
+        }
     }
+
+    console.log('piecesLength:');
+    console.log(piecesLength);
 }
 
 function activatePiece(piece) {
     const index = piecesDatabase.findIndex(item => item === piece);
     piecesDatabase.splice(index, 1);
     pieces.push(piece);
+
+    const length = piece.nodes.length;
+    if(piecesLength.indexOf(length) < 0) {
+        piecesLength.push(length);
+    }
+    console.log('piecesLength:');
+    console.log(piecesLength);
+
 }
 
 function deactivatePiece(piece) {
     const index = pieces.findIndex(item => item === piece);
     pieces.splice(index, 1);
     piecesDatabase.push(piece);
+
+    const length = piece.nodes.length;
+    if(!pieces.find(pieceInner => length == pieceInner.nodes.length)) {
+        piecesLength.remove(length);
+    }
+
+    console.log('piecesLength:');
+    console.log(piecesLength);
 }
 
 export {pieces, activatePiece, deactivatePiece, piecesLength};
