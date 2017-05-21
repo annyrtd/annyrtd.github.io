@@ -151,7 +151,7 @@ is-small-screen .creative .polyomino-area {
 	margin-right: 32px;
 }
 
-.mdl-layout__drawer {
+.mdl-layout__drawer.is-visible {
 	width: 600px;
 }
 
