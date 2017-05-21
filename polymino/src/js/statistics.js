@@ -108,6 +108,7 @@ function getNeighbours(node, arr) {
 
 //TODO: add proper check if number of empty cells can be divided by pieces
 function checkIfProperNumber(number) {
+    return true;
     for (let i = 0; i < piecesLength.length; i++) {
         if (number % piecesLength[i] == 0) {
             return true;
