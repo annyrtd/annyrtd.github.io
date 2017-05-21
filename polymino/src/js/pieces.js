@@ -145,45 +145,35 @@ setInitialActivePieces();
 function setInitialActivePieces() {
     while(piecesDatabase.length > 0) {
         const piece = piecesDatabase.shift();
-
         pieces.push(piece);
-
-        const length = piece.nodes.length;
-        if(piecesLength.indexOf(length) < 0) {
-            piecesLength.push(length);
-        }
+        addPieceLength(piece.nodes.length);
     }
+}
 
-    console.log('piecesLength:');
-    console.log(piecesLength);
+function addPieceLength(length) {
+    if (piecesLength.indexOf(length) < 0) {
+        piecesLength.push(length);
+    }
 }
 
 function activatePiece(piece) {
     const index = piecesDatabase.findIndex(item => item === piece);
     piecesDatabase.splice(index, 1);
     pieces.push(piece);
-
-    const length = piece.nodes.length;
-    if(piecesLength.indexOf(length) < 0) {
-        piecesLength.push(length);
-    }
-    console.log('piecesLength:');
-    console.log(piecesLength);
-
+    addPieceLength(piece.nodes.length);
 }
 
 function deactivatePiece(piece) {
     const index = pieces.findIndex(item => item === piece);
     pieces.splice(index, 1);
     piecesDatabase.push(piece);
+    removePieceLength(piece.nodes.length);
+}
 
-    const length = piece.nodes.length;
+function removePieceLength(length) {
     if(!pieces.find(pieceInner => length == pieceInner.nodes.length)) {
         piecesLength.remove(length);
     }
-
-    console.log('piecesLength:');
-    console.log(piecesLength);
 }
 
 export {pieces, activatePiece, deactivatePiece, piecesLength};
