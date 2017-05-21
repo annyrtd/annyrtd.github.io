@@ -358,17 +358,15 @@ setInitialActivePieces();
 function setInitialActivePieces() {
     while (piecesDatabase.length > 0) {
         var piece = piecesDatabase.shift();
-
         pieces.push(piece);
-
-        var length = piece.nodes.length;
-        if (piecesLength.indexOf(length) < 0) {
-            piecesLength.push(length);
-        }
+        addPieceLength(piece.nodes.length);
     }
+}
 
-    console.log('piecesLength:');
-    console.log(piecesLength);
+function addPieceLength(length) {
+    if (piecesLength.indexOf(length) < 0) {
+        piecesLength.push(length);
+    }
 }
 
 function activatePiece(piece) {
@@ -377,13 +375,7 @@ function activatePiece(piece) {
     });
     piecesDatabase.splice(index, 1);
     pieces.push(piece);
-
-    var length = piece.nodes.length;
-    if (piecesLength.indexOf(length) < 0) {
-        piecesLength.push(length);
-    }
-    console.log('piecesLength:');
-    console.log(piecesLength);
+    addPieceLength(piece.nodes.length);
 }
 
 function deactivatePiece(piece) {
@@ -392,16 +384,15 @@ function deactivatePiece(piece) {
     });
     pieces.splice(index, 1);
     piecesDatabase.push(piece);
+    removePieceLength(piece.nodes.length);
+}
 
-    var length = piece.nodes.length;
+function removePieceLength(length) {
     if (!pieces.find(function (pieceInner) {
         return length == pieceInner.nodes.length;
     })) {
         piecesLength.remove(length);
     }
-
-    console.log('piecesLength:');
-    console.log(piecesLength);
 }
 
 exports.pieces = pieces;
@@ -11270,16 +11261,6 @@ function getNeighbours(node, arr) {
 
     return neighbours;
 }
-
-//TODO: add proper check if number of empty cells can be divided by pieces
-/*function checkIfProperNumber(number) {
-    for (let i = 0; i < piecesLength.length; i++) {
-        if (number % piecesLength[i] == 0) {
-            return true;
-        }
-    }
-    return false;
-}*/
 
 function checkIfProperNumber(number) {
     if (number < 0) {
