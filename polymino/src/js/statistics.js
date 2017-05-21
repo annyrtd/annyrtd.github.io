@@ -107,14 +107,28 @@ function getNeighbours(node, arr) {
 }
 
 //TODO: add proper check if number of empty cells can be divided by pieces
-function checkIfProperNumber(number) {
-    return true;
+/*function checkIfProperNumber(number) {
     for (let i = 0; i < piecesLength.length; i++) {
         if (number % piecesLength[i] == 0) {
             return true;
         }
     }
     return false;
+}*/
+
+function checkIfProperNumber(number) {
+    if(number < 0) {
+        return false;
+    } else if(number == 0) {
+        return true;
+    } else {
+        let result = false;
+        for (let i = 0; i < piecesLength.length; i++) {
+            result = result || checkIfProperNumber(number - piecesLength[i]);
+        }
+
+        return result;
+    }
 }
 
 export {countStatistic};
