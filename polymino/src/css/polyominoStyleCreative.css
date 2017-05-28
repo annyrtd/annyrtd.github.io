@@ -151,8 +151,10 @@ is-small-screen .creative .polyomino-area {
 	margin-right: 32px;
 }
 
-.mdl-layout__drawer.is-visible {
-	width: 600px;
+@media screen and (min-width: 610px) {
+	.mdl-layout__drawer.is-visible {
+		width: 600px;
+	}
 }
 
 .pieceSelectionArea {
