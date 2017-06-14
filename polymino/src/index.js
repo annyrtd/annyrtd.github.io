@@ -942,6 +942,10 @@ $(document).ready(
         creative.find('#countSolutions').click(
             function() {
                 const arr = transformTableToMatrix(creative);
+                if (creative.find('span.statisticSpan .bad').length > 0) {
+                    $('#numberOfSolutions').html(`0 решений`);
+                    return;
+                }
                 setTimeout(function() {
                     countSolutions(arr);
                 }, 0);

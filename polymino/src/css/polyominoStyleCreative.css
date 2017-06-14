@@ -207,3 +207,8 @@ is-small-screen .creative .polyomino-area {
 #select-all, #deselect-all {
 	margin: 12px 0;
 }
+
+#numberOfSolutions {
+	line-height: 40px;
+	height: 40px;
+}

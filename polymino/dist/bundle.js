@@ -12292,6 +12292,10 @@ function resetFieldCreative() {
 
     creative.find('#countSolutions').click(function () {
         var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
+        if (creative.find('span.statisticSpan .bad').length > 0) {
+            (0, _jquery2.default)('#numberOfSolutions').html('0 \u0440\u0435\u0448\u0435\u043D\u0438\u0439');
+            return;
+        }
         setTimeout(function () {
             countSolutions(arr);
         }, 0);
