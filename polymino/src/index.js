@@ -942,7 +942,9 @@ $(document).ready(
         creative.find('#countSolutions').click(
             function() {
                 const arr = transformTableToMatrix(creative);
-                countSolutions(arr);
+                setTimeout(function() {
+                    countSolutions(arr);
+                }, 0);
             }
         );
     }

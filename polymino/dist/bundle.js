@@ -11461,16 +11461,16 @@ function countSolutions(arr) {
 
     var numberOfSolutions = void 0;
 
-    //if(barriers <= 8 ||
-    //    (barriers > 8 && barriers <= 12 && (freeCells + barriers) < 96)) {
-    numberOfSolutions = (0, _debruijn.countBruijnSolutions)(arr);
-    console.log('debruijn: ' + numberOfSolutions + ' solutions');
-    //} else {
-    var header = (0, _dlx.createXListForExactCoverProblem)(arr);
-    numberOfSolutions = (0, _dlx.countDLXsolutions)(header, 0);
-    console.log('dlx: ' + numberOfSolutions + ' solutions');
-    //}
+    if (barriers <= 8 || barriers > 8 && barriers <= 12 && freeCells + barriers < 96) {
+        numberOfSolutions = (0, _debruijn.countBruijnSolutions)(arr);
+        console.log('debruijn: ' + numberOfSolutions + ' solutions');
+    } else {
+        var header = (0, _dlx.createXListForExactCoverProblem)(arr);
+        numberOfSolutions = (0, _dlx.countDLXsolutions)(header, 0);
+        console.log('dlx: ' + numberOfSolutions + ' solutions');
+    }
 
+    (0, _jquery2.default)('#numberOfSolutions').html(numberOfSolutions + ' \u0440\u0435\u0448\u0435\u043D\u0438\u0439');
 }
 
 /***** SCRIPT.JS *****/
@@ -12292,7 +12292,9 @@ function resetFieldCreative() {
 
     creative.find('#countSolutions').click(function () {
         var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
-        countSolutions(arr);
+        setTimeout(function () {
+            countSolutions(arr);
+        }, 0);
     });
 });
 
