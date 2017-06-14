@@ -105,15 +105,15 @@ function countSolutions(arr) {
 
     let numberOfSolutions;
 
-    if(barriers <= 8 ||
-        (barriers > 8 && barriers <= 12 && (freeCells + barriers) < 96)) {
+    //if(barriers <= 8 ||
+    //    (barriers > 8 && barriers <= 12 && (freeCells + barriers) < 96)) {
         numberOfSolutions = countBruijnSolutions(arr);
         console.log(`debruijn: ${numberOfSolutions} solutions`);
-    } else {
+    //} else {
         const header = createXListForExactCoverProblem(arr);
         numberOfSolutions = countDLXsolutions(header, 0);
         console.log(`dlx: ${numberOfSolutions} solutions`);
-    }
+    //}
 
 
 }

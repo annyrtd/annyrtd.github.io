@@ -82,6 +82,7 @@ function countBruijnSolutions(arr) {
                 removePiece(arr, nodes, next.row - root.row, next.column - root.column);
             }
         }
+        return numberOfSolutions;
     } else {
         return 1;
     }
