@@ -2,8 +2,8 @@
 
 import $ from "jquery";
 import {Node, Piece} from './js/classes';
-import {createXListForExactCoverProblem, searchDLX, printDLX} from './js/dlx';
-import {searchBruijn} from './js/debruijn';
+import {createXListForExactCoverProblem, searchDLX, printDLX, countDLXsolutions} from './js/dlx';
+import {searchBruijn, countBruijnSolutions} from './js/debruijn';
 import {pieces} from './js/pieces';
 import {setUpPieceSelectionArea} from './js/pieceSelection';
 import {transformTableToMatrix} from './js/transformTableToMatrix';
@@ -88,6 +88,34 @@ function findSolution(arr)  {
         }
         return printDLX(solution);
     }
+}
+
+function countSolutions(arr) {
+    let freeCells = 0, barriers = 0;
+
+    for(let i = 0; i < arr.length; i++) {
+        for(let j = 0; j < arr[i].length; j++) {
+            if(arr[i][j] == 0) {
+                freeCells++
+            } else {
+                barriers++;
+            }
+        }
+    }
+
+    let numberOfSolutions;
+
+//    if(barriers <= 8 ||
+//        (barriers > 8 && barriers <= 12 && (freeCells + barriers) < 96)) {
+        numberOfSolutions = countBruijnSolutions(arr);
+        console.log(`debruijn: ${numberOfSolutions} solutions`);
+//    } else {
+        const header = createXListForExactCoverProblem(arr);
+        numberOfSolutions = countDLXsolutions(header, 0);
+        console.log(`dlx: ${numberOfSolutions} solutions`);
+//    }
+
+
 }
 
 /***** SCRIPT.JS *****/
@@ -908,6 +936,13 @@ $(document).ready(
 
                 $(this).addClass('arrow-div');
                 countStatistic(creative);
+            }
+        );
+
+        creative.find('#countSolutions').click(
+            function() {
+                const arr = transformTableToMatrix(creative);
+                countSolutions(arr);
             }
         );
     }

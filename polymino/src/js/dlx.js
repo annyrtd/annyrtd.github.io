@@ -206,4 +206,37 @@ function printDLX(solution) {
     return pieces;
 }
 
-export {createXListForExactCoverProblem, searchDLX, printDLX};
+//additional functions
+function countDLXsolutions(header, k) {
+    if (header.right == header) {
+        return 1;
+    }
+    else {
+        let numberOfSolutions = 0;
+        let current = chooseColumn(header);
+        coverColumn(current);
+        let row = current.down;
+
+        while (row != current) {
+            let j = row.right;
+            while (j != row) {
+                coverColumn(j.column);
+                j = j.right;
+            }
+            numberOfSolutions += searchDLX(header, k + 1);
+
+            current = row.column;
+            j = row.left;
+            while (j != row) {
+                uncoverColumn(j.column);
+                j = j.left;
+            }
+            row = row.down;
+        }
+
+        uncoverColumn(current);
+        return numberOfSolutions;
+    }
+}
+
+export {createXListForExactCoverProblem, searchDLX, printDLX, countDLXsolutions};

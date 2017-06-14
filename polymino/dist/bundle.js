@@ -63,11 +63,973 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 10);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _jquery = __webpack_require__(4);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _classes = __webpack_require__(1);
+
+var _dlx = __webpack_require__(6);
+
+var _debruijn = __webpack_require__(5);
+
+var _pieces = __webpack_require__(2);
+
+var _pieceSelection = __webpack_require__(8);
+
+var _transformTableToMatrix = __webpack_require__(3);
+
+var _shufflePieces = __webpack_require__(9);
+
+var _statistics = __webpack_require__(10);
+
+var _getCoordinates = __webpack_require__(7);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var interval = 200;
+var stepOfInterval = 0;
+var piecesSet = 0;
+var solutionLength = void 0;
+var solutionPieces = void 0;
+//let timeStart;
+var scoreForLevel = 500;
+
+var stepOfIntervalCreative = 0;
+var piecesSetCreative = 0;
+var solutionPiecesCreative = void 0;
+
+var repeats = 2;
+var level = 0;
+var score = 0;
+var pieceCost = 400;
+var giveUpCost = void 0;
+var tableCellWidth = 35;
+
+var computed = void 0;
+var creative = void 0;
+
+var numberOfRowsCreative = void 0,
+    numberOfColumnsCreative = void 0;
+
+function saveToLocalStorage() {
+    if (localStorage) {
+        localStorage['level'] = parseInt(level);
+        localStorage['score'] = parseInt(score);
+    }
+}
+
+function restoreFromLocalStorage() {
+    if (localStorage) {
+        if (parseInt(localStorage.getItem('level'))) {
+            level = parseInt(localStorage['level']);
+        } else {
+            localStorage['level'] = level = 0;
+        }
+
+        if (parseInt(localStorage.getItem('score'))) {
+            score = parseInt(localStorage['score']);
+        } else {
+            localStorage['score'] = score = 0;
+        }
+    }
+}
+
+function findSolution(arr) {
+    var freeCells = 0,
+        barriers = 0;
+
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < arr[i].length; j++) {
+            if (arr[i][j] == 0) {
+                freeCells++;
+            } else {
+                barriers++;
+            }
+        }
+    }
+
+    if (barriers <= 8 || barriers > 8 && barriers <= 12 && freeCells + barriers < 96) {
+        console.log('debruijn');
+        var solution = [];
+        if (!(0, _debruijn.searchBruijn)(arr, solution)) {
+            return;
+        }
+        return solution;
+    } else {
+        console.log('dlx');
+        var header = (0, _dlx.createXListForExactCoverProblem)(arr);
+        var _solution = [];
+        if (!(0, _dlx.searchDLX)(header, _solution, 0)) {
+            return;
+        }
+        return (0, _dlx.printDLX)(_solution);
+    }
+}
+
+function countSolutions(arr) {
+    var freeCells = 0,
+        barriers = 0;
+
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < arr[i].length; j++) {
+            if (arr[i][j] == 0) {
+                freeCells++;
+            } else {
+                barriers++;
+            }
+        }
+    }
+
+    var numberOfSolutions = void 0;
+
+    //    if(barriers <= 8 ||
+    //        (barriers > 8 && barriers <= 12 && (freeCells + barriers) < 96)) {
+    numberOfSolutions = (0, _debruijn.countBruijnSolutions)(arr);
+    console.log('debruijn: ' + numberOfSolutions + ' solutions');
+    //    } else {
+    var header = (0, _dlx.createXListForExactCoverProblem)(arr);
+    numberOfSolutions = (0, _dlx.countDLXsolutions)(header, 0);
+    console.log('dlx: ' + numberOfSolutions + ' solutions');
+    //    }
+
+}
+
+/***** SCRIPT.JS *****/
+function generatePolyminoTable() {
+    saveToLocalStorage();
+    initialSetUp();
+    var table = computed.find('table.polytable');
+
+    var _countNumbersForTable = countNumbersForTable(),
+        numberOfRows = _countNumbersForTable.numberOfRows,
+        numberOfColumns = _countNumbersForTable.numberOfColumns,
+        numberOfBarriers = _countNumbersForTable.numberOfBarriers,
+        area = _countNumbersForTable.area;
+
+    table.empty();
+    for (var i = 0; i < numberOfRows; i++) {
+        var row = (0, _jquery2.default)('<tr class=\'field-row\' id=\'tr-' + i + '\'></tr>');
+        for (var j = 0; j < numberOfColumns; j++) {
+            var td = (0, _jquery2.default)('<td class=\'cell empty-cell\' id=\'td-' + i + '-' + j + '\'></td>');
+            row.append(td);
+        }
+        table.append(row);
+    }
+
+    for (var _i = 0; _i < numberOfBarriers * 4; _i++) {
+        var allCells = computed.find('td.empty-cell');
+        (0, _jquery2.default)(allCells[Math.floor(Math.random() * (area - _i))]).removeClass('empty-cell').addClass('border-cell');
+    }
+
+    (0, _shufflePieces.shufflePieces)(_pieces.pieces);
+    var arr = (0, _transformTableToMatrix.transformTableToMatrix)(computed);
+    startGame(arr);
+}
+
+function countNumbersForTable() {
+    var numberOfPieces = Math.floor(level / repeats) + 3;
+    giveUpCost = Math.floor(pieceCost * numberOfPieces * 0.8 / 100) * 100;
+    computed.find('span.pieceCost').text(pieceCost);
+    computed.find('span.giveUpCost').text(giveUpCost);
+
+    var numberOfBarriers = level % repeats * 2;
+    var area = (numberOfPieces + numberOfBarriers) * 4;
+    var numberOfRows = void 0,
+        numberOfColumns = void 0;
+    var side = void 0,
+        index = void 0;
+    for (numberOfRows = index = 4, side = area / index, numberOfColumns = Math.floor(side); index < numberOfPieces + numberOfBarriers; index++, numberOfRows = index, side = area / index, numberOfColumns = Math.floor(side)) {
+        if (side == numberOfColumns && Math.abs(numberOfColumns - numberOfRows) <= 5) {
+            break;
+        }
+    }
+
+    if (numberOfRows > numberOfColumns) {
+        var _ref = [numberOfColumns, numberOfRows];
+        numberOfRows = _ref[0];
+        numberOfColumns = _ref[1];
+    }
+
+    var tableWidth = tableCellWidth * numberOfColumns + 32 * 2;
+    var tableHeight = tableCellWidth * numberOfRows + 32 * 2;
+    var windowWidth = document.body.scrollWidth;
+
+    if (tableWidth > windowWidth) {
+        if (tableHeight > windowWidth) {
+            numberOfColumns = 4;
+            numberOfRows = numberOfPieces + numberOfBarriers;
+        } else {
+            var _ref2 = [numberOfColumns, numberOfRows];
+            numberOfRows = _ref2[0];
+            numberOfColumns = _ref2[1];
+        }
+    }
+
+    return { numberOfRows: numberOfRows, numberOfColumns: numberOfColumns, numberOfBarriers: numberOfBarriers, area: area };
+}
+
+function startGame(arr) {
+    stepOfInterval = 0;
+    //timeStart = performance && performance.now? performance.now() : 0;
+    piecesSet = 0;
+    var solutionArea = computed.find('div.solutionArea');
+
+    solutionPieces = findSolution(arr);
+    if (!solutionPieces) {
+        console.log('no solution');
+        generatePolyminoTable();
+        return;
+    }
+
+    solutionLength = solutionPieces.length;
+
+    var numberOfRows = solutionPieces[0].maxrow - solutionPieces[0].minrow;
+    var numberOfCols = solutionPieces[0].maxcol - solutionPieces[0].mincol;
+    if (solutionPieces.every(function (piece) {
+        return piece.maxcol - piece.mincol == numberOfCols && piece.maxrow - piece.minrow == numberOfRows;
+    })) {
+        console.log('all pieces are the same');
+        generatePolyminoTable();
+        return;
+    }
+
+    (0, _shufflePieces.shufflePieces)(solutionPieces);
+
+    solutionPieces.forEach(function (piece, index) {
+        var view = piece.getView();
+        solutionArea.append(view);
+        view.setAttribute('id', 'piece' + index);
+
+        (0, _jquery2.default)(view).find('td.pieceCell').each(function () {
+            var cell = this;
+
+            cell.ontouchcancel = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            };
+
+            cell.ontouchstart = cell.onmousedown = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                view.style.display = '';
+                var coords = (0, _getCoordinates.getCoordinates)(view);
+                var shiftX = e.pageX - coords.left;
+                var shiftY = e.pageY - coords.top;
+
+                var isPieceSet = true;
+                var currentCoordinatesAttribute = view.getAttribute('data-nodes');
+                var currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(function (item) {
+                    return _classes.Node.fromString(item);
+                });
+
+                var row = void 0,
+                    column = void 0;
+
+                var _getRowAndCol = getRowAndCol(e);
+
+                row = _getRowAndCol.row;
+                column = _getRowAndCol.column;
+
+                var isPieceRemoved = false;
+                currentPieceTdCoordinates.forEach(function (item) {
+                    var tdRow = parseInt(item.row) + row;
+                    var tdCol = parseInt(item.column) + column;
+                    var td = computed.find('#td-' + tdRow + '-' + tdCol);
+                    if (td.hasClass('set') && !isPieceRemoved) {
+                        isPieceRemoved = true;
+                        piecesSet--;
+                    }
+                    td.removeClass('set');
+                    td.removeAttr('data-piece');
+                });
+
+                function moveAt(e) {
+                    view.style.left = e.pageX - shiftX - 8 + 'px';
+                    view.style.top = e.pageY - shiftY + 'px';
+                }
+
+                function getRowAndCol(e) {
+                    var offset = solutionArea.offset();
+                    var containerX = e.pageX - offset.left;
+                    var containerY = e.pageY - offset.top;
+                    var row = Math.round((containerY - shiftY) / tableCellWidth);
+                    var column = Math.round((containerX - shiftX) / tableCellWidth);
+                    return { row: row, column: column };
+                }
+
+                view.style.zIndex = 1000; // над другими элементами
+                view.style.position = 'absolute';
+                document.body.appendChild(view);
+                moveAt(e);
+
+                cell.ontouchmove = document.onmousemove = function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    moveAt(e);
+                };
+
+                cell.ontouchend = cell.onmouseup = function (e) {
+                    var row = void 0,
+                        column = void 0;
+
+                    var _getRowAndCol2 = getRowAndCol(e);
+
+                    row = _getRowAndCol2.row;
+                    column = _getRowAndCol2.column;
+
+                    var rowPosition = row * tableCellWidth;
+                    var columnPosition = column * tableCellWidth;
+                    var currentPieceCells = [];
+                    currentPieceTdCoordinates.every(function (item) {
+                        var tdRow = parseInt(item.row) + row;
+                        var tdCol = parseInt(item.column) + column;
+                        var cell = computed.find('#td-' + tdRow + '-' + tdCol).not('.set').not('.border-cell');
+
+                        if (cell.length > 0) {
+                            currentPieceCells.push(cell);
+                        } else {
+                            isPieceSet = false;
+                            return false;
+                        }
+
+                        return true;
+                    });
+
+                    solutionArea.append(view);
+
+                    if (isPieceSet) {
+                        currentPieceCells.forEach(function (item) {
+                            item.addClass('set');
+                            item.attr('data-piece', (0, _jquery2.default)(view).attr('id'));
+                        });
+                        view.style.left = columnPosition - 8 + 'px';
+                        view.style.top = rowPosition + 'px';
+                        view.style.display = 'block';
+                        (0, _jquery2.default)(view).addClass('pieceSet');
+                        piecesSet++;
+                    } else {
+                        view.style.position = '';
+                        view.style.left = '';
+                        view.style.top = '';
+                        view.style.display = '';
+                        (0, _jquery2.default)(view).removeClass('pieceSet');
+                    }
+
+                    cell.ontouchmove = document.onmousemove = null;
+                    cell.ontouchend = cell.onmouseup = null;
+                    view.style.zIndex = '';
+
+                    console.log(piecesSet);
+                    if (piecesSet == solutionLength) {
+                        alertWithInterval('Congratulations!', 50);
+                        computed.find('.piece').each(placePieceNoInterval);
+                        level++;
+                        score = parseInt(score) + parseInt(scoreForLevel);
+                        saveToLocalStorage();
+                        computed.find('#give-up, #add-piece').prop('disabled', true);
+                        computed.find('#next').prop('disabled', false);
+                    }
+                };
+            };
+
+            cell.ondragstart = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            };
+        });
+
+        view.ondragstart = function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+            return false;
+        };
+    });
+}
+
+function placePiece() {
+    var index = parseInt((0, _jquery2.default)(this).attr('id').replace('piece', ''));
+    setTimeoutForCoveringPiece(solutionPieces[index], (0, _jquery2.default)(this));
+}
+
+function placePieceNoInterval() {
+    var piece = (0, _jquery2.default)(this);
+    var left = parseInt(piece.css('left'));
+    var top = parseInt(piece.css('top'));
+    var row = Math.round(top / tableCellWidth);
+    var column = Math.round((left + 8) / tableCellWidth);
+    var currentCoordinatesAttribute = piece.attr('data-nodes');
+    var currentPieceTdCoordinates = currentCoordinatesAttribute.split(/\s*-\s*/).map(function (item) {
+        var coordinates = item.split(/\s*,\s*/);
+        return [parseInt(coordinates[0]) + row, parseInt(coordinates[1]) + column];
+    });
+
+    var index = parseInt(piece.attr('id').replace('piece', ''));
+    var solutionPiece = solutionPieces[index];
+    coverPieceInTable(new _classes.Piece(currentPieceTdCoordinates, solutionPiece.color));
+
+    //coverPieceInTable(solutionPieces[index]);
+
+    piece.remove();
+}
+
+function setTimeoutForCoveringPiece(piece, removedPiece) {
+    return new Promise(function (resolve) {
+        if (!piece) return;
+        stepOfInterval++;
+        setTimeout(function () {
+            coverPieceInTable(piece);
+            if (removedPiece) {
+                removedPiece.remove();
+            }
+            resolve();
+        }, interval * stepOfInterval);
+    });
+}
+
+function coverPieceInTable(piece) {
+    var nodes = piece.nodes;
+    var backgroundColor = piece.color;
+    for (var i = 0; i < nodes.length; i++) {
+        var row = nodes[i].row;
+        var column = nodes[i].column;
+        var td = computed.find('#td-' + row + '-' + column);
+        var border = '1px dashed #121212';
+        td.css({ backgroundColor: backgroundColor, /*boxShadow,*/border: border });
+        td.addClass('set');
+    }
+}
+
+function alertWithInterval(message) {
+    var interval = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 50;
+
+    setTimeout(function () {
+        alert(message);
+    }, interval);
+}
+
+function printLevel() {
+    computed.find(".levelSpan").html(level);
+}
+
+function printScore() {
+    computed.find(".scoreSpan").html(score);
+}
+
+function initialSetUp() {
+    resetField();
+    printLevel();
+    printScore();
+}
+
+function resetField() {
+    computed.find('td.cell').removeClass('set').css('backgroundColor', '').removeAttr('data-piece');
+    computed.find('.piece').remove();
+}
+
+(0, _jquery2.default)(document).ready(function () {
+    var pieceSelectionArea = (0, _jquery2.default)('.pieceSelectionArea');
+    (0, _pieceSelection.setUpPieceSelectionArea)(pieceSelectionArea.get(0), 'select-all', 'deselect-all');
+    pieceSelectionArea.hide();
+
+    computed = (0, _jquery2.default)('.computed');
+    creative = (0, _jquery2.default)('.creative');
+    restoreFromLocalStorage();
+    generatePolyminoTable();
+    var solutionArea = computed.find('div.solutionArea');
+
+    computed.find('#add-piece').click(function () {
+        if (score - pieceCost < 0) {
+            alertWithInterval("You haven't got enough money!");
+            return;
+        }
+        score = score - pieceCost;
+        saveToLocalStorage();
+        printScore();
+
+        var allPieces = computed.find('.piece');
+        var removedPiece = (0, _jquery2.default)(allPieces[Math.floor(Math.random() * allPieces.length)]);
+
+        if (removedPiece.hasClass('pieceSet')) {
+            var left = parseInt(removedPiece.css('left'));
+            var top = parseInt(removedPiece.css('top'));
+            var row = Math.round(top / tableCellWidth);
+            var column = Math.round((left + 8) / tableCellWidth);
+            var currentCoordinatesAttribute = removedPiece.attr('data-nodes');
+            var currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(function (item) {
+                return _classes.Node.fromString(item);
+            });
+
+            currentPieceTdCoordinates.forEach(function (item) {
+                var tdRow = parseInt(item.row) + row;
+                var tdCol = parseInt(item.column) + column;
+                var td = computed.find('#td-' + tdRow + '-' + tdCol);
+                td.removeClass('set');
+                td.removeAttr('data-piece');
+            });
+
+            removedPiece.css({
+                position: '',
+                left: '',
+                top: '',
+                display: ''
+            });
+            removedPiece.removeClass('pieceSet');
+
+            piecesSet--;
+        }
+
+        var index = parseInt(removedPiece.attr('id').replace('piece', ''));
+        var solutionPiece = solutionPieces[index];
+
+        solutionPiece.nodes.forEach(function (node) {
+            var solutionRow = node.row;
+            var solutionColumn = node.column;
+            var td = computed.find('#td-' + solutionRow + '-' + solutionColumn);
+            var pieceId = td.attr('data-piece');
+            if (!pieceId) {
+                return;
+            }
+            piecesSet--;
+            console.log(piecesSet);
+            var coveringPiece = computed.find('#' + pieceId);
+            var left = parseInt(coveringPiece.css('left'));
+            var top = parseInt(coveringPiece.css('top'));
+            var row = Math.round(top / tableCellWidth);
+            var column = Math.round((left + 8) / tableCellWidth);
+            var currentCoordinatesAttribute = coveringPiece.attr('data-nodes');
+            var currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(function (item) {
+                return _classes.Node.fromString(item);
+            });
+
+            currentPieceTdCoordinates.forEach(function (item) {
+                var tdRow = parseInt(item.row) + row;
+                var tdCol = parseInt(item.column) + column;
+                var td = computed.find('#td-' + tdRow + '-' + tdCol);
+                td.removeClass('set');
+                td.removeAttr('data-piece');
+            });
+
+            coveringPiece.css({
+                position: '',
+                left: '',
+                top: '',
+                display: ''
+            });
+            coveringPiece.removeClass('pieceSet');
+        });
+
+        stepOfInterval = 0;
+        setTimeoutForCoveringPiece(solutionPiece, removedPiece).then(function () {
+            piecesSet++;
+            console.log(piecesSet);
+            if (piecesSet == solutionLength) {
+                alertWithInterval('Congratulations!', 50);
+                computed.find('.piece').each(placePieceNoInterval);
+                level++;
+                score = parseInt(score) + parseInt(scoreForLevel);
+                saveToLocalStorage();
+                computed.find('#give-up, #add-piece').prop('disabled', true);
+                computed.find('#next').prop('disabled', false);
+            }
+        });
+    });
+
+    computed.find('#give-up').click(function () {
+        if (score - giveUpCost < 0) {
+            alertWithInterval("You haven't got enough money!");
+            return;
+        }
+        score = score - giveUpCost;
+        saveToLocalStorage();
+        printScore();
+
+        stepOfInterval = 0;
+        computed.find('.piece[style]').each(placePiece);
+        computed.find('.piece').each(placePiece);
+
+        setTimeout(function () {
+            computed.find('#next').prop('disabled', false);
+        }, interval * stepOfInterval);
+
+        level++;
+        score = parseInt(score) + parseInt(scoreForLevel);
+        saveToLocalStorage();
+        computed.find('#give-up, #add-piece').prop('disabled', true);
+    });
+
+    computed.find('#next').click(function () {
+        computed.find('#give-up, #add-piece').prop('disabled', false);
+        (0, _jquery2.default)(this).prop('disabled', true);
+        generatePolyminoTable();
+    });
+
+    var uncheckedPieces = [];
+
+    (0, _jquery2.default)('#computed').change(function () {
+        if ((0, _jquery2.default)(this).prop("checked")) {
+            //setup computed mode
+            (0, _jquery2.default)('main.mdl-layout__content.computed').show();
+            (0, _jquery2.default)('main.mdl-layout__content.creative').hide();
+
+            pieceSelectionArea.hide();
+            pieceSelectionArea.find('.pieceContainer').not('.selected').each(function (i, piece) {
+                uncheckedPieces.push((0, _jquery2.default)(piece));
+                (0, _jquery2.default)(piece).click();
+            });
+        }
+    });
+
+    (0, _jquery2.default)('#creative').change(function () {
+        if ((0, _jquery2.default)(this).prop("checked")) {
+            //setup creative mode
+            (0, _jquery2.default)('main.mdl-layout__content.computed').hide();
+            (0, _jquery2.default)('main.mdl-layout__content.creative').show();
+
+            uncheckedPieces.forEach(function (piece) {
+                return piece.click();
+            });
+            uncheckedPieces = [];
+            pieceSelectionArea.show();
+        }
+    });
+});
+
+/***** SCRIPT-CREATIVE.JS *****/
+
+function startGameCreative(arr) {
+    var isGameFinished = false;
+    var solutionArea = creative.find('div.solutionArea');
+    stepOfIntervalCreative = 0;
+    piecesSetCreative = 0;
+    //timeStart = performance && performance.now? performance.now() : 0;
+    solutionPiecesCreative = findSolution(arr);
+
+    if (!solutionPiecesCreative) {
+        alertWithInterval('There is no solution!', interval * (stepOfIntervalCreative + 1));
+        creative.find('#give-up-creative').hide();
+        return;
+    }
+
+    var solutionLengthCreative = solutionPiecesCreative.length;
+    (0, _shufflePieces.shufflePieces)(solutionPiecesCreative);
+
+    solutionPiecesCreative.forEach(function (piece, index) {
+        var view = piece.getView();
+        solutionArea.append(view);
+        view.setAttribute('id', 'piece' + index);
+
+        (0, _jquery2.default)(view).find('td.pieceCell').each(function () {
+            var cell = this;
+
+            cell.ontouchcancel = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            };
+
+            cell.ontouchstart = cell.onmousedown = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                view.style.display = '';
+                var coords = (0, _getCoordinates.getCoordinates)(view);
+                var shiftX = e.pageX - coords.left;
+                var shiftY = e.pageY - coords.top;
+
+                var isPieceSet = true;
+                var currentCoordinatesAttributeCreative = view.getAttribute('data-nodes');
+                var currentPieceTdCoordinatesCreative = currentCoordinatesAttributeCreative.split('-').map(function (item) {
+                    return _classes.Node.fromString(item);
+                });
+
+                var _getRowAndCol3 = getRowAndCol(e),
+                    row = _getRowAndCol3.row,
+                    column = _getRowAndCol3.column;
+
+                var isPieceRemoved = false;
+                currentPieceTdCoordinatesCreative.forEach(function (item) {
+                    var tdRow = parseInt(item.row) + row;
+                    var tdCol = parseInt(item.column) + column;
+                    var td = creative.find('#td-' + tdRow + '-' + tdCol);
+                    if (td.hasClass('set') && !isPieceRemoved) {
+                        isPieceRemoved = true;
+                        piecesSetCreative--;
+                    }
+                    td.removeClass('set');
+                });
+
+                function moveAt(e) {
+                    view.style.left = e.pageX - shiftX - 8 + 'px';
+                    view.style.top = e.pageY - shiftY + 'px';
+                }
+
+                function getRowAndCol(e) {
+                    var offset = solutionArea.offset();
+                    var containerX = e.pageX - offset.left;
+                    var containerY = e.pageY - offset.top;
+                    var row = Math.round((containerY - shiftY) / tableCellWidth);
+                    var column = Math.round((containerX - shiftX) / tableCellWidth);
+                    return { row: row, column: column };
+                }
+
+                view.style.zIndex = 1000; // над другими элементами
+                view.style.position = 'absolute';
+                document.body.appendChild(view);
+                moveAt(e);
+
+                cell.ontouchmove = document.onmousemove = function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    moveAt(e);
+                };
+
+                cell.ontouchend = cell.onmouseup = function (e) {
+                    var row = void 0,
+                        column = void 0;
+
+                    var _getRowAndCol4 = getRowAndCol(e);
+
+                    row = _getRowAndCol4.row;
+                    column = _getRowAndCol4.column;
+
+                    var rowPosition = row * tableCellWidth;
+                    var columnPosition = column * tableCellWidth;
+                    var currentPieceCells = [];
+                    currentPieceTdCoordinatesCreative.every(function (item) {
+                        var tdRow = parseInt(item.row) + row;
+                        var tdCol = parseInt(item.column) + column;
+                        var cell = creative.find('#td-' + tdRow + '-' + tdCol).not('.set').not('.border-cell');
+
+                        if (cell.length > 0) {
+                            currentPieceCells.push(cell);
+                        } else {
+                            isPieceSet = false;
+                            return false;
+                        }
+
+                        return true;
+                    });
+
+                    solutionArea.append(view);
+
+                    if (isPieceSet) {
+                        currentPieceCells.forEach(function (item) {
+                            item.addClass('set');
+                        });
+                        view.style.left = columnPosition - 4 + 'px';
+                        view.style.top = rowPosition - 4 + 'px';
+                        view.style.display = 'block';
+                        piecesSetCreative++;
+                    } else {
+                        view.style.position = '';
+                        view.style.left = '';
+                        view.style.top = '';
+                        view.style.display = '';
+                    }
+
+                    cell.ontouchmove = document.onmousemove = null;
+                    cell.ontouchend = cell.onmouseup = null;
+                    view.style.zIndex = '';
+
+                    console.log(piecesSetCreative);
+                    if (piecesSetCreative == solutionLengthCreative && !isGameFinished) {
+                        isGameFinished = true;
+                        creative.find('#give-up-creative').hide();
+                        alertWithInterval('Congratulations!', 50);
+                    }
+                };
+            };
+
+            cell.ondragstart = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            };
+        });
+
+        view.ondragstart = function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+            return false;
+        };
+    });
+}
+
+function setTimeoutForCoveringPieceCreative(piece, removedPiece) {
+    return new Promise(function (resolve) {
+        if (!piece) return;
+        stepOfIntervalCreative++;
+        setTimeout(function () {
+            coverPieceInTableCreative(piece);
+            if (removedPiece) {
+                removedPiece.remove();
+            }
+            resolve();
+        }, interval * stepOfIntervalCreative);
+    });
+}
+
+function coverPieceInTableCreative(piece) {
+    var nodes = piece.nodes;
+    var backgroundColor = piece.color;
+    for (var i = 0; i < nodes.length; i++) {
+        var row = nodes[i].row;
+        var column = nodes[i].column;
+        var td = creative.find('#td-' + row + '-' + column);
+        var border = '1px dashed #121212';
+        td.css({ backgroundColor: backgroundColor, border: border });
+        td.addClass('set');
+    }
+}
+
+function setInitialPolyminoTable() {
+    var table = creative.find('table.polytable');
+    numberOfRowsCreative = 8;
+    numberOfColumnsCreative = 8;
+    for (var i = 0; i < 8; i++) {
+        var row = (0, _jquery2.default)('<tr class=\'field-row\' id=\'tr-' + i + '\'></tr>');
+        for (var j = 0; j < 8; j++) {
+            row.append((0, _jquery2.default)('<td class=\'cell empty-cell\' id=\'td-' + i + '-' + j + '\'></td>'));
+        }
+        table.append(row);
+    }
+
+    table.find('#td-3-3, #td-3-4, #td-4-3, #td-4-4').removeClass('empty-cell').addClass('border-cell');
+}
+
+// Transform table
+function addColumn() {
+    creative.find('tr.field-row').each(function (row) {
+        (0, _jquery2.default)(this).append((0, _jquery2.default)('<td class=\'cell empty-cell\' id=\'td-' + row + '-' + numberOfColumnsCreative + '\'></td>'));
+    });
+    numberOfColumnsCreative++;
+}
+
+function addRow() {
+    var row = (0, _jquery2.default)('<tr class="field-row" id="tr-' + numberOfRowsCreative + '"></tr>');
+    for (var i = 0; i < numberOfColumnsCreative; i++) {
+        row.append((0, _jquery2.default)('<td class=\'cell empty-cell\' id=\'td-' + numberOfRowsCreative + '-' + i + '\'></td>'));
+    }
+
+    creative.find('table.polytable tr.field-row').last().after(row);
+    numberOfRowsCreative++;
+}
+
+function removeColumn() {
+    if (numberOfColumnsCreative < 2) {
+        return;
+    }
+    creative.find('tr.field-row').each(function () {
+        //noinspection JSValidateTypes
+        (0, _jquery2.default)(this).children('td.cell').last().remove();
+    });
+    numberOfColumnsCreative--;
+}
+
+function removeRow() {
+    if (numberOfRowsCreative < 2) {
+        return;
+    }
+    creative.find('tr.field-row').last().remove();
+    numberOfRowsCreative--;
+}
+
+function resetFieldCreative() {
+    creative.find('td.cell').removeClass('set').css('backgroundColor', '').css('border', '');
+    creative.find('.piece').remove();
+    creative.find('#give-up-creative').hide();
+}
+
+(0, _jquery2.default)(document).ready(function () {
+    setInitialPolyminoTable();
+    (0, _statistics.countStatistic)(creative);
+    var solutionArea = creative.find('div.solutionArea');
+    var pieceSelectionArea = (0, _jquery2.default)('.pieceSelectionArea');
+
+    creative.find('#go').click(function () {
+        resetFieldCreative();
+        if (creative.find('span.statisticSpan .bad').length > 0) {
+            alert("It's impossible to cover table with such number of empty cells!");
+            return;
+        }
+        (0, _shufflePieces.shufflePieces)(_pieces.pieces);
+        creative.find('#give-up-creative').show();
+
+        var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
+        startGameCreative(arr);
+    });
+
+    creative.find('#give-up-creative').click(function () {
+        function placePiece() {
+            var index = parseInt((0, _jquery2.default)(this).attr('id').replace('piece', ''));
+            setTimeoutForCoveringPieceCreative(solutionPiecesCreative[index], (0, _jquery2.default)(this));
+        }
+
+        stepOfIntervalCreative = 0;
+        creative.find('.piece[style]').each(placePiece);
+        creative.find('.piece').each(placePiece);
+        (0, _jquery2.default)(this).hide();
+    });
+
+    (0, _jquery2.default)(document).on('click', '.creative td.cell', function () {
+        resetFieldCreative();
+
+        if ((0, _jquery2.default)(this).hasClass('empty-cell')) {
+            (0, _jquery2.default)(this).removeClass('empty-cell').addClass('border-cell');
+            (0, _statistics.countStatistic)(creative);
+        } else {
+            (0, _jquery2.default)(this).removeClass('border-cell').addClass('empty-cell');
+            (0, _statistics.countStatistic)(creative);
+        }
+    });
+
+    creative.find("#resetBarrierCells").click(function () {
+        resetFieldCreative();
+        creative.find(".polytable td").removeClass('border-cell').addClass('empty-cell').css('backgroundColor', '');
+        (0, _statistics.countStatistic)(creative);
+    });
+
+    creative.find('div.arrow-div').click(function () {
+        resetFieldCreative();
+        var direction = (0, _jquery2.default)(this).removeClass('arrow-div').attr('class').replace('arrow-', '');
+
+        switch (direction) {
+            case 'left':
+                removeColumn();
+                break;
+            case 'right':
+                addColumn();
+                break;
+            case 'top':
+                removeRow();
+                break;
+            case 'bottom':
+                addRow();
+                break;
+        }
+
+        (0, _jquery2.default)(this).addClass('arrow-div');
+        (0, _statistics.countStatistic)(creative);
+    });
+
+    creative.find('#countSolutions').click(function () {
+        var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
+        countSolutions(arr);
+    });
+});
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -297,7 +1259,7 @@ exports.DataObject = DataObject;
 exports.RootObject = RootObject;
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -308,7 +1270,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.piecesLength = exports.deactivatePiece = exports.activatePiece = exports.pieces = undefined;
 
-var _classes = __webpack_require__(0);
+var _classes = __webpack_require__(1);
 
 Array.prototype.remove = function () {
     var what = void 0,
@@ -401,7 +1363,7 @@ exports.deactivatePiece = deactivatePiece;
 exports.piecesLength = piecesLength;
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -412,7 +1374,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.transformTableToMatrix = undefined;
 
-var _jquery = __webpack_require__(3);
+var _jquery = __webpack_require__(4);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -436,7 +1398,7 @@ function transformTableToMatrix(container) {
 exports.transformTableToMatrix = transformTableToMatrix;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10696,7 +11658,7 @@ return jQuery;
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10705,11 +11667,11 @@ return jQuery;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.searchBruijn = undefined;
+exports.countBruijnSolutions = exports.searchBruijn = undefined;
 
-var _pieces = __webpack_require__(1);
+var _pieces = __webpack_require__(2);
 
-var _classes = __webpack_require__(0);
+var _classes = __webpack_require__(1);
 
 function getNextBruijnHole(arr) {
     for (var column = 0; column < arr[0].length; column++) {
@@ -10772,10 +11734,33 @@ function removePiece(arr, nodes, i, j) {
     }
 }
 
+// additional functions
+function countBruijnSolutions(arr) {
+    var next = getNextBruijnHole(arr);
+    if (next) {
+        var numberOfSolutions = 0;
+        for (var index = 0; index < _pieces.pieces.length; index++) {
+            var piece = _pieces.pieces[index];
+            var nodes = piece.nodes;
+            var root = piece.root;
+            var offsetX = next.row - root.row;
+            var offsetY = next.column - root.column;
+            if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
+                placePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                numberOfSolutions += searchBruijn(arr);
+                removePiece(arr, nodes, next.row - root.row, next.column - root.column);
+            }
+        }
+    } else {
+        return 1;
+    }
+}
+
 exports.searchBruijn = searchBruijn;
+exports.countBruijnSolutions = countBruijnSolutions;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10784,11 +11769,11 @@ exports.searchBruijn = searchBruijn;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.printDLX = exports.searchDLX = exports.createXListForExactCoverProblem = undefined;
+exports.countDLXsolutions = exports.printDLX = exports.searchDLX = exports.createXListForExactCoverProblem = undefined;
 
-var _pieces = __webpack_require__(1);
+var _pieces = __webpack_require__(2);
 
-var _classes = __webpack_require__(0);
+var _classes = __webpack_require__(1);
 
 // Prepare for DLX
 function createXListForExactCoverProblem(arr) {
@@ -10996,12 +11981,45 @@ function printDLX(solution) {
     return pieces;
 }
 
+//additional functions
+function countDLXsolutions(header, k) {
+    if (header.right == header) {
+        return 1;
+    } else {
+        var numberOfSolutions = 0;
+        var current = chooseColumn(header);
+        coverColumn(current);
+        var row = current.down;
+
+        while (row != current) {
+            var j = row.right;
+            while (j != row) {
+                coverColumn(j.column);
+                j = j.right;
+            }
+            numberOfSolutions += searchDLX(header, k + 1);
+
+            current = row.column;
+            j = row.left;
+            while (j != row) {
+                uncoverColumn(j.column);
+                j = j.left;
+            }
+            row = row.down;
+        }
+
+        uncoverColumn(current);
+        return numberOfSolutions;
+    }
+}
+
 exports.createXListForExactCoverProblem = createXListForExactCoverProblem;
 exports.searchDLX = searchDLX;
 exports.printDLX = printDLX;
+exports.countDLXsolutions = countDLXsolutions;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11036,7 +12054,7 @@ function getCoordinates(elem) {
 exports.getCoordinates = getCoordinates;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11047,7 +12065,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.setUpPieceSelectionArea = undefined;
 
-var _pieces = __webpack_require__(1);
+var _pieces = __webpack_require__(2);
 
 function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
     var containerPieceMap = new WeakMap();
@@ -11107,7 +12125,7 @@ function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
 exports.setUpPieceSelectionArea = setUpPieceSelectionArea;
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11138,7 +12156,7 @@ function shufflePieces(arrayOfPieces) {
 exports.shufflePieces = shufflePieces;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11149,11 +12167,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.countStatistic = undefined;
 
-var _classes = __webpack_require__(0);
+var _classes = __webpack_require__(1);
 
-var _transformTableToMatrix = __webpack_require__(2);
+var _transformTableToMatrix = __webpack_require__(3);
 
-var _pieces = __webpack_require__(1);
+var _pieces = __webpack_require__(2);
 
 // Counting connected components in a table
 function countStatistic(creative) {
@@ -11276,935 +12294,6 @@ function checkIfProperNumber(number) {
 }
 
 exports.countStatistic = countStatistic;
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _jquery = __webpack_require__(3);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _classes = __webpack_require__(0);
-
-var _dlx = __webpack_require__(5);
-
-var _debruijn = __webpack_require__(4);
-
-var _pieces = __webpack_require__(1);
-
-var _pieceSelection = __webpack_require__(7);
-
-var _transformTableToMatrix = __webpack_require__(2);
-
-var _shufflePieces = __webpack_require__(8);
-
-var _statistics = __webpack_require__(9);
-
-var _getCoordinates = __webpack_require__(6);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var interval = 200;
-var stepOfInterval = 0;
-var piecesSet = 0;
-var solutionLength = void 0;
-var solutionPieces = void 0;
-//let timeStart;
-var scoreForLevel = 500;
-
-var stepOfIntervalCreative = 0;
-var piecesSetCreative = 0;
-var solutionPiecesCreative = void 0;
-
-var repeats = 2;
-var level = 0;
-var score = 0;
-var pieceCost = 400;
-var giveUpCost = void 0;
-var tableCellWidth = 35;
-
-var computed = void 0;
-var creative = void 0;
-
-var numberOfRowsCreative = void 0,
-    numberOfColumnsCreative = void 0;
-
-function saveToLocalStorage() {
-    if (localStorage) {
-        localStorage['level'] = parseInt(level);
-        localStorage['score'] = parseInt(score);
-    }
-}
-
-function restoreFromLocalStorage() {
-    if (localStorage) {
-        if (parseInt(localStorage.getItem('level'))) {
-            level = parseInt(localStorage['level']);
-        } else {
-            localStorage['level'] = level = 0;
-        }
-
-        if (parseInt(localStorage.getItem('score'))) {
-            score = parseInt(localStorage['score']);
-        } else {
-            localStorage['score'] = score = 0;
-        }
-    }
-}
-
-function findSolution(arr) {
-    var freeCells = 0,
-        barriers = 0;
-
-    for (var i = 0; i < arr.length; i++) {
-        for (var j = 0; j < arr[i].length; j++) {
-            if (arr[i][j] == 0) {
-                freeCells++;
-            } else {
-                barriers++;
-            }
-        }
-    }
-
-    if (barriers <= 8 || barriers > 8 && barriers <= 12 && freeCells + barriers < 96) {
-        console.log('debruijn');
-        var solution = [];
-        if (!(0, _debruijn.searchBruijn)(arr, solution)) {
-            return;
-        }
-        return solution;
-    } else {
-        console.log('dlx');
-        var header = (0, _dlx.createXListForExactCoverProblem)(arr);
-        var _solution = [];
-        if (!(0, _dlx.searchDLX)(header, _solution, 0)) {
-            return;
-        }
-        return (0, _dlx.printDLX)(_solution);
-    }
-}
-
-/***** SCRIPT.JS *****/
-function generatePolyminoTable() {
-    saveToLocalStorage();
-    initialSetUp();
-    var table = computed.find('table.polytable');
-
-    var _countNumbersForTable = countNumbersForTable(),
-        numberOfRows = _countNumbersForTable.numberOfRows,
-        numberOfColumns = _countNumbersForTable.numberOfColumns,
-        numberOfBarriers = _countNumbersForTable.numberOfBarriers,
-        area = _countNumbersForTable.area;
-
-    table.empty();
-    for (var i = 0; i < numberOfRows; i++) {
-        var row = (0, _jquery2.default)('<tr class=\'field-row\' id=\'tr-' + i + '\'></tr>');
-        for (var j = 0; j < numberOfColumns; j++) {
-            var td = (0, _jquery2.default)('<td class=\'cell empty-cell\' id=\'td-' + i + '-' + j + '\'></td>');
-            row.append(td);
-        }
-        table.append(row);
-    }
-
-    for (var _i = 0; _i < numberOfBarriers * 4; _i++) {
-        var allCells = computed.find('td.empty-cell');
-        (0, _jquery2.default)(allCells[Math.floor(Math.random() * (area - _i))]).removeClass('empty-cell').addClass('border-cell');
-    }
-
-    (0, _shufflePieces.shufflePieces)(_pieces.pieces);
-    var arr = (0, _transformTableToMatrix.transformTableToMatrix)(computed);
-    startGame(arr);
-}
-
-function countNumbersForTable() {
-    var numberOfPieces = Math.floor(level / repeats) + 3;
-    giveUpCost = Math.floor(pieceCost * numberOfPieces * 0.8 / 100) * 100;
-    computed.find('span.pieceCost').text(pieceCost);
-    computed.find('span.giveUpCost').text(giveUpCost);
-
-    var numberOfBarriers = level % repeats * 2;
-    var area = (numberOfPieces + numberOfBarriers) * 4;
-    var numberOfRows = void 0,
-        numberOfColumns = void 0;
-    var side = void 0,
-        index = void 0;
-    for (numberOfRows = index = 4, side = area / index, numberOfColumns = Math.floor(side); index < numberOfPieces + numberOfBarriers; index++, numberOfRows = index, side = area / index, numberOfColumns = Math.floor(side)) {
-        if (side == numberOfColumns && Math.abs(numberOfColumns - numberOfRows) <= 5) {
-            break;
-        }
-    }
-
-    if (numberOfRows > numberOfColumns) {
-        var _ref = [numberOfColumns, numberOfRows];
-        numberOfRows = _ref[0];
-        numberOfColumns = _ref[1];
-    }
-
-    var tableWidth = tableCellWidth * numberOfColumns + 32 * 2;
-    var tableHeight = tableCellWidth * numberOfRows + 32 * 2;
-    var windowWidth = document.body.scrollWidth;
-
-    if (tableWidth > windowWidth) {
-        if (tableHeight > windowWidth) {
-            numberOfColumns = 4;
-            numberOfRows = numberOfPieces + numberOfBarriers;
-        } else {
-            var _ref2 = [numberOfColumns, numberOfRows];
-            numberOfRows = _ref2[0];
-            numberOfColumns = _ref2[1];
-        }
-    }
-
-    return { numberOfRows: numberOfRows, numberOfColumns: numberOfColumns, numberOfBarriers: numberOfBarriers, area: area };
-}
-
-function startGame(arr) {
-    stepOfInterval = 0;
-    //timeStart = performance && performance.now? performance.now() : 0;
-    piecesSet = 0;
-    var solutionArea = computed.find('div.solutionArea');
-
-    solutionPieces = findSolution(arr);
-    if (!solutionPieces) {
-        console.log('no solution');
-        generatePolyminoTable();
-        return;
-    }
-
-    solutionLength = solutionPieces.length;
-
-    var numberOfRows = solutionPieces[0].maxrow - solutionPieces[0].minrow;
-    var numberOfCols = solutionPieces[0].maxcol - solutionPieces[0].mincol;
-    if (solutionPieces.every(function (piece) {
-        return piece.maxcol - piece.mincol == numberOfCols && piece.maxrow - piece.minrow == numberOfRows;
-    })) {
-        console.log('all pieces are the same');
-        generatePolyminoTable();
-        return;
-    }
-
-    (0, _shufflePieces.shufflePieces)(solutionPieces);
-
-    solutionPieces.forEach(function (piece, index) {
-        var view = piece.getView();
-        solutionArea.append(view);
-        view.setAttribute('id', 'piece' + index);
-
-        (0, _jquery2.default)(view).find('td.pieceCell').each(function () {
-            var cell = this;
-
-            cell.ontouchcancel = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-            };
-
-            cell.ontouchstart = cell.onmousedown = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-                view.style.display = '';
-                var coords = (0, _getCoordinates.getCoordinates)(view);
-                var shiftX = e.pageX - coords.left;
-                var shiftY = e.pageY - coords.top;
-
-                var isPieceSet = true;
-                var currentCoordinatesAttribute = view.getAttribute('data-nodes');
-                var currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(function (item) {
-                    return _classes.Node.fromString(item);
-                });
-
-                var row = void 0,
-                    column = void 0;
-
-                var _getRowAndCol = getRowAndCol(e);
-
-                row = _getRowAndCol.row;
-                column = _getRowAndCol.column;
-
-                var isPieceRemoved = false;
-                currentPieceTdCoordinates.forEach(function (item) {
-                    var tdRow = parseInt(item.row) + row;
-                    var tdCol = parseInt(item.column) + column;
-                    var td = computed.find('#td-' + tdRow + '-' + tdCol);
-                    if (td.hasClass('set') && !isPieceRemoved) {
-                        isPieceRemoved = true;
-                        piecesSet--;
-                    }
-                    td.removeClass('set');
-                    td.removeAttr('data-piece');
-                });
-
-                function moveAt(e) {
-                    view.style.left = e.pageX - shiftX - 8 + 'px';
-                    view.style.top = e.pageY - shiftY + 'px';
-                }
-
-                function getRowAndCol(e) {
-                    var offset = solutionArea.offset();
-                    var containerX = e.pageX - offset.left;
-                    var containerY = e.pageY - offset.top;
-                    var row = Math.round((containerY - shiftY) / tableCellWidth);
-                    var column = Math.round((containerX - shiftX) / tableCellWidth);
-                    return { row: row, column: column };
-                }
-
-                view.style.zIndex = 1000; // над другими элементами
-                view.style.position = 'absolute';
-                document.body.appendChild(view);
-                moveAt(e);
-
-                cell.ontouchmove = document.onmousemove = function (e) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    moveAt(e);
-                };
-
-                cell.ontouchend = cell.onmouseup = function (e) {
-                    var row = void 0,
-                        column = void 0;
-
-                    var _getRowAndCol2 = getRowAndCol(e);
-
-                    row = _getRowAndCol2.row;
-                    column = _getRowAndCol2.column;
-
-                    var rowPosition = row * tableCellWidth;
-                    var columnPosition = column * tableCellWidth;
-                    var currentPieceCells = [];
-                    currentPieceTdCoordinates.every(function (item) {
-                        var tdRow = parseInt(item.row) + row;
-                        var tdCol = parseInt(item.column) + column;
-                        var cell = computed.find('#td-' + tdRow + '-' + tdCol).not('.set').not('.border-cell');
-
-                        if (cell.length > 0) {
-                            currentPieceCells.push(cell);
-                        } else {
-                            isPieceSet = false;
-                            return false;
-                        }
-
-                        return true;
-                    });
-
-                    solutionArea.append(view);
-
-                    if (isPieceSet) {
-                        currentPieceCells.forEach(function (item) {
-                            item.addClass('set');
-                            item.attr('data-piece', (0, _jquery2.default)(view).attr('id'));
-                        });
-                        view.style.left = columnPosition - 8 + 'px';
-                        view.style.top = rowPosition + 'px';
-                        view.style.display = 'block';
-                        (0, _jquery2.default)(view).addClass('pieceSet');
-                        piecesSet++;
-                    } else {
-                        view.style.position = '';
-                        view.style.left = '';
-                        view.style.top = '';
-                        view.style.display = '';
-                        (0, _jquery2.default)(view).removeClass('pieceSet');
-                    }
-
-                    cell.ontouchmove = document.onmousemove = null;
-                    cell.ontouchend = cell.onmouseup = null;
-                    view.style.zIndex = '';
-
-                    console.log(piecesSet);
-                    if (piecesSet == solutionLength) {
-                        alertWithInterval('Congratulations!', 50);
-                        computed.find('.piece').each(placePieceNoInterval);
-                        level++;
-                        score = parseInt(score) + parseInt(scoreForLevel);
-                        saveToLocalStorage();
-                        computed.find('#give-up, #add-piece').prop('disabled', true);
-                        computed.find('#next').prop('disabled', false);
-                    }
-                };
-            };
-
-            cell.ondragstart = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-                return false;
-            };
-        });
-
-        view.ondragstart = function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-            return false;
-        };
-    });
-}
-
-function placePiece() {
-    var index = parseInt((0, _jquery2.default)(this).attr('id').replace('piece', ''));
-    setTimeoutForCoveringPiece(solutionPieces[index], (0, _jquery2.default)(this));
-}
-
-function placePieceNoInterval() {
-    var piece = (0, _jquery2.default)(this);
-    var left = parseInt(piece.css('left'));
-    var top = parseInt(piece.css('top'));
-    var row = Math.round(top / tableCellWidth);
-    var column = Math.round((left + 8) / tableCellWidth);
-    var currentCoordinatesAttribute = piece.attr('data-nodes');
-    var currentPieceTdCoordinates = currentCoordinatesAttribute.split(/\s*-\s*/).map(function (item) {
-        var coordinates = item.split(/\s*,\s*/);
-        return [parseInt(coordinates[0]) + row, parseInt(coordinates[1]) + column];
-    });
-
-    var index = parseInt(piece.attr('id').replace('piece', ''));
-    var solutionPiece = solutionPieces[index];
-    coverPieceInTable(new _classes.Piece(currentPieceTdCoordinates, solutionPiece.color));
-
-    //coverPieceInTable(solutionPieces[index]);
-
-    piece.remove();
-}
-
-function setTimeoutForCoveringPiece(piece, removedPiece) {
-    return new Promise(function (resolve) {
-        if (!piece) return;
-        stepOfInterval++;
-        setTimeout(function () {
-            coverPieceInTable(piece);
-            if (removedPiece) {
-                removedPiece.remove();
-            }
-            resolve();
-        }, interval * stepOfInterval);
-    });
-}
-
-function coverPieceInTable(piece) {
-    var nodes = piece.nodes;
-    var backgroundColor = piece.color;
-    for (var i = 0; i < nodes.length; i++) {
-        var row = nodes[i].row;
-        var column = nodes[i].column;
-        var td = computed.find('#td-' + row + '-' + column);
-        var border = '1px dashed #121212';
-        td.css({ backgroundColor: backgroundColor, /*boxShadow,*/border: border });
-        td.addClass('set');
-    }
-}
-
-function alertWithInterval(message) {
-    var interval = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 50;
-
-    setTimeout(function () {
-        alert(message);
-    }, interval);
-}
-
-function printLevel() {
-    computed.find(".levelSpan").html(level);
-}
-
-function printScore() {
-    computed.find(".scoreSpan").html(score);
-}
-
-function initialSetUp() {
-    resetField();
-    printLevel();
-    printScore();
-}
-
-function resetField() {
-    computed.find('td.cell').removeClass('set').css('backgroundColor', '').removeAttr('data-piece');
-    computed.find('.piece').remove();
-}
-
-(0, _jquery2.default)(document).ready(function () {
-    var pieceSelectionArea = (0, _jquery2.default)('.pieceSelectionArea');
-    (0, _pieceSelection.setUpPieceSelectionArea)(pieceSelectionArea.get(0), 'select-all', 'deselect-all');
-    pieceSelectionArea.hide();
-
-    computed = (0, _jquery2.default)('.computed');
-    creative = (0, _jquery2.default)('.creative');
-    restoreFromLocalStorage();
-    generatePolyminoTable();
-    var solutionArea = computed.find('div.solutionArea');
-
-    computed.find('#add-piece').click(function () {
-        if (score - pieceCost < 0) {
-            alertWithInterval("You haven't got enough money!");
-            return;
-        }
-        score = score - pieceCost;
-        saveToLocalStorage();
-        printScore();
-
-        var allPieces = computed.find('.piece');
-        var removedPiece = (0, _jquery2.default)(allPieces[Math.floor(Math.random() * allPieces.length)]);
-
-        if (removedPiece.hasClass('pieceSet')) {
-            var left = parseInt(removedPiece.css('left'));
-            var top = parseInt(removedPiece.css('top'));
-            var row = Math.round(top / tableCellWidth);
-            var column = Math.round((left + 8) / tableCellWidth);
-            var currentCoordinatesAttribute = removedPiece.attr('data-nodes');
-            var currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(function (item) {
-                return _classes.Node.fromString(item);
-            });
-
-            currentPieceTdCoordinates.forEach(function (item) {
-                var tdRow = parseInt(item.row) + row;
-                var tdCol = parseInt(item.column) + column;
-                var td = computed.find('#td-' + tdRow + '-' + tdCol);
-                td.removeClass('set');
-                td.removeAttr('data-piece');
-            });
-
-            removedPiece.css({
-                position: '',
-                left: '',
-                top: '',
-                display: ''
-            });
-            removedPiece.removeClass('pieceSet');
-
-            piecesSet--;
-        }
-
-        var index = parseInt(removedPiece.attr('id').replace('piece', ''));
-        var solutionPiece = solutionPieces[index];
-
-        solutionPiece.nodes.forEach(function (node) {
-            var solutionRow = node.row;
-            var solutionColumn = node.column;
-            var td = computed.find('#td-' + solutionRow + '-' + solutionColumn);
-            var pieceId = td.attr('data-piece');
-            if (!pieceId) {
-                return;
-            }
-            piecesSet--;
-            console.log(piecesSet);
-            var coveringPiece = computed.find('#' + pieceId);
-            var left = parseInt(coveringPiece.css('left'));
-            var top = parseInt(coveringPiece.css('top'));
-            var row = Math.round(top / tableCellWidth);
-            var column = Math.round((left + 8) / tableCellWidth);
-            var currentCoordinatesAttribute = coveringPiece.attr('data-nodes');
-            var currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(function (item) {
-                return _classes.Node.fromString(item);
-            });
-
-            currentPieceTdCoordinates.forEach(function (item) {
-                var tdRow = parseInt(item.row) + row;
-                var tdCol = parseInt(item.column) + column;
-                var td = computed.find('#td-' + tdRow + '-' + tdCol);
-                td.removeClass('set');
-                td.removeAttr('data-piece');
-            });
-
-            coveringPiece.css({
-                position: '',
-                left: '',
-                top: '',
-                display: ''
-            });
-            coveringPiece.removeClass('pieceSet');
-        });
-
-        stepOfInterval = 0;
-        setTimeoutForCoveringPiece(solutionPiece, removedPiece).then(function () {
-            piecesSet++;
-            console.log(piecesSet);
-            if (piecesSet == solutionLength) {
-                alertWithInterval('Congratulations!', 50);
-                computed.find('.piece').each(placePieceNoInterval);
-                level++;
-                score = parseInt(score) + parseInt(scoreForLevel);
-                saveToLocalStorage();
-                computed.find('#give-up, #add-piece').prop('disabled', true);
-                computed.find('#next').prop('disabled', false);
-            }
-        });
-    });
-
-    computed.find('#give-up').click(function () {
-        if (score - giveUpCost < 0) {
-            alertWithInterval("You haven't got enough money!");
-            return;
-        }
-        score = score - giveUpCost;
-        saveToLocalStorage();
-        printScore();
-
-        stepOfInterval = 0;
-        computed.find('.piece[style]').each(placePiece);
-        computed.find('.piece').each(placePiece);
-
-        setTimeout(function () {
-            computed.find('#next').prop('disabled', false);
-        }, interval * stepOfInterval);
-
-        level++;
-        score = parseInt(score) + parseInt(scoreForLevel);
-        saveToLocalStorage();
-        computed.find('#give-up, #add-piece').prop('disabled', true);
-    });
-
-    computed.find('#next').click(function () {
-        computed.find('#give-up, #add-piece').prop('disabled', false);
-        (0, _jquery2.default)(this).prop('disabled', true);
-        generatePolyminoTable();
-    });
-
-    var uncheckedPieces = [];
-
-    (0, _jquery2.default)('#computed').change(function () {
-        if ((0, _jquery2.default)(this).prop("checked")) {
-            //setup computed mode
-            (0, _jquery2.default)('main.mdl-layout__content.computed').show();
-            (0, _jquery2.default)('main.mdl-layout__content.creative').hide();
-
-            pieceSelectionArea.hide();
-            pieceSelectionArea.find('.pieceContainer').not('.selected').each(function (i, piece) {
-                uncheckedPieces.push((0, _jquery2.default)(piece));
-                (0, _jquery2.default)(piece).click();
-            });
-        }
-    });
-
-    (0, _jquery2.default)('#creative').change(function () {
-        if ((0, _jquery2.default)(this).prop("checked")) {
-            //setup creative mode
-            (0, _jquery2.default)('main.mdl-layout__content.computed').hide();
-            (0, _jquery2.default)('main.mdl-layout__content.creative').show();
-
-            uncheckedPieces.forEach(function (piece) {
-                return piece.click();
-            });
-            uncheckedPieces = [];
-            pieceSelectionArea.show();
-        }
-    });
-});
-
-/***** SCRIPT-CREATIVE.JS *****/
-
-function startGameCreative(arr) {
-    var isGameFinished = false;
-    var solutionArea = creative.find('div.solutionArea');
-    stepOfIntervalCreative = 0;
-    piecesSetCreative = 0;
-    //timeStart = performance && performance.now? performance.now() : 0;
-    solutionPiecesCreative = findSolution(arr);
-
-    if (!solutionPiecesCreative) {
-        alertWithInterval('There is no solution!', interval * (stepOfIntervalCreative + 1));
-        creative.find('#give-up-creative').hide();
-        return;
-    }
-
-    var solutionLengthCreative = solutionPiecesCreative.length;
-    (0, _shufflePieces.shufflePieces)(solutionPiecesCreative);
-
-    solutionPiecesCreative.forEach(function (piece, index) {
-        var view = piece.getView();
-        solutionArea.append(view);
-        view.setAttribute('id', 'piece' + index);
-
-        (0, _jquery2.default)(view).find('td.pieceCell').each(function () {
-            var cell = this;
-
-            cell.ontouchcancel = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-            };
-
-            cell.ontouchstart = cell.onmousedown = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-                view.style.display = '';
-                var coords = (0, _getCoordinates.getCoordinates)(view);
-                var shiftX = e.pageX - coords.left;
-                var shiftY = e.pageY - coords.top;
-
-                var isPieceSet = true;
-                var currentCoordinatesAttributeCreative = view.getAttribute('data-nodes');
-                var currentPieceTdCoordinatesCreative = currentCoordinatesAttributeCreative.split('-').map(function (item) {
-                    return _classes.Node.fromString(item);
-                });
-
-                var _getRowAndCol3 = getRowAndCol(e),
-                    row = _getRowAndCol3.row,
-                    column = _getRowAndCol3.column;
-
-                var isPieceRemoved = false;
-                currentPieceTdCoordinatesCreative.forEach(function (item) {
-                    var tdRow = parseInt(item.row) + row;
-                    var tdCol = parseInt(item.column) + column;
-                    var td = creative.find('#td-' + tdRow + '-' + tdCol);
-                    if (td.hasClass('set') && !isPieceRemoved) {
-                        isPieceRemoved = true;
-                        piecesSetCreative--;
-                    }
-                    td.removeClass('set');
-                });
-
-                function moveAt(e) {
-                    view.style.left = e.pageX - shiftX - 8 + 'px';
-                    view.style.top = e.pageY - shiftY + 'px';
-                }
-
-                function getRowAndCol(e) {
-                    var offset = solutionArea.offset();
-                    var containerX = e.pageX - offset.left;
-                    var containerY = e.pageY - offset.top;
-                    var row = Math.round((containerY - shiftY) / tableCellWidth);
-                    var column = Math.round((containerX - shiftX) / tableCellWidth);
-                    return { row: row, column: column };
-                }
-
-                view.style.zIndex = 1000; // над другими элементами
-                view.style.position = 'absolute';
-                document.body.appendChild(view);
-                moveAt(e);
-
-                cell.ontouchmove = document.onmousemove = function (e) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    moveAt(e);
-                };
-
-                cell.ontouchend = cell.onmouseup = function (e) {
-                    var row = void 0,
-                        column = void 0;
-
-                    var _getRowAndCol4 = getRowAndCol(e);
-
-                    row = _getRowAndCol4.row;
-                    column = _getRowAndCol4.column;
-
-                    var rowPosition = row * tableCellWidth;
-                    var columnPosition = column * tableCellWidth;
-                    var currentPieceCells = [];
-                    currentPieceTdCoordinatesCreative.every(function (item) {
-                        var tdRow = parseInt(item.row) + row;
-                        var tdCol = parseInt(item.column) + column;
-                        var cell = creative.find('#td-' + tdRow + '-' + tdCol).not('.set').not('.border-cell');
-
-                        if (cell.length > 0) {
-                            currentPieceCells.push(cell);
-                        } else {
-                            isPieceSet = false;
-                            return false;
-                        }
-
-                        return true;
-                    });
-
-                    solutionArea.append(view);
-
-                    if (isPieceSet) {
-                        currentPieceCells.forEach(function (item) {
-                            item.addClass('set');
-                        });
-                        view.style.left = columnPosition - 4 + 'px';
-                        view.style.top = rowPosition - 4 + 'px';
-                        view.style.display = 'block';
-                        piecesSetCreative++;
-                    } else {
-                        view.style.position = '';
-                        view.style.left = '';
-                        view.style.top = '';
-                        view.style.display = '';
-                    }
-
-                    cell.ontouchmove = document.onmousemove = null;
-                    cell.ontouchend = cell.onmouseup = null;
-                    view.style.zIndex = '';
-
-                    console.log(piecesSetCreative);
-                    if (piecesSetCreative == solutionLengthCreative && !isGameFinished) {
-                        isGameFinished = true;
-                        creative.find('#give-up-creative').hide();
-                        alertWithInterval('Congratulations!', 50);
-                    }
-                };
-            };
-
-            cell.ondragstart = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-                return false;
-            };
-        });
-
-        view.ondragstart = function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-            return false;
-        };
-    });
-}
-
-function setTimeoutForCoveringPieceCreative(piece, removedPiece) {
-    return new Promise(function (resolve) {
-        if (!piece) return;
-        stepOfIntervalCreative++;
-        setTimeout(function () {
-            coverPieceInTableCreative(piece);
-            if (removedPiece) {
-                removedPiece.remove();
-            }
-            resolve();
-        }, interval * stepOfIntervalCreative);
-    });
-}
-
-function coverPieceInTableCreative(piece) {
-    var nodes = piece.nodes;
-    var backgroundColor = piece.color;
-    for (var i = 0; i < nodes.length; i++) {
-        var row = nodes[i].row;
-        var column = nodes[i].column;
-        var td = creative.find('#td-' + row + '-' + column);
-        var border = '1px dashed #121212';
-        td.css({ backgroundColor: backgroundColor, border: border });
-        td.addClass('set');
-    }
-}
-
-function setInitialPolyminoTable() {
-    var table = creative.find('table.polytable');
-    numberOfRowsCreative = 8;
-    numberOfColumnsCreative = 8;
-    for (var i = 0; i < 8; i++) {
-        var row = (0, _jquery2.default)('<tr class=\'field-row\' id=\'tr-' + i + '\'></tr>');
-        for (var j = 0; j < 8; j++) {
-            row.append((0, _jquery2.default)('<td class=\'cell empty-cell\' id=\'td-' + i + '-' + j + '\'></td>'));
-        }
-        table.append(row);
-    }
-
-    table.find('#td-3-3, #td-3-4, #td-4-3, #td-4-4').removeClass('empty-cell').addClass('border-cell');
-}
-
-// Transform table
-function addColumn() {
-    creative.find('tr.field-row').each(function (row) {
-        (0, _jquery2.default)(this).append((0, _jquery2.default)('<td class=\'cell empty-cell\' id=\'td-' + row + '-' + numberOfColumnsCreative + '\'></td>'));
-    });
-    numberOfColumnsCreative++;
-}
-
-function addRow() {
-    var row = (0, _jquery2.default)('<tr class="field-row" id="tr-' + numberOfRowsCreative + '"></tr>');
-    for (var i = 0; i < numberOfColumnsCreative; i++) {
-        row.append((0, _jquery2.default)('<td class=\'cell empty-cell\' id=\'td-' + numberOfRowsCreative + '-' + i + '\'></td>'));
-    }
-
-    creative.find('table.polytable tr.field-row').last().after(row);
-    numberOfRowsCreative++;
-}
-
-function removeColumn() {
-    if (numberOfColumnsCreative < 2) {
-        return;
-    }
-    creative.find('tr.field-row').each(function () {
-        //noinspection JSValidateTypes
-        (0, _jquery2.default)(this).children('td.cell').last().remove();
-    });
-    numberOfColumnsCreative--;
-}
-
-function removeRow() {
-    if (numberOfRowsCreative < 2) {
-        return;
-    }
-    creative.find('tr.field-row').last().remove();
-    numberOfRowsCreative--;
-}
-
-function resetFieldCreative() {
-    creative.find('td.cell').removeClass('set').css('backgroundColor', '').css('border', '');
-    creative.find('.piece').remove();
-    creative.find('#give-up-creative').hide();
-}
-
-(0, _jquery2.default)(document).ready(function () {
-    setInitialPolyminoTable();
-    (0, _statistics.countStatistic)(creative);
-    var solutionArea = creative.find('div.solutionArea');
-    var pieceSelectionArea = (0, _jquery2.default)('.pieceSelectionArea');
-
-    creative.find('#go').click(function () {
-        resetFieldCreative();
-        if (creative.find('span.statisticSpan .bad').length > 0) {
-            alert("It's impossible to cover table with such number of empty cells!");
-            return;
-        }
-        (0, _shufflePieces.shufflePieces)(_pieces.pieces);
-        creative.find('#give-up-creative').show();
-
-        var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
-        startGameCreative(arr);
-    });
-
-    creative.find('#give-up-creative').click(function () {
-        function placePiece() {
-            var index = parseInt((0, _jquery2.default)(this).attr('id').replace('piece', ''));
-            setTimeoutForCoveringPieceCreative(solutionPiecesCreative[index], (0, _jquery2.default)(this));
-        }
-
-        stepOfIntervalCreative = 0;
-        creative.find('.piece[style]').each(placePiece);
-        creative.find('.piece').each(placePiece);
-        (0, _jquery2.default)(this).hide();
-    });
-
-    (0, _jquery2.default)(document).on('click', '.creative td.cell', function () {
-        resetFieldCreative();
-
-        if ((0, _jquery2.default)(this).hasClass('empty-cell')) {
-            (0, _jquery2.default)(this).removeClass('empty-cell').addClass('border-cell');
-            (0, _statistics.countStatistic)(creative);
-        } else {
-            (0, _jquery2.default)(this).removeClass('border-cell').addClass('empty-cell');
-            (0, _statistics.countStatistic)(creative);
-        }
-    });
-
-    creative.find("#resetBarrierCells").click(function () {
-        resetFieldCreative();
-        creative.find(".polytable td").removeClass('border-cell').addClass('empty-cell').css('backgroundColor', '');
-        (0, _statistics.countStatistic)(creative);
-    });
-
-    creative.find('div.arrow-div').click(function () {
-        resetFieldCreative();
-        var direction = (0, _jquery2.default)(this).removeClass('arrow-div').attr('class').replace('arrow-', '');
-
-        switch (direction) {
-            case 'left':
-                removeColumn();
-                break;
-            case 'right':
-                addColumn();
-                break;
-            case 'top':
-                removeRow();
-                break;
-            case 'bottom':
-                addRow();
-                break;
-        }
-
-        (0, _jquery2.default)(this).addClass('arrow-div');
-        (0, _statistics.countStatistic)(creative);
-    });
-});
 
 /***/ })
 /******/ ]);
