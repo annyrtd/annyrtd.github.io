@@ -145,10 +145,12 @@ is-small-screen .creative .polyomino-area {
 .creative .creative-buttons {
 	display: flex;
 	align-items: center;
+    flex-wrap: wrap;
 }
 
 .creative .creative-buttons > * {
 	margin-right: 32px;
+    margin-bottom: 16px;
 }
 
 @media screen and (min-width: 610px) {
@@ -209,6 +211,6 @@ is-small-screen .creative .polyomino-area {
 }
 
 #numberOfSolutions {
-	line-height: 40px;
-	height: 40px;
+	line-height: 24px;
+	height: 24px;
 }
