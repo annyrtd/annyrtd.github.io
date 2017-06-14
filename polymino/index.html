@@ -18,33 +18,33 @@
 			<header class="mdl-layout__header mdl-layout__header--transparent">
 				<div class="mdl-layout__header-row">
 					<!-- Title -->
-					<span class="mdl-layout-title">Polymino</span>
+					<span class="mdl-layout-title">Полимино</span>
 				</div>
 			</header>
 			<div class="mdl-layout__drawer">
-				<span class="mdl-layout-title">Choose mode:</span>
+				<span class="mdl-layout-title">Выберите режим:</span>
 				<div class="modeDiv">
 					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="computed">
 						<input type="radio" id="computed" class="mdl-radio__button" name="options" value="1" checked>
-						<span class="mdl-radio__label">Computed levels</span>
+						<span class="mdl-radio__label">Автоматический</span>
 					</label>
 					<br>
 					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="creative">
 						<input type="radio" id="creative" class="mdl-radio__button" name="options" value="2">
-						<span class="mdl-radio__label">Creative</span>
+						<span class="mdl-radio__label">Ручной</span>
 					</label>
 				</div>
 				<div class="pieceSelectionArea">
                     <div class="pieceSelectionArea-header">
-                        <span class="bold">Selected pieces</span>
+                        <span class="bold">Выбранные фигуры</span>
                         <br>
-                        <span class="instruction">Click to toggle, selected highlighted in <span class="selected-sample mdl-card mdl-shadow--8dp"></span>:</span>
+                        <span class="instruction">Нажмите на фигуру чтобы выбрать или убрать её, выбранные фигуры выделены таким образом: <span class="selected-sample mdl-card mdl-shadow--8dp"></span></span>
 						<br>
 						<button id="select-all" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-							Select all
+							Выделеть все
 						</button>
 						<button id="deselect-all" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-							Deselect all
+							Снять выделение
 						</button>
                     </div>
                 </div>
@@ -53,19 +53,19 @@
 			    <div class="polyomino-area">
                     <div class="menu">
                         <div class='statistic'>
-                            Level completed:&nbsp;<span class='levelSpan'></span><br><br>
-                            Score:&nbsp;<span class='scoreSpan'></span><span class="star">&nbsp;&#9733;</span>
+                            Уровень:&nbsp;<span class='levelSpan'></span><br><br>
+                            Счет:&nbsp;<span class='scoreSpan'></span><span class="star">&nbsp;&#9733;</span>
                         </div>
                         <!-- Colored mini FAB button -->
 						<div class="buttons">
 							<button id="add-piece" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-								Place a piece (<span class="pieceCost"></span><span class="star">&nbsp;&#9733</span>)
+								Положить фигуру (<span class="pieceCost"></span><span class="star">&nbsp;&#9733</span>)
 							</button>
 							<button id="give-up" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-								Give up (<span class="giveUpCost"></span><span class="star">&nbsp;&#9733</span>)
+								Сдаться (<span class="giveUpCost"></span><span class="star">&nbsp;&#9733</span>)
 							</button>
 							<button id="next" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect" disabled>
-								Next level
+								Следующий уровень
 							</button>
 						</div>
                     </div>
@@ -77,13 +77,13 @@
 		    </main>
 			<main style="display: none;" class="mdl-layout__content creative">
 				<div class="polyomino-area">
-					<div class='statistic'> Number of empty cells:&nbsp;<span class='statisticSpan'></span>
+					<div class='statistic'> Число пустых клеток:&nbsp;<span class='statisticSpan'></span>
 						<button id="resetBarrierCells"
 								class="mdl-button mdl-js-button mdl-button--icon mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
 							<i class="material-icons">clear</i>
 						</button>
 						<div class="mdl-tooltip" for="resetBarrierCells">
-							Reset all barrier cells
+							Сбросить все препятствия
 						</div>
 					</div>
 					<div class="creative-buttons">
@@ -94,7 +94,7 @@
 									<td class="arrow-td">
 										<div id="arrow-top" class="arrow-div arrow-top"></div>
 										<div class="mdl-tooltip" for="arrow-top">
-											Remove row
+											Удалить строку
 										</div>
 									</td>
 									<td class="arrow-td"></td>
@@ -103,14 +103,14 @@
 									<td class="arrow-td">
 										<div id="arrow-left" class="arrow-div arrow-left"></div>
 										<div class="mdl-tooltip" for="arrow-left">
-											Remove column
+											Удалить колонку
 										</div>
 									</td>
 									<td class="arrow-td"></td>
 									<td class="arrow-td">
 										<div id="arrow-right" class="arrow-div arrow-right"></div>
 										<div class="mdl-tooltip" for="arrow-right">
-											Add column
+											Добавить колонку
 										</div>
 									</td>
 								</tr>
@@ -119,7 +119,7 @@
 									<td class="arrow-td">
 										<div id="arrow-bottom" class="arrow-div arrow-bottom"></div>
 										<div class="mdl-tooltip" for="arrow-bottom">
-											Add row
+											Добавить строку
 										</div>
 									</td>
 									<td class="arrow-td"></td>
@@ -127,12 +127,16 @@
 							</table>
 						</div>
 						<button id="go" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-							Go!
+							Старт
+						</button>
+						<button id="countSolutions" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+							Подсчитать число решений
 						</button>
 						<button style="display: none;" id="give-up-creative" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-							Give up
+							Сдаться
 						</button>
 					</div>
+					<div id="numberOfSolutions"></div>
 					<div class="solutionArea">
 						<table class='polytable mdl-shadow--2dp'>
 						</table>
