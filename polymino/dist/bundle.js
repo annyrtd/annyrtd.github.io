@@ -349,7 +349,79 @@ new Piece([
 new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 1]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 0], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 2]]), new _classes.Piece([[0, 1], [1, 1], [2, 0], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [0, 2], [1, 0], [1, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [0, 3]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0]]),
 
 // Size 5
-new _classes.Piece([[0, 1], [0, 2], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]]), new _classes.Piece([[0, 1], [1, 1], [2, 0], [2, 1], [3, 0]]), new _classes.Piece([[0, 0], [0, 1], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 2], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [2, 1], [2, 2]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 1], [2, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [2, 1], [3, 0]]), new _classes.Piece([[0, 0], [0, 1], [1, 1], [2, 1], [2, 2]])];
+
+//  OO
+// OO
+//  O
+new _classes.Piece([[0, 1], [0, 2], [1, 0], [1, 1], [2, 1]]),
+//  O
+// OOO
+//   O
+new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2], [2, 2]]),
+//  O
+//  OO
+// OO
+new _classes.Piece([[0, 1], [1, 1], [1, 2], [2, 0], [2, 1]]),
+// O
+// OOO
+//  O
+new _classes.Piece([[0, 0], [1, 0], [1, 1], [1, 2], [2, 1]]),
+
+// O
+// O
+// O
+// O
+// O
+new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]]),
+// 00000
+new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]]),
+
+// O
+// O
+// O
+// OO
+new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]]),
+//  O
+//  O
+// OO
+// O
+new _classes.Piece([[0, 1], [1, 1], [2, 0], [2, 1], [3, 0]]),
+
+// OO
+// OO
+// O
+new _classes.Piece([[0, 0], [0, 1], [1, 0], [1, 1], [2, 0]]),
+// OOO
+//  O
+//  O
+new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 1], [2, 1]]),
+
+// O O
+// OOO
+new _classes.Piece([[0, 0], [0, 2], [1, 0], [1, 1], [1, 2]]),
+// O
+// O
+// OOO
+new _classes.Piece([[0, 0], [1, 0], [2, 0], [2, 1], [2, 2]]),
+
+// O
+// OO
+//  OO
+new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 1], [2, 2]]),
+//  O
+// OOO
+//  O
+new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2], [2, 1]]),
+
+// O
+// O
+// OO
+// O
+new _classes.Piece([[0, 0], [1, 0], [2, 0], [2, 1], [3, 0]]),
+// OO
+//  O
+//  OO
+new _classes.Piece([[0, 0], [0, 1], [1, 1], [2, 1], [2, 2]])];
 var pieces = [];
 var piecesLength = [];
 
