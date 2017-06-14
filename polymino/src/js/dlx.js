@@ -223,7 +223,7 @@ function countDLXsolutions(header, k) {
                 coverColumn(j.column);
                 j = j.right;
             }
-            numberOfSolutions += searchDLX(header, k + 1);
+            numberOfSolutions += countDLXsolutions(header, k + 1);
 
             current = row.column;
             j = row.left;

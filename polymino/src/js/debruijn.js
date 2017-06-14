@@ -78,7 +78,7 @@ function countBruijnSolutions(arr) {
             let offsetY = next.column - root.column;
             if(isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
                 placePiece(arr, nodes, next.row - root.row, next.column - root.column);
-                numberOfSolutions += searchBruijn(arr);
+                numberOfSolutions += countBruijnSolutions(arr);
                 removePiece(arr, nodes, next.row - root.row, next.column - root.column);
             }
         }
