@@ -1,7 +1,8 @@
 import {pieces, activatePiece, deactivatePiece} from './pieces';
+import {countStatistic} from './statistics';
 const INFINITY = 'Infinity';
 
-function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
+function setUpPieceSelectionArea(area, selectAllId, deselectAllId, creative) {
     const containerPieceMap = new WeakMap();
     const containers = [];
 /*
@@ -41,6 +42,7 @@ function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
                 container.classList.add('mdl-shadow--8dp');
                 activatePiece(piece);
             }
+            countStatistic(creative);
         }
     });
 
@@ -53,6 +55,8 @@ function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
                activatePiece(containerPieceMap.get(container));
            }
         });
+
+        countStatistic(creative);
     };
 
     document.getElementById(deselectAllId).onclick = () => {
@@ -64,6 +68,8 @@ function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
                 deactivatePiece(containerPieceMap.get(container));
             }
         });
+
+        countStatistic(creative);
     };
 }
 

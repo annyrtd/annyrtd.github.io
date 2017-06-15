@@ -507,9 +507,149 @@ exports.piecesLength = piecesLength;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.countStatistic = undefined;
+
+var _classes = __webpack_require__(0);
+
+var _transformTableToMatrix = __webpack_require__(3);
+
+var _pieces = __webpack_require__(1);
+
+// Counting connected components in a table
+function countStatistic(creative) {
+    var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
+    var sizes = getComponentsSizes(arr);
+    var messages = sizes.map(function (size) {
+        return '<span class="' + (checkIfProperNumber(size) ? 'good' : 'bad') + '">' + size + '</span>';
+    });
+    var html = '';
+
+    switch (messages.length) {
+        case 0:
+            html = '0';
+            break;
+        case 1:
+            html = messages[0];
+            break;
+        default:
+            html = messages.join(' + ') + ' = ' + sizes.reduce(function (a, b) {
+                return a + b;
+            });
+            break;
+    }
+
+    creative.find(".statisticSpan").html(html);
+}
+
+function getComponentsSizes(arr) {
+    var startNode = void 0,
+        sizes = [];
+    while (!isAllVisited(arr)) {
+        startNode = getStartNode(arr);
+        sizes[sizes.length] = 1 + countOneComponent(startNode, arr);
+    }
+    return sizes;
+}
+
+function isAllVisited(arr) {
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < arr[i].length; j++) {
+            if (arr[i][j] == 0) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+function getStartNode(arr) {
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < arr[i].length; j++) {
+            if (arr[i][j] == 0) {
+                return new _classes.Node(i, j);
+            }
+        }
+    }
+}
+
+function countOneComponent(startNode, arr) {
+    var size = 0;
+    arr[startNode.row][startNode.column] = 1;
+    var neighbours = getNeighbours(startNode, arr);
+
+    if (neighbours.length == 0) {
+        return 0;
+    }
+
+    for (var t = 0; t < neighbours.length; t++) {
+        arr[neighbours[t].row][neighbours[t].column] = 1;
+        size++;
+    }
+
+    for (var i = 0; i < neighbours.length; i++) {
+        size += countOneComponent(neighbours[i], arr);
+    }
+
+    return size;
+}
+
+function getNeighbours(node, arr) {
+    var neighbours = [];
+    // connect diagonal cells
+    //neighbours[neighbours.length] = new Node(node.row - 1, node.column - 1);
+    //neighbours[neighbours.length] = new Node(node.row - 1, node.column + 1);
+    //neighbours[neighbours.length] = new Node(node.row + 1, node.column - 1);
+    //neighbours[neighbours.length] = new Node(node.row + 1, node.column + 1);
+
+    neighbours[neighbours.length] = new _classes.Node(node.row - 1, node.column);
+    neighbours[neighbours.length] = new _classes.Node(node.row, node.column - 1);
+    neighbours[neighbours.length] = new _classes.Node(node.row, node.column + 1);
+    neighbours[neighbours.length] = new _classes.Node(node.row + 1, node.column);
+
+    for (var i = 0; i < neighbours.length; i++) {
+        if (neighbours[i].row < 0 || neighbours[i].column < 0 || neighbours[i].row >= arr.length || neighbours[i].column >= arr[0].length || arr[neighbours[i].row][neighbours[i].column] == 1) {
+            neighbours[i] = undefined;
+        }
+    }
+    var position = neighbours.indexOf(undefined);
+    while (position > -1) {
+        neighbours.splice(position, 1);
+        position = neighbours.indexOf(undefined);
+    }
+
+    return neighbours;
+}
+
+function checkIfProperNumber(number) {
+    if (number < 0) {
+        return false;
+    } else if (number == 0) {
+        return true;
+    } else {
+        var result = false;
+        for (var i = 0; i < _pieces.piecesLength.length; i++) {
+            result = result || checkIfProperNumber(number - _pieces.piecesLength[i]);
+        }
+
+        return result;
+    }
+}
+
+exports.countStatistic = countStatistic;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.transformTableToMatrix = undefined;
 
-var _jquery = __webpack_require__(3);
+var _jquery = __webpack_require__(4);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -533,7 +673,7 @@ function transformTableToMatrix(container) {
 exports.transformTableToMatrix = transformTableToMatrix;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10793,7 +10933,7 @@ return jQuery;
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10953,7 +11093,7 @@ exports.countBruijnSolutionsWithPiece = countBruijnSolutionsWithPiece;
 exports.searchBruijnWithPiece = searchBruijnWithPiece;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11340,7 +11480,7 @@ exports.countDLXsolutionsWithPiece = countDLXsolutionsWithPiece;
 exports.searchDLXWithPiece = searchDLXWithPiece;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11375,7 +11515,7 @@ function getCoordinates(elem) {
 exports.getCoordinates = getCoordinates;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11388,9 +11528,11 @@ exports.setUpPieceSelectionArea = undefined;
 
 var _pieces = __webpack_require__(1);
 
+var _statistics = __webpack_require__(2);
+
 var INFINITY = 'Infinity';
 
-function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
+function setUpPieceSelectionArea(area, selectAllId, deselectAllId, creative) {
     var containerPieceMap = new WeakMap();
     var containers = [];
     /*
@@ -11430,6 +11572,7 @@ function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
                 container.classList.add('mdl-shadow--8dp');
                 (0, _pieces.activatePiece)(piece);
             }
+            (0, _statistics.countStatistic)(creative);
         };
     });
 
@@ -11442,6 +11585,8 @@ function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
                 (0, _pieces.activatePiece)(containerPieceMap.get(container));
             }
         });
+
+        (0, _statistics.countStatistic)(creative);
     };
 
     document.getElementById(deselectAllId).onclick = function () {
@@ -11453,6 +11598,8 @@ function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
                 (0, _pieces.deactivatePiece)(containerPieceMap.get(container));
             }
         });
+
+        (0, _statistics.countStatistic)(creative);
     };
 }
 
@@ -11485,7 +11632,7 @@ function createInput(piece, id) {
 exports.setUpPieceSelectionArea = setUpPieceSelectionArea;
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11516,173 +11663,33 @@ function shufflePieces(arrayOfPieces) {
 exports.shufflePieces = shufflePieces;
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.countStatistic = undefined;
-
-var _classes = __webpack_require__(0);
-
-var _transformTableToMatrix = __webpack_require__(2);
-
-var _pieces = __webpack_require__(1);
-
-// Counting connected components in a table
-function countStatistic(creative) {
-    var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
-    var sizes = getComponentsSizes(arr);
-    var messages = sizes.map(function (size) {
-        return '<span class="' + (checkIfProperNumber(size) ? 'good' : 'bad') + '">' + size + '</span>';
-    });
-    var html = '';
-
-    switch (messages.length) {
-        case 0:
-            html = '0';
-            break;
-        case 1:
-            html = messages[0];
-            break;
-        default:
-            html = messages.join(' + ') + ' = ' + sizes.reduce(function (a, b) {
-                return a + b;
-            });
-            break;
-    }
-
-    creative.find(".statisticSpan").html(html);
-}
-
-function getComponentsSizes(arr) {
-    var startNode = void 0,
-        sizes = [];
-    while (!isAllVisited(arr)) {
-        startNode = getStartNode(arr);
-        sizes[sizes.length] = 1 + countOneComponent(startNode, arr);
-    }
-    return sizes;
-}
-
-function isAllVisited(arr) {
-    for (var i = 0; i < arr.length; i++) {
-        for (var j = 0; j < arr[i].length; j++) {
-            if (arr[i][j] == 0) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-function getStartNode(arr) {
-    for (var i = 0; i < arr.length; i++) {
-        for (var j = 0; j < arr[i].length; j++) {
-            if (arr[i][j] == 0) {
-                return new _classes.Node(i, j);
-            }
-        }
-    }
-}
-
-function countOneComponent(startNode, arr) {
-    var size = 0;
-    arr[startNode.row][startNode.column] = 1;
-    var neighbours = getNeighbours(startNode, arr);
-
-    if (neighbours.length == 0) {
-        return 0;
-    }
-
-    for (var t = 0; t < neighbours.length; t++) {
-        arr[neighbours[t].row][neighbours[t].column] = 1;
-        size++;
-    }
-
-    for (var i = 0; i < neighbours.length; i++) {
-        size += countOneComponent(neighbours[i], arr);
-    }
-
-    return size;
-}
-
-function getNeighbours(node, arr) {
-    var neighbours = [];
-    // connect diagonal cells
-    //neighbours[neighbours.length] = new Node(node.row - 1, node.column - 1);
-    //neighbours[neighbours.length] = new Node(node.row - 1, node.column + 1);
-    //neighbours[neighbours.length] = new Node(node.row + 1, node.column - 1);
-    //neighbours[neighbours.length] = new Node(node.row + 1, node.column + 1);
-
-    neighbours[neighbours.length] = new _classes.Node(node.row - 1, node.column);
-    neighbours[neighbours.length] = new _classes.Node(node.row, node.column - 1);
-    neighbours[neighbours.length] = new _classes.Node(node.row, node.column + 1);
-    neighbours[neighbours.length] = new _classes.Node(node.row + 1, node.column);
-
-    for (var i = 0; i < neighbours.length; i++) {
-        if (neighbours[i].row < 0 || neighbours[i].column < 0 || neighbours[i].row >= arr.length || neighbours[i].column >= arr[0].length || arr[neighbours[i].row][neighbours[i].column] == 1) {
-            neighbours[i] = undefined;
-        }
-    }
-    var position = neighbours.indexOf(undefined);
-    while (position > -1) {
-        neighbours.splice(position, 1);
-        position = neighbours.indexOf(undefined);
-    }
-
-    return neighbours;
-}
-
-function checkIfProperNumber(number) {
-    if (number < 0) {
-        return false;
-    } else if (number == 0) {
-        return true;
-    } else {
-        var result = false;
-        for (var i = 0; i < _pieces.piecesLength.length; i++) {
-            result = result || checkIfProperNumber(number - _pieces.piecesLength[i]);
-        }
-
-        return result;
-    }
-}
-
-exports.countStatistic = countStatistic;
-
-/***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _jquery = __webpack_require__(3);
+var _jquery = __webpack_require__(4);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
 var _classes = __webpack_require__(0);
 
-var _dlx = __webpack_require__(5);
+var _dlx = __webpack_require__(6);
 
-var _debruijn = __webpack_require__(4);
+var _debruijn = __webpack_require__(5);
 
 var _pieces = __webpack_require__(1);
 
-var _pieceSelection = __webpack_require__(7);
+var _pieceSelection = __webpack_require__(8);
 
-var _transformTableToMatrix = __webpack_require__(2);
+var _transformTableToMatrix = __webpack_require__(3);
 
-var _shufflePieces = __webpack_require__(8);
+var _shufflePieces = __webpack_require__(9);
 
-var _statistics = __webpack_require__(9);
+var _statistics = __webpack_require__(2);
 
-var _getCoordinates = __webpack_require__(6);
+var _getCoordinates = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11823,7 +11830,7 @@ function countSolutions(arr) {
         console.log('dlx: ' + numberOfSolutions + ' solutions');
     }
 
-    (0, _jquery2.default)('#numberOfSolutions').html(numberOfSolutions + ' \u0440\u0435\u0448\u0435\u043D\u0438\u0439');
+    (0, _jquery2.default)('#numberOfSolutions').html('\u0427\u0438\u0441\u043B\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0439: ' + numberOfSolutions);
 }
 
 /***** SCRIPT.JS *****/
@@ -12160,12 +12167,13 @@ function resetField() {
 }
 
 (0, _jquery2.default)(document).ready(function () {
-    var pieceSelectionArea = (0, _jquery2.default)('.pieceSelectionArea');
-    (0, _pieceSelection.setUpPieceSelectionArea)(pieceSelectionArea.get(0), 'select-all', 'deselect-all');
-    pieceSelectionArea.hide();
-
     computed = (0, _jquery2.default)('.computed');
     creative = (0, _jquery2.default)('.creative');
+
+    var pieceSelectionArea = (0, _jquery2.default)('.pieceSelectionArea');
+    (0, _pieceSelection.setUpPieceSelectionArea)(pieceSelectionArea.get(0), 'select-all', 'deselect-all', creative);
+    pieceSelectionArea.hide();
+
     restoreFromLocalStorage();
     generatePolyminoTable();
     var solutionArea = computed.find('div.solutionArea');
@@ -12572,6 +12580,9 @@ function resetFieldCreative() {
 }
 
 (0, _jquery2.default)(document).ready(function () {
+    computed = (0, _jquery2.default)('.computed');
+    creative = (0, _jquery2.default)('.creative');
+
     setInitialPolyminoTable();
     (0, _statistics.countStatistic)(creative);
     var solutionArea = creative.find('div.solutionArea');
@@ -12646,7 +12657,7 @@ function resetFieldCreative() {
     creative.find('#countSolutions').click(function () {
         var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
         if (creative.find('span.statisticSpan .bad').length > 0) {
-            (0, _jquery2.default)('#numberOfSolutions').html('0 \u0440\u0435\u0448\u0435\u043D\u0438\u0439');
+            (0, _jquery2.default)('#numberOfSolutions').html('\u0427\u0438\u0441\u043B\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0439: 0');
             return;
         }
         setTimeout(function () {

@@ -147,7 +147,7 @@ function countSolutions(arr) {
         console.log(`dlx: ${numberOfSolutions} solutions`);
     }
 
-    $('#numberOfSolutions').html(`${numberOfSolutions} решений`);
+    $('#numberOfSolutions').html(`Число решений: ${numberOfSolutions}`);
 }
 
 /***** SCRIPT.JS *****/
@@ -472,12 +472,13 @@ function resetField() {
 
 $(document).ready(
     function() {
-        let pieceSelectionArea = $('.pieceSelectionArea');
-        setUpPieceSelectionArea(pieceSelectionArea.get(0), 'select-all', 'deselect-all');
-        pieceSelectionArea.hide();
-
         computed =  $('.computed');
         creative =  $('.creative');
+
+        let pieceSelectionArea = $('.pieceSelectionArea');
+        setUpPieceSelectionArea(pieceSelectionArea.get(0), 'select-all', 'deselect-all', creative);
+        pieceSelectionArea.hide();
+
         restoreFromLocalStorage();
         generatePolyminoTable();
         let solutionArea = computed.find('div.solutionArea');
@@ -889,6 +890,9 @@ function resetFieldCreative() {
 
 $(document).ready(
     function() {
+        computed =  $('.computed');
+        creative =  $('.creative');
+
         setInitialPolyminoTable();
         countStatistic(creative);
         let solutionArea = creative.find('div.solutionArea');
@@ -975,7 +979,7 @@ $(document).ready(
             function() {
                 const arr = transformTableToMatrix(creative);
                 if (creative.find('span.statisticSpan .bad').length > 0) {
-                    $('#numberOfSolutions').html(`0 решений`);
+                    $('#numberOfSolutions').html(`Число решений: 0`);
                     return;
                 }
                 setTimeout(function() {
