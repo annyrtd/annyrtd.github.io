@@ -12371,6 +12371,7 @@ function startGame(arr) {
                 e.stopPropagation();
                 e.preventDefault();
                 view.style.display = '';
+                alert('e.pageX: ' + e.pageX + '; e.pageY: ' + e.pageY);
                 var coords = (0, _getCoordinates.getCoordinates)(view);
                 var shiftX = e.pageX - coords.left;
                 var shiftY = e.pageY - coords.top;

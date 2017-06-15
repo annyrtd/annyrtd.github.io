@@ -240,6 +240,7 @@ function startGame(arr) {
                 e.stopPropagation();
                 e.preventDefault();
                 view.style.display = '';
+                alert('e.pageX: ' + e.pageX + '; e.pageY: ' + e.pageY);
                 const coords = getCoordinates(view);
                 const shiftX = e.pageX - coords.left;
                 const shiftY = e.pageY - coords.top;
