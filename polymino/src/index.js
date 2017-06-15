@@ -58,7 +58,7 @@ function restoreFromLocalStorage() {
     }
 }
 
-function findSolution(arr)  {
+function shouldDeBruijnBeUsed(arr){
     let freeCells = 0, barriers = 0;
 
     for(let i = 0; i < arr.length; i++) {
@@ -71,8 +71,11 @@ function findSolution(arr)  {
         }
     }
 
-    if(barriers <= 8 ||
-        (barriers > 8 && barriers <= 12 && (freeCells + barriers) < 96)) {
+    return (barriers < 8 && (freeCells + barriers) < 132) || (barriers >= 8 && barriers < 12 && (freeCells + barriers) < 96);
+}
+
+function findSolution(arr)  {
+    if(shouldDeBruijnBeUsed(arr)) {
         console.log('debruijn');
         const solution = [];
         if(!searchBruijn(arr, solution)) {
@@ -91,20 +94,7 @@ function findSolution(arr)  {
 }
 
 function findSolutionWithPiece(arr)  {
-    let freeCells = 0, barriers = 0;
-
-    for(let i = 0; i < arr.length; i++) {
-        for(let j = 0; j < arr[i].length; j++) {
-            if(arr[i][j] == 0) {
-                freeCells++
-            } else {
-                barriers++;
-            }
-        }
-    }
-
-    if(barriers <= 8 ||
-        (barriers > 8 && barriers <= 12 && (freeCells + barriers) < 96)) {
+    if(shouldDeBruijnBeUsed(arr)) {
         console.log('debruijn');
         const solution = [];
         if(!searchBruijnWithPiece(arr, solution)) {
@@ -123,22 +113,9 @@ function findSolutionWithPiece(arr)  {
 }
 
 function countSolutions(arr) {
-    let freeCells = 0, barriers = 0;
-
-    for(let i = 0; i < arr.length; i++) {
-        for(let j = 0; j < arr[i].length; j++) {
-            if(arr[i][j] == 0) {
-                freeCells++
-            } else {
-                barriers++;
-            }
-        }
-    }
-
     let numberOfSolutions;
 
-    if(barriers <= 8 ||
-        (barriers > 8 && barriers <= 12 && (freeCells + barriers) < 96)) {
+    if(shouldDeBruijnBeUsed(arr)) {
         numberOfSolutions = countBruijnSolutionsWithPiece(arr);
         console.log(`debruijn: ${numberOfSolutions} solutions`);
     } else {
@@ -154,7 +131,6 @@ function countSolutions(arr) {
 function generatePolyminoTable() {
     saveToLocalStorage();
     initialSetUp();
-    level = 1;
     const table = computed.find('table.polytable');
     let {numberOfRows, numberOfColumns, numberOfBarriers, area} = countNumbersForTable();
 

@@ -12183,7 +12183,7 @@ function restoreFromLocalStorage() {
     }
 }
 
-function findSolution(arr) {
+function shouldDeBruijnBeUsed(arr) {
     var freeCells = 0,
         barriers = 0;
 
@@ -12197,7 +12197,11 @@ function findSolution(arr) {
         }
     }
 
-    if (barriers <= 8 || barriers > 8 && barriers <= 12 && freeCells + barriers < 96) {
+    return barriers < 8 && freeCells + barriers < 132 || barriers >= 8 && barriers < 12 && freeCells + barriers < 96;
+}
+
+function findSolution(arr) {
+    if (shouldDeBruijnBeUsed(arr)) {
         console.log('debruijn');
         var solution = [];
         if (!(0, _debruijn.searchBruijn)(arr, solution)) {
@@ -12216,20 +12220,7 @@ function findSolution(arr) {
 }
 
 function findSolutionWithPiece(arr) {
-    var freeCells = 0,
-        barriers = 0;
-
-    for (var i = 0; i < arr.length; i++) {
-        for (var j = 0; j < arr[i].length; j++) {
-            if (arr[i][j] == 0) {
-                freeCells++;
-            } else {
-                barriers++;
-            }
-        }
-    }
-
-    if (barriers <= 8 || barriers > 8 && barriers <= 12 && freeCells + barriers < 96) {
+    if (shouldDeBruijnBeUsed(arr)) {
         console.log('debruijn');
         var solution = [];
         if (!(0, _debruijn.searchBruijnWithPiece)(arr, solution)) {
@@ -12248,22 +12239,9 @@ function findSolutionWithPiece(arr) {
 }
 
 function countSolutions(arr) {
-    var freeCells = 0,
-        barriers = 0;
-
-    for (var i = 0; i < arr.length; i++) {
-        for (var j = 0; j < arr[i].length; j++) {
-            if (arr[i][j] == 0) {
-                freeCells++;
-            } else {
-                barriers++;
-            }
-        }
-    }
-
     var numberOfSolutions = void 0;
 
-    if (barriers <= 8 || barriers > 8 && barriers <= 12 && freeCells + barriers < 96) {
+    if (shouldDeBruijnBeUsed(arr)) {
         numberOfSolutions = (0, _debruijn.countBruijnSolutionsWithPiece)(arr);
         console.log('debruijn: ' + numberOfSolutions + ' solutions');
     } else {
@@ -12279,7 +12257,6 @@ function countSolutions(arr) {
 function generatePolyminoTable() {
     saveToLocalStorage();
     initialSetUp();
-    level = 1;
     var table = computed.find('table.polytable');
 
     var _countNumbersForTable = countNumbersForTable(),
