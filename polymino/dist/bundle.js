@@ -118,26 +118,48 @@ var DataObject = function (_RootObject) {
     return DataObject;
 }(RootObject);
 
-var ColumnObject = function (_DataObject) {
-    _inherits(ColumnObject, _DataObject);
+var PieceDataObject = function (_DataObject) {
+    _inherits(PieceDataObject, _DataObject);
 
-    function ColumnObject(_ref3) {
+    function PieceDataObject(_ref3) {
         var left = _ref3.left,
             right = _ref3.right,
             up = _ref3.up,
             down = _ref3.down,
             column = _ref3.column,
-            _ref3$size = _ref3.size,
-            size = _ref3$size === undefined ? 0 : _ref3$size,
-            name = _ref3.name;
+            piece = _ref3.piece;
+
+        _classCallCheck(this, PieceDataObject);
+
+        var _this2 = _possibleConstructorReturn(this, (PieceDataObject.__proto__ || Object.getPrototypeOf(PieceDataObject)).call(this, { left: left, right: right, up: up, down: down, column: column }));
+
+        _this2.piece = piece;
+        return _this2;
+    }
+
+    return PieceDataObject;
+}(DataObject);
+
+var ColumnObject = function (_DataObject2) {
+    _inherits(ColumnObject, _DataObject2);
+
+    function ColumnObject(_ref4) {
+        var left = _ref4.left,
+            right = _ref4.right,
+            up = _ref4.up,
+            down = _ref4.down,
+            column = _ref4.column,
+            _ref4$size = _ref4.size,
+            size = _ref4$size === undefined ? 0 : _ref4$size,
+            name = _ref4.name;
 
         _classCallCheck(this, ColumnObject);
 
-        var _this2 = _possibleConstructorReturn(this, (ColumnObject.__proto__ || Object.getPrototypeOf(ColumnObject)).call(this, { left: left, right: right, up: up, down: down, column: column }));
+        var _this3 = _possibleConstructorReturn(this, (ColumnObject.__proto__ || Object.getPrototypeOf(ColumnObject)).call(this, { left: left, right: right, up: up, down: down, column: column }));
 
-        _this2.size = size;
-        _this2.name = name;
-        return _this2;
+        _this3.size = size;
+        _this3.name = name;
+        return _this3;
     }
 
     return ColumnObject;
@@ -184,6 +206,7 @@ var Node = function () {
 var Piece = function () {
     function Piece(coordinates) {
         var color = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : getRandomColor();
+        var numberOfUsages = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Infinity;
 
         _classCallCheck(this, Piece);
 
@@ -216,12 +239,13 @@ var Piece = function () {
         this.maxcol = maxcol;
         this.mincol = mincol;
         this.root = Piece.getPieceRoot(nodes);
+        this.numberOfUsages = numberOfUsages;
     }
 
     _createClass(Piece, [{
         key: 'getView',
         value: function getView() {
-            var _this3 = this;
+            var _this4 = this;
 
             if (this.view) {
                 return this.view;
@@ -241,7 +265,7 @@ var Piece = function () {
             }
 
             this.nodes.forEach(function (node) {
-                var cell = tbody.children[node.row - _this3.minrow].children[node.column - _this3.mincol];
+                var cell = tbody.children[node.row - _this4.minrow].children[node.column - _this4.mincol];
                 cell.style.backgroundColor = color;
                 cell.setAttribute('class', 'pieceCell');
                 cell.style.border = '1px solid black';
@@ -249,7 +273,7 @@ var Piece = function () {
 
             table.setAttribute('class', 'piece');
             table.setAttribute('data-nodes', this.nodes.map(function (item) {
-                return new Node(item.row - _this3.minrow, item.column - _this3.mincol).toString();
+                return new Node(item.row - _this4.minrow, item.column - _this4.mincol).toString();
             }).join('-'));
             table.appendChild(tbody);
 
@@ -295,6 +319,7 @@ exports.Piece = Piece;
 exports.ColumnObject = ColumnObject;
 exports.DataObject = DataObject;
 exports.RootObject = RootObject;
+exports.PieceDataObject = PieceDataObject;
 
 /***/ }),
 /* 1 */
@@ -10880,7 +10905,7 @@ exports.countBruijnSolutions = countBruijnSolutions;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.countDLXsolutions = exports.printDLX = exports.searchDLX = exports.createXListForExactCoverProblem = undefined;
+exports.searchDLXWithPiece = exports.createXListForExactCoverProblemWithPiece = exports.countDLXsolutions = exports.printDLX = exports.searchDLX = exports.createXListForExactCoverProblem = undefined;
 
 var _pieces = __webpack_require__(1);
 
@@ -10966,6 +10991,58 @@ function addNewDataObject(header, currentNode, previousData) {
     }
 
     var data = new _classes.DataObject({ column: current, down: current, up: current.up, left: previousData });
+
+    data.up.down = data;
+    data.down.up = data;
+    current.size++;
+
+    return data;
+}
+
+function createXListForExactCoverProblemWithPiece(arr) {
+    var header = createInitialXList(arr);
+    for (var p = 0, piece, nodes; p < _pieces.pieces.length; p++) {
+        piece = _pieces.pieces[p];
+        nodes = piece.nodes;
+        for (var i = 0; i + piece.maxrow < arr.length; i++) {
+            for (var j = 0; j + piece.maxcol < arr[i].length; j++) {
+                if (isMatch(arr, nodes, i, j)) {
+                    addNewRowWithPiece(header, nodes, i, j, piece);
+                }
+            }
+        }
+    }
+
+    return header;
+}
+
+function addNewRowWithPiece(header, nodes, row, column, piece) {
+    var node = nodes[0];
+    var currentNode = new _classes.Node(node.row + row, node.column + column);
+
+    var data = void 0,
+        startRowData = addNewDataObjectWithPiece(header, currentNode, piece);
+    var previousData = startRowData;
+
+    for (var n = 1; n < nodes.length; n++) {
+        node = nodes[n];
+        currentNode = new _classes.Node(node.row + row, node.column + column);
+        data = addNewDataObjectWithPiece(header, currentNode, piece, previousData);
+        previousData.right = data;
+        previousData = data;
+    }
+
+    startRowData.left = data;
+    data.right = startRowData;
+}
+
+function addNewDataObjectWithPiece(header, currentNode, piece, previousData) {
+    var current = findColumnForNode(header, currentNode);
+    if (current === undefined) {
+        return;
+    }
+
+    var data = new _classes.PieceDataObject({ piece: piece, column: current, down: current, up: current.up, left: previousData });
 
     data.up.down = data;
     data.down.up = data;
@@ -11124,10 +11201,50 @@ function countDLXsolutions(header, k) {
     }
 }
 
+function searchDLXWithPiece(header, solution, k) {
+    if (header.right === header) {
+        return true;
+    } else {
+        var isSolutionFound = false;
+        var current = chooseColumn(header);
+        coverColumn(current);
+        var row = current.down;
+
+        while (row !== current && !isSolutionFound) {
+            if (row.piece.numberOfUsages > 0) {
+                solution[k] = row;
+                row.piece.numberOfUsages--;
+
+                var j = row.right;
+                while (j !== row) {
+                    coverColumn(j.column);
+                    j = j.right;
+                }
+                isSolutionFound = searchDLXWithPiece(header, solution, k + 1);
+                row = solution[k];
+                row.piece.numberOfUsages++;
+                current = row.column;
+                j = row.left;
+                while (j !== row) {
+                    uncoverColumn(j.column);
+                    j = j.left;
+                }
+            }
+
+            row = row.down;
+        }
+
+        uncoverColumn(current);
+        return isSolutionFound;
+    }
+}
+
 exports.createXListForExactCoverProblem = createXListForExactCoverProblem;
 exports.searchDLX = searchDLX;
 exports.printDLX = printDLX;
 exports.countDLXsolutions = countDLXsolutions;
+exports.createXListForExactCoverProblemWithPiece = createXListForExactCoverProblemWithPiece;
+exports.searchDLXWithPiece = searchDLXWithPiece;
 
 /***/ }),
 /* 6 */
@@ -11508,9 +11625,13 @@ function findSolution(arr) {
         return solution;
     } else {
         console.log('dlx');
-        var header = (0, _dlx.createXListForExactCoverProblem)(arr);
+        //const header = createXListForExactCoverProblem(arr);
+        var header = (0, _dlx.createXListForExactCoverProblemWithPiece)(arr);
         var _solution = [];
-        if (!(0, _dlx.searchDLX)(header, _solution, 0)) {
+        /*if (!searchDLX(header, solution, 0)) {
+            return;
+        }*/
+        if (!(0, _dlx.searchDLXWithPiece)(header, _solution, 0)) {
             return;
         }
         return (0, _dlx.printDLX)(_solution);

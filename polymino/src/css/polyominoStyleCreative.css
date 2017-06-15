@@ -155,7 +155,7 @@ is-small-screen .creative .polyomino-area {
 
 @media screen and (min-width: 610px) {
 	.mdl-layout__drawer.is-visible {
-		width: 600px;
+		width: 50%;
 	}
 }
 

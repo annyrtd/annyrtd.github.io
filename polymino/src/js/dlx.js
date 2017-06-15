@@ -1,5 +1,5 @@
 import {pieces} from './pieces';
-import {RootObject, DataObject, ColumnObject, Node, Piece} from './classes';
+import {RootObject, DataObject, ColumnObject, Node, Piece, PieceDataObject} from './classes';
 
 // Prepare for DLX
 function createXListForExactCoverProblem(arr) {
@@ -79,6 +79,57 @@ function addNewDataObject(header, currentNode, previousData) {
     }
 
     const data = new DataObject({column: current, down: current, up: current.up, left: previousData});
+
+    data.up.down = data;
+    data.down.up = data;
+    current.size++;
+
+    return data;
+}
+
+function createXListForExactCoverProblemWithPiece(arr) {
+    const header = createInitialXList(arr);
+    for (let p = 0, piece, nodes; p < pieces.length; p++) {
+        piece = pieces[p];
+        nodes = piece.nodes;
+        for (let i = 0; i + piece.maxrow < arr.length; i++) {
+            for (let j = 0; j + piece.maxcol < arr[i].length; j++) {
+                if (isMatch(arr, nodes, i, j)) {
+                    addNewRowWithPiece(header, nodes, i, j, piece);
+                }
+            }
+        }
+    }
+
+    return header;
+}
+
+function addNewRowWithPiece(header, nodes, row, column, piece) {
+    let node = nodes[0];
+    let currentNode = new Node(node.row + row, node.column + column);
+
+    let data, startRowData = addNewDataObjectWithPiece(header, currentNode, piece);
+    let previousData = startRowData;
+
+    for (let n = 1; n < nodes.length; n++) {
+        node = nodes[n];
+        currentNode = new Node(node.row + row, node.column + column);
+        data = addNewDataObjectWithPiece(header, currentNode, piece, previousData);
+        previousData.right = data;
+        previousData = data;
+    }
+
+    startRowData.left = data;
+    data.right = startRowData;
+}
+
+function addNewDataObjectWithPiece(header, currentNode, piece, previousData) {
+    const current = findColumnForNode(header, currentNode);
+    if (current === undefined) {
+        return;
+    }
+
+    const data = new PieceDataObject({piece, column: current, down: current, up: current.up, left: previousData});
 
     data.up.down = data;
     data.down.up = data;
@@ -239,4 +290,46 @@ function countDLXsolutions(header, k) {
     }
 }
 
-export {createXListForExactCoverProblem, searchDLX, printDLX, countDLXsolutions};
+function searchDLXWithPiece(header, solution, k) {
+    if (header.right === header) {
+        return true;
+    }
+    else {
+        let isSolutionFound = false;
+        let current = chooseColumn(header);
+        coverColumn(current);
+        let row = current.down;
+
+        while (row !== current && !isSolutionFound) {
+            if(row.piece.numberOfUsages > 0) {
+                solution[k] = row;
+                row.piece.numberOfUsages--;
+
+                let j = row.right;
+                while (j !== row) {
+                    coverColumn(j.column);
+                    j = j.right;
+                }
+                isSolutionFound = searchDLXWithPiece(header, solution, k + 1);
+                row = solution[k];
+                row.piece.numberOfUsages++;
+                current = row.column;
+                j = row.left;
+                while (j !== row) {
+                    uncoverColumn(j.column);
+                    j = j.left;
+                }
+            }
+
+            row = row.down;
+        }
+
+        uncoverColumn(current);
+        return isSolutionFound;
+    }
+}
+
+export {
+    createXListForExactCoverProblem, searchDLX, printDLX, countDLXsolutions,
+    createXListForExactCoverProblemWithPiece, searchDLXWithPiece
+};

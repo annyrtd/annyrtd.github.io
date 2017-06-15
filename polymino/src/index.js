@@ -2,7 +2,7 @@
 
 import $ from "jquery";
 import {Node, Piece} from './js/classes';
-import {createXListForExactCoverProblem, searchDLX, printDLX, countDLXsolutions} from './js/dlx';
+import {createXListForExactCoverProblem, searchDLX, printDLX, countDLXsolutions, createXListForExactCoverProblemWithPiece, searchDLXWithPiece} from './js/dlx';
 import {searchBruijn, countBruijnSolutions} from './js/debruijn';
 import {pieces} from './js/pieces';
 import {setUpPieceSelectionArea} from './js/pieceSelection';
@@ -81,9 +81,13 @@ function findSolution(arr)  {
         return solution;
     } else {
         console.log('dlx');
-        const header = createXListForExactCoverProblem(arr);
+        //const header = createXListForExactCoverProblem(arr);
+        const header = createXListForExactCoverProblemWithPiece(arr);
         const solution = [];
-        if (!searchDLX(header, solution, 0)) {
+        /*if (!searchDLX(header, solution, 0)) {
+            return;
+        }*/
+        if (!searchDLXWithPiece(header, solution, 0)) {
             return;
         }
         return printDLX(solution);

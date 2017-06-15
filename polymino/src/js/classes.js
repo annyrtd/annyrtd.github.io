@@ -14,6 +14,13 @@ class DataObject extends RootObject{
     }
 }
 
+class PieceDataObject extends DataObject{
+    constructor({left, right, up, down, column, piece}) {
+        super({left, right, up, down, column});
+        this.piece = piece;
+    }
+}
+
 class ColumnObject extends DataObject{
     constructor({left, right, up, down, column, size = 0, name}) {
         super({left, right, up, down, column});
@@ -46,7 +53,7 @@ class Node {
 }
 
 class Piece {
-    constructor(coordinates, color = getRandomColor()) {
+    constructor(coordinates, color = getRandomColor(), numberOfUsages = Infinity) {
         this.color = color;
         let nodes = [];
         let maxrow = coordinates[0][0];
@@ -76,6 +83,7 @@ class Piece {
         this.maxcol = maxcol;
         this.mincol = mincol;
         this.root = Piece.getPieceRoot(nodes);
+        this.numberOfUsages = numberOfUsages;
     }
 
     getView() {
@@ -142,4 +150,4 @@ function getRandomColor() {
     return color;
 }
 
-export {Node, Piece, ColumnObject, DataObject, RootObject};
+export {Node, Piece, ColumnObject, DataObject, RootObject, PieceDataObject};
