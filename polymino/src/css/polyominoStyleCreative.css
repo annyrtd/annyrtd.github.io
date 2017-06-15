@@ -214,3 +214,17 @@ is-small-screen .creative .polyomino-area {
 	line-height: 24px;
 	height: 24px;
 }
+
+.numberOfUsages {
+	display: none;
+	width: 60px;
+}
+
+.numberOfUsages input{
+	width: 100%;
+	margin: 8px 0;
+}
+
+.selected .numberOfUsages {
+	display: block;
+}

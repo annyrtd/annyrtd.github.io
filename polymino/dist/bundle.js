@@ -11295,24 +11295,37 @@ exports.setUpPieceSelectionArea = undefined;
 
 var _pieces = __webpack_require__(1);
 
+var INFINITY = 'Infinity';
+
 function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
     var containerPieceMap = new WeakMap();
     var containers = [];
+    /*
+        let datalist = document.createElement('datalist');
+        let id = 'datalistNumberOfUsages';
+        datalist.id = id;
+        datalist.innerHTML = `<option value="1"><option value="2"><option value="3"><option value="${INFINITY}">`;
+        area.appendChild(datalist);*/
 
     _pieces.pieces.forEach(function (piece) {
         var view = piece.getView();
+        var input = createInput(piece /*, id*/);
         var container = document.createElement('div');
         container.classList.add('pieceContainer');
         container.classList.add('selected');
         container.classList.add('mdl-card');
         container.classList.add('mdl-shadow--8dp');
+        container.appendChild(input);
         container.appendChild(view);
         area.appendChild(container);
 
         containers.push(container);
         containerPieceMap.set(container, piece);
 
-        container.onclick = function () {
+        container.onclick = function (e) {
+            if (e.target.nodeName === 'INPUT') {
+                return;
+            }
             if (container.classList.contains('selected')) {
                 container.classList.remove('selected');
                 container.classList.remove('mdl-card');
@@ -11348,6 +11361,31 @@ function setUpPieceSelectionArea(area, selectAllId, deselectAllId) {
             }
         });
     };
+}
+
+function createInput(piece, id) {
+    var input = document.createElement('input');
+    input.value = INFINITY;
+    input.setAttribute('list', id);
+
+    var wrapper = document.createElement('div');
+    wrapper.classList.add('numberOfUsages');
+
+    wrapper.appendChild(input);
+
+    input.onblur = function () {
+        var regExp = new RegExp('^([1-9][0-9]*|' + INFINITY + ')$');
+        var value = input.value;
+        if (!regExp.test(value)) {
+            input.value = INFINITY;
+            piece.numberOfUsages = Infinity;
+            return;
+        }
+
+        piece.numberOfUsages = parseInt(value);
+    };
+
+    return wrapper;
 }
 
 exports.setUpPieceSelectionArea = setUpPieceSelectionArea;
