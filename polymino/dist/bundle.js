@@ -10929,7 +10929,6 @@ function searchBruijnWithPiece(arr, solution) {
                 var offsetX = next.row - root.row;
                 var offsetY = next.column - root.column;
                 if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
-                    // TODO: add offset
                     solution.push(placePiece(arr, nodes, next.row - root.row, next.column - root.column));
                     piece.numberOfUsages--;
                     if (searchBruijnWithPiece(arr, solution)) {
@@ -11468,7 +11467,8 @@ function createInput(piece, id) {
     wrapper.appendChild(input);
 
     input.onblur = function () {
-        var regExp = new RegExp('^([1-9][0-9]*|' + INFINITY + ')$');
+        var regExp = /^[1-9][0-9]*$/;
+        //const regExp = new RegExp('^([1-9][0-9]*|' + INFINITY + ')$');
         var value = input.value;
         if (!regExp.test(value)) {
             input.value = INFINITY;

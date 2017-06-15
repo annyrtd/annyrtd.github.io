@@ -125,7 +125,6 @@ function searchBruijnWithPiece(arr, solution) {
                 let offsetX = next.row - root.row;
                 let offsetY = next.column - root.column;
                 if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
-                    // TODO: add offset
                     solution.push(placePiece(arr, nodes, next.row - root.row, next.column - root.column));
                     piece.numberOfUsages--;
                     if (searchBruijnWithPiece(arr, solution)) {

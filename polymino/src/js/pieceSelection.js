@@ -78,7 +78,8 @@ function createInput(piece, id) {
     wrapper.appendChild(input);
 
     input.onblur = function() {
-        const regExp = new RegExp('^([1-9][0-9]*|' + INFINITY + ')$');
+        const regExp = /^[1-9][0-9]*$/;
+        //const regExp = new RegExp('^([1-9][0-9]*|' + INFINITY + ')$');
         const value = input.value;
         if(!regExp.test(value)) {
             input.value = INFINITY;
