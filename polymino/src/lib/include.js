@@ -19,7 +19,7 @@ if(!supportsPromise()) {
     );
 }
 
-if(!supportsPromise()) {
+if(!supportsWeakMap()) {
     document.write(
         '<script src="weakmap.min.js"></script>\n'
     );
