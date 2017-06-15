@@ -12279,6 +12279,7 @@ function countSolutions(arr) {
 function generatePolyminoTable() {
     saveToLocalStorage();
     initialSetUp();
+    level = 1;
     var table = computed.find('table.polytable');
 
     var _countNumbersForTable = countNumbersForTable(),

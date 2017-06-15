@@ -154,6 +154,7 @@ function countSolutions(arr) {
 function generatePolyminoTable() {
     saveToLocalStorage();
     initialSetUp();
+    level = 1;
     const table = computed.find('table.polytable');
     let {numberOfRows, numberOfColumns, numberOfBarriers, area} = countNumbersForTable();
 
