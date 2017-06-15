@@ -10905,7 +10905,7 @@ exports.countBruijnSolutions = countBruijnSolutions;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.searchDLXWithPiece = exports.createXListForExactCoverProblemWithPiece = exports.countDLXsolutions = exports.printDLX = exports.searchDLX = exports.createXListForExactCoverProblem = undefined;
+exports.searchDLXWithPiece = exports.countDLXsolutionsWithPiece = exports.createXListForExactCoverProblemWithPiece = exports.countDLXsolutions = exports.printDLX = exports.searchDLX = exports.createXListForExactCoverProblem = undefined;
 
 var _pieces = __webpack_require__(1);
 
@@ -11201,6 +11201,41 @@ function countDLXsolutions(header, k) {
     }
 }
 
+function countDLXsolutionsWithPiece(header, k) {
+    if (header.right == header) {
+        return 1;
+    } else {
+        var numberOfSolutions = 0;
+        var current = chooseColumn(header);
+        coverColumn(current);
+        var row = current.down;
+
+        while (row != current) {
+            if (row.piece.numberOfUsages > 0) {
+                row.piece.numberOfUsages--;
+                var j = row.right;
+                while (j != row) {
+                    coverColumn(j.column);
+                    j = j.right;
+                }
+                numberOfSolutions += countDLXsolutionsWithPiece(header, k + 1);
+
+                current = row.column;
+                j = row.left;
+                while (j != row) {
+                    uncoverColumn(j.column);
+                    j = j.left;
+                }
+                row.piece.numberOfUsages++;
+            }
+            row = row.down;
+        }
+
+        uncoverColumn(current);
+        return numberOfSolutions;
+    }
+}
+
 function searchDLXWithPiece(header, solution, k) {
     if (header.right === header) {
         return true;
@@ -11244,6 +11279,7 @@ exports.searchDLX = searchDLX;
 exports.printDLX = printDLX;
 exports.countDLXsolutions = countDLXsolutions;
 exports.createXListForExactCoverProblemWithPiece = createXListForExactCoverProblemWithPiece;
+exports.countDLXsolutionsWithPiece = countDLXsolutionsWithPiece;
 exports.searchDLXWithPiece = searchDLXWithPiece;
 
 /***/ }),
@@ -11663,16 +11699,44 @@ function findSolution(arr) {
         return solution;
     } else {
         console.log('dlx');
-        //const header = createXListForExactCoverProblem(arr);
-        var header = (0, _dlx.createXListForExactCoverProblemWithPiece)(arr);
+        var header = (0, _dlx.createXListForExactCoverProblem)(arr);
         var _solution = [];
-        /*if (!searchDLX(header, solution, 0)) {
-            return;
-        }*/
-        if (!(0, _dlx.searchDLXWithPiece)(header, _solution, 0)) {
+        if (!(0, _dlx.searchDLX)(header, _solution, 0)) {
             return;
         }
         return (0, _dlx.printDLX)(_solution);
+    }
+}
+
+function findSolutionWithPiece(arr) {
+    var freeCells = 0,
+        barriers = 0;
+
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < arr[i].length; j++) {
+            if (arr[i][j] == 0) {
+                freeCells++;
+            } else {
+                barriers++;
+            }
+        }
+    }
+
+    if (barriers <= 8 || barriers > 8 && barriers <= 12 && freeCells + barriers < 96) {
+        console.log('debruijn');
+        var solution = [];
+        if (!(0, _debruijn.searchBruijn)(arr, solution)) {
+            return;
+        }
+        return solution;
+    } else {
+        console.log('dlx');
+        var header = (0, _dlx.createXListForExactCoverProblemWithPiece)(arr);
+        var _solution2 = [];
+        if (!(0, _dlx.searchDLXWithPiece)(header, _solution2, 0)) {
+            return;
+        }
+        return (0, _dlx.printDLX)(_solution2);
     }
 }
 
@@ -11696,8 +11760,8 @@ function countSolutions(arr) {
         numberOfSolutions = (0, _debruijn.countBruijnSolutions)(arr);
         console.log('debruijn: ' + numberOfSolutions + ' solutions');
     } else {
-        var header = (0, _dlx.createXListForExactCoverProblem)(arr);
-        numberOfSolutions = (0, _dlx.countDLXsolutions)(header, 0);
+        var header = (0, _dlx.createXListForExactCoverProblemWithPiece)(arr);
+        numberOfSolutions = (0, _dlx.countDLXsolutionsWithPiece)(header, 0);
         console.log('dlx: ' + numberOfSolutions + ' solutions');
     }
 
@@ -12213,7 +12277,7 @@ function startGameCreative(arr) {
     stepOfIntervalCreative = 0;
     piecesSetCreative = 0;
     //timeStart = performance && performance.now? performance.now() : 0;
-    solutionPiecesCreative = findSolution(arr);
+    solutionPiecesCreative = findSolutionWithPiece(arr);
 
     if (!solutionPiecesCreative) {
         alertWithInterval('There is no solution!', interval * (stepOfIntervalCreative + 1));

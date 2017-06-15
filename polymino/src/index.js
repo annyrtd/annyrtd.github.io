@@ -2,7 +2,7 @@
 
 import $ from "jquery";
 import {Node, Piece} from './js/classes';
-import {createXListForExactCoverProblem, searchDLX, printDLX, countDLXsolutions, createXListForExactCoverProblemWithPiece, searchDLXWithPiece} from './js/dlx';
+import {createXListForExactCoverProblem, searchDLX, printDLX, countDLXsolutions, createXListForExactCoverProblemWithPiece, searchDLXWithPiece, countDLXsolutionsWithPiece} from './js/dlx';
 import {searchBruijn, countBruijnSolutions} from './js/debruijn';
 import {pieces} from './js/pieces';
 import {setUpPieceSelectionArea} from './js/pieceSelection';
@@ -81,12 +81,40 @@ function findSolution(arr)  {
         return solution;
     } else {
         console.log('dlx');
-        //const header = createXListForExactCoverProblem(arr);
+        const header = createXListForExactCoverProblem(arr);
+        const solution = [];
+        if (!searchDLX(header, solution, 0)) {
+            return;
+        }
+        return printDLX(solution);
+    }
+}
+
+function findSolutionWithPiece(arr)  {
+    let freeCells = 0, barriers = 0;
+
+    for(let i = 0; i < arr.length; i++) {
+        for(let j = 0; j < arr[i].length; j++) {
+            if(arr[i][j] == 0) {
+                freeCells++
+            } else {
+                barriers++;
+            }
+        }
+    }
+
+    if(barriers <= 8 ||
+        (barriers > 8 && barriers <= 12 && (freeCells + barriers) < 96)) {
+        console.log('debruijn');
+        const solution = [];
+        if(!searchBruijn(arr, solution)) {
+            return;
+        }
+        return solution;
+    } else {
+        console.log('dlx');
         const header = createXListForExactCoverProblemWithPiece(arr);
         const solution = [];
-        /*if (!searchDLX(header, solution, 0)) {
-            return;
-        }*/
         if (!searchDLXWithPiece(header, solution, 0)) {
             return;
         }
@@ -114,8 +142,8 @@ function countSolutions(arr) {
         numberOfSolutions = countBruijnSolutions(arr);
         console.log(`debruijn: ${numberOfSolutions} solutions`);
     } else {
-        const header = createXListForExactCoverProblem(arr);
-        numberOfSolutions = countDLXsolutions(header, 0);
+        const header = createXListForExactCoverProblemWithPiece(arr);
+        numberOfSolutions = countDLXsolutionsWithPiece(header, 0);
         console.log(`dlx: ${numberOfSolutions} solutions`);
     }
 
@@ -624,7 +652,7 @@ function startGameCreative(arr) {
     stepOfIntervalCreative = 0;
     piecesSetCreative = 0;
     //timeStart = performance && performance.now? performance.now() : 0;
-    solutionPiecesCreative = findSolution(arr);
+    solutionPiecesCreative = findSolutionWithPiece(arr);
 
     if (!solutionPiecesCreative) {
         alertWithInterval('There is no solution!', interval * (stepOfIntervalCreative + 1));

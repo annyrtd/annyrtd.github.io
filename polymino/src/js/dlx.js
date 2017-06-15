@@ -290,6 +290,42 @@ function countDLXsolutions(header, k) {
     }
 }
 
+function countDLXsolutionsWithPiece(header, k) {
+    if (header.right == header) {
+        return 1;
+    }
+    else {
+        let numberOfSolutions = 0;
+        let current = chooseColumn(header);
+        coverColumn(current);
+        let row = current.down;
+
+        while (row != current) {
+            if(row.piece.numberOfUsages > 0) {
+                row.piece.numberOfUsages--;
+                let j = row.right;
+                while (j != row) {
+                    coverColumn(j.column);
+                    j = j.right;
+                }
+                numberOfSolutions += countDLXsolutionsWithPiece(header, k + 1);
+
+                current = row.column;
+                j = row.left;
+                while (j != row) {
+                    uncoverColumn(j.column);
+                    j = j.left;
+                }
+                row.piece.numberOfUsages++;
+            }
+            row = row.down;
+        }
+
+        uncoverColumn(current);
+        return numberOfSolutions;
+    }
+}
+
 function searchDLXWithPiece(header, solution, k) {
     if (header.right === header) {
         return true;
@@ -331,5 +367,5 @@ function searchDLXWithPiece(header, solution, k) {
 
 export {
     createXListForExactCoverProblem, searchDLX, printDLX, countDLXsolutions,
-    createXListForExactCoverProblemWithPiece, searchDLXWithPiece
+    createXListForExactCoverProblemWithPiece, countDLXsolutionsWithPiece, searchDLXWithPiece
 };
