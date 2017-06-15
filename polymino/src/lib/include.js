@@ -21,6 +21,6 @@ if(!supportsPromise()) {
 
 if(!supportsWeakMap()) {
     document.write(
-        '<script src="weakmap.min.js"></script>\n'
+        '<script src="weakmap.js"></script>\n'
     );
 }
