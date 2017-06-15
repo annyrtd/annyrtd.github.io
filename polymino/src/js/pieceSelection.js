@@ -1,5 +1,7 @@
 import {pieces, activatePiece, deactivatePiece} from './pieces';
 import {countStatistic} from './statistics';
+var Map = require('es6-map');
+
 const INFINITY = 'Infinity';
 
 function setUpPieceSelectionArea(area, selectAllId, deselectAllId, creative) {
