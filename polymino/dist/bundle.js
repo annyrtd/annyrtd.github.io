@@ -10802,7 +10802,7 @@ return jQuery;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.countBruijnSolutions = exports.searchBruijn = undefined;
+exports.searchBruijnWithPiece = exports.countBruijnSolutionsWithPiece = exports.countBruijnSolutions = exports.searchBruijn = undefined;
 
 var _pieces = __webpack_require__(1);
 
@@ -10892,8 +10892,66 @@ function countBruijnSolutions(arr) {
     }
 }
 
+function countBruijnSolutionsWithPiece(arr) {
+    var next = getNextBruijnHole(arr);
+    if (next) {
+        var numberOfSolutions = 0;
+        for (var index = 0; index < _pieces.pieces.length; index++) {
+            var piece = _pieces.pieces[index];
+            if (piece.numberOfUsages > 0) {
+                var nodes = piece.nodes;
+                var root = piece.root;
+                var offsetX = next.row - root.row;
+                var offsetY = next.column - root.column;
+                if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
+                    placePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                    piece.numberOfUsages--;
+                    numberOfSolutions += countBruijnSolutionsWithPiece(arr);
+                    removePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                    piece.numberOfUsages++;
+                }
+            }
+        }
+        return numberOfSolutions;
+    } else {
+        return 1;
+    }
+}
+
+function searchBruijnWithPiece(arr, solution) {
+    var next = getNextBruijnHole(arr);
+    if (next) {
+        for (var index = 0; index < _pieces.pieces.length; index++) {
+            var piece = _pieces.pieces[index];
+            if (piece.numberOfUsages > 0) {
+                var nodes = piece.nodes;
+                var root = piece.root;
+                var offsetX = next.row - root.row;
+                var offsetY = next.column - root.column;
+                if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
+                    // TODO: add offset
+                    solution.push(placePiece(arr, nodes, next.row - root.row, next.column - root.column));
+                    piece.numberOfUsages--;
+                    if (searchBruijnWithPiece(arr, solution)) {
+                        removePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                        piece.numberOfUsages++;
+                        return true;
+                    }
+                    removePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                    piece.numberOfUsages++;
+                    solution.pop();
+                }
+            }
+        }
+    } else {
+        return true;
+    }
+}
+
 exports.searchBruijn = searchBruijn;
 exports.countBruijnSolutions = countBruijnSolutions;
+exports.countBruijnSolutionsWithPiece = countBruijnSolutionsWithPiece;
+exports.searchBruijnWithPiece = searchBruijnWithPiece;
 
 /***/ }),
 /* 5 */
@@ -11725,7 +11783,7 @@ function findSolutionWithPiece(arr) {
     if (barriers <= 8 || barriers > 8 && barriers <= 12 && freeCells + barriers < 96) {
         console.log('debruijn');
         var solution = [];
-        if (!(0, _debruijn.searchBruijn)(arr, solution)) {
+        if (!(0, _debruijn.searchBruijnWithPiece)(arr, solution)) {
             return;
         }
         return solution;
@@ -11757,7 +11815,7 @@ function countSolutions(arr) {
     var numberOfSolutions = void 0;
 
     if (barriers <= 8 || barriers > 8 && barriers <= 12 && freeCells + barriers < 96) {
-        numberOfSolutions = (0, _debruijn.countBruijnSolutions)(arr);
+        numberOfSolutions = (0, _debruijn.countBruijnSolutionsWithPiece)(arr);
         console.log('debruijn: ' + numberOfSolutions + ' solutions');
     } else {
         var header = (0, _dlx.createXListForExactCoverProblemWithPiece)(arr);

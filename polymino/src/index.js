@@ -3,7 +3,7 @@
 import $ from "jquery";
 import {Node, Piece} from './js/classes';
 import {createXListForExactCoverProblem, searchDLX, printDLX, countDLXsolutions, createXListForExactCoverProblemWithPiece, searchDLXWithPiece, countDLXsolutionsWithPiece} from './js/dlx';
-import {searchBruijn, countBruijnSolutions} from './js/debruijn';
+import {searchBruijn, searchBruijnWithPiece, countBruijnSolutions, countBruijnSolutionsWithPiece} from './js/debruijn';
 import {pieces} from './js/pieces';
 import {setUpPieceSelectionArea} from './js/pieceSelection';
 import {transformTableToMatrix} from './js/transformTableToMatrix';
@@ -107,7 +107,7 @@ function findSolutionWithPiece(arr)  {
         (barriers > 8 && barriers <= 12 && (freeCells + barriers) < 96)) {
         console.log('debruijn');
         const solution = [];
-        if(!searchBruijn(arr, solution)) {
+        if(!searchBruijnWithPiece(arr, solution)) {
             return;
         }
         return solution;
@@ -139,7 +139,7 @@ function countSolutions(arr) {
 
     if(barriers <= 8 ||
         (barriers > 8 && barriers <= 12 && (freeCells + barriers) < 96)) {
-        numberOfSolutions = countBruijnSolutions(arr);
+        numberOfSolutions = countBruijnSolutionsWithPiece(arr);
         console.log(`debruijn: ${numberOfSolutions} solutions`);
     } else {
         const header = createXListForExactCoverProblemWithPiece(arr);

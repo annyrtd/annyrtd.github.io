@@ -88,4 +88,60 @@ function countBruijnSolutions(arr) {
     }
 }
 
-export {searchBruijn, countBruijnSolutions};
+function countBruijnSolutionsWithPiece(arr) {
+    let next = getNextBruijnHole(arr);
+    if (next) {
+        let numberOfSolutions = 0;
+        for (let index = 0; index < pieces.length; index++) {
+            let piece = pieces[index];
+            if(piece.numberOfUsages > 0) {
+                let nodes = piece.nodes;
+                let root = piece.root;
+                let offsetX = next.row - root.row;
+                let offsetY = next.column - root.column;
+                if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
+                    placePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                    piece.numberOfUsages--;
+                    numberOfSolutions += countBruijnSolutionsWithPiece(arr);
+                    removePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                    piece.numberOfUsages++;
+                }
+            }
+        }
+        return numberOfSolutions;
+    } else {
+        return 1;
+    }
+}
+
+function searchBruijnWithPiece(arr, solution) {
+    let next = getNextBruijnHole(arr);
+    if (next) {
+        for (let index = 0; index < pieces.length; index++) {
+            let piece = pieces[index];
+            if(piece.numberOfUsages > 0) {
+                let nodes = piece.nodes;
+                let root = piece.root;
+                let offsetX = next.row - root.row;
+                let offsetY = next.column - root.column;
+                if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
+                    // TODO: add offset
+                    solution.push(placePiece(arr, nodes, next.row - root.row, next.column - root.column));
+                    piece.numberOfUsages--;
+                    if (searchBruijnWithPiece(arr, solution)) {
+                        removePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                        piece.numberOfUsages++;
+                        return true;
+                    }
+                    removePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                    piece.numberOfUsages++;
+                    solution.pop();
+                }
+            }
+        }
+    } else {
+        return true;
+    }
+}
+
+export {searchBruijn, countBruijnSolutions, countBruijnSolutionsWithPiece, searchBruijnWithPiece};
