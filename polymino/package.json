@@ -4,7 +4,9 @@
   "scripts": {
     "build": "./node_modules/.bin/webpack"
   },
-  "pre-commit": [ "build" ],
+  "pre-commit": [
+    "build"
+  ],
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
@@ -13,6 +15,7 @@
     "webpack": "^2.4.1"
   },
   "dependencies": {
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "weakmap": "0.0.6"
   }
 }

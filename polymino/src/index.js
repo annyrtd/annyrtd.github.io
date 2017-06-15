@@ -1,9 +1,4 @@
 'use strict';
-window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
-    alert(`${lineNumber}: ${errorMsg}`);
-    // Просто запустить обработчик события по умолчанию.
-    return false;
-};
 
 import $ from "jquery";
 import {Node, Piece} from './js/classes';
