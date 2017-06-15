@@ -11693,6 +11693,12 @@ var _getCoordinates = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+    alert(lineNumber + ': ' + errorMsg);
+    // Просто запустить обработчик события по умолчанию.
+    return false;
+};
+
 var interval = 200;
 var stepOfInterval = 0;
 var piecesSet = 0;
