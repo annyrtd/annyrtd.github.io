@@ -6,11 +6,11 @@ window.onerror = function (message, url, lineNo){
 };
 
 function supportsPromise() {
-    return typeof Promise != "undefined";
+    return typeof Promise !== "undefined";
 }
 
 function supportsWeakMap() {
-    return typeof WeakMap != "undefined";
+    return typeof WeakMap !== "undefined";
 }
 
 if(!supportsPromise()) {
