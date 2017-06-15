@@ -12327,6 +12327,28 @@ function countNumbersForTable() {
     return { numberOfRows: numberOfRows, numberOfColumns: numberOfColumns, numberOfBarriers: numberOfBarriers, area: area };
 }
 
+function getPageX(event) {
+    if (event.pageX) {
+        return event.pageX;
+    } else {
+        var touches = event.changedTouches;
+        if (touches && touches[0]) {
+            return touches[0].pageX;
+        }
+    }
+}
+
+function getPageY(event) {
+    if (event.pageY) {
+        return event.pageY;
+    } else {
+        var touches = event.changedTouches;
+        if (touches && touches[0]) {
+            return touches[0].pageY;
+        }
+    }
+}
+
 function startGame(arr) {
     stepOfInterval = 0;
     //timeStart = performance && performance.now? performance.now() : 0;
@@ -12371,10 +12393,9 @@ function startGame(arr) {
                 e.stopPropagation();
                 e.preventDefault();
                 view.style.display = '';
-                alert('e.pageX: ' + e.pageX + '; e.pageY: ' + e.pageY);
                 var coords = (0, _getCoordinates.getCoordinates)(view);
-                var shiftX = e.pageX - coords.left;
-                var shiftY = e.pageY - coords.top;
+                var shiftX = getPageX(e) - coords.left;
+                var shiftY = getPageY(e) - coords.top;
 
                 var isPieceSet = true;
                 var currentCoordinatesAttribute = view.getAttribute('data-nodes');
@@ -12404,14 +12425,14 @@ function startGame(arr) {
                 });
 
                 function moveAt(e) {
-                    view.style.left = e.pageX - shiftX - 8 + 'px';
-                    view.style.top = e.pageY - shiftY + 'px';
+                    view.style.left = getPageX(e) - shiftX - 8 + 'px';
+                    view.style.top = getPageY(e) - shiftY + 'px';
                 }
 
                 function getRowAndCol(e) {
                     var offset = solutionArea.offset();
-                    var containerX = e.pageX - offset.left;
-                    var containerY = e.pageY - offset.top;
+                    var containerX = getPageX(e) - offset.left;
+                    var containerY = getPageY(e) - offset.top;
                     var row = Math.round((containerY - shiftY) / tableCellWidth);
                     var column = Math.round((containerX - shiftX) / tableCellWidth);
                     return { row: row, column: column };
@@ -12793,8 +12814,8 @@ function startGameCreative(arr) {
                 e.preventDefault();
                 view.style.display = '';
                 var coords = (0, _getCoordinates.getCoordinates)(view);
-                var shiftX = e.pageX - coords.left;
-                var shiftY = e.pageY - coords.top;
+                var shiftX = getPageX(e) - coords.left;
+                var shiftY = getPageY(e) - coords.top;
 
                 var isPieceSet = true;
                 var currentCoordinatesAttributeCreative = view.getAttribute('data-nodes');
@@ -12819,14 +12840,14 @@ function startGameCreative(arr) {
                 });
 
                 function moveAt(e) {
-                    view.style.left = e.pageX - shiftX - 8 + 'px';
-                    view.style.top = e.pageY - shiftY + 'px';
+                    view.style.left = getPageX(e) - shiftX - 8 + 'px';
+                    view.style.top = getPageY(e) - shiftY + 'px';
                 }
 
                 function getRowAndCol(e) {
                     var offset = solutionArea.offset();
-                    var containerX = e.pageX - offset.left;
-                    var containerY = e.pageY - offset.top;
+                    var containerX = getPageX(e) - offset.left;
+                    var containerY = getPageY(e) - offset.top;
                     var row = Math.round((containerY - shiftY) / tableCellWidth);
                     var column = Math.round((containerX - shiftX) / tableCellWidth);
                     return { row: row, column: column };

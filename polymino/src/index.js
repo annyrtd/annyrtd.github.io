@@ -196,6 +196,28 @@ function countNumbersForTable() {
     return {numberOfRows, numberOfColumns, numberOfBarriers, area};
 }
 
+function getPageX(event) {
+    if(event.pageX) {
+        return event.pageX;
+    } else {
+        const touches = event.changedTouches;
+        if(touches && touches[0]) {
+            return touches[0].pageX;
+        }
+    }
+}
+
+function getPageY(event) {
+    if(event.pageY) {
+        return event.pageY;
+    } else {
+        const touches = event.changedTouches;
+        if(touches && touches[0]) {
+            return touches[0].pageY;
+        }
+    }
+}
+
 function startGame(arr) {
     stepOfInterval = 0;
     //timeStart = performance && performance.now? performance.now() : 0;
@@ -240,10 +262,9 @@ function startGame(arr) {
                 e.stopPropagation();
                 e.preventDefault();
                 view.style.display = '';
-                alert('e.pageX: ' + e.pageX + '; e.pageY: ' + e.pageY);
                 const coords = getCoordinates(view);
-                const shiftX = e.pageX - coords.left;
-                const shiftY = e.pageY - coords.top;
+                const shiftX = getPageX(e) - coords.left;
+                const shiftY = getPageY(e) - coords.top;
 
                 let isPieceSet = true;
                 let currentCoordinatesAttribute = view.getAttribute('data-nodes');
@@ -265,14 +286,14 @@ function startGame(arr) {
                 });
 
                 function moveAt(e) {
-                    view.style.left = (e.pageX - shiftX - 8) + 'px';
-                    view.style.top = (e.pageY - shiftY) + 'px';
+                    view.style.left = (getPageX(e) - shiftX - 8) + 'px';
+                    view.style.top = (getPageY(e) - shiftY) + 'px';
                 }
 
                 function getRowAndCol(e) {
                     let offset = solutionArea.offset();
-                    let containerX = e.pageX - offset.left;
-                    let containerY = e.pageY - offset.top;
+                    let containerX = getPageX(e) - offset.left;
+                    let containerY = getPageY(e) - offset.top;
                     let row = Math.round((containerY - shiftY) / tableCellWidth);
                     let column = Math.round((containerX - shiftX) / tableCellWidth);
                     return {row, column};
@@ -660,8 +681,8 @@ function startGameCreative(arr) {
                 e.preventDefault();
                 view.style.display = '';
                 const coords = getCoordinates(view);
-                const shiftX = e.pageX - coords.left;
-                const shiftY = e.pageY - coords.top;
+                const shiftX = getPageX(e) - coords.left;
+                const shiftY = getPageY(e) - coords.top;
 
                 let isPieceSet = true;
                 let currentCoordinatesAttributeCreative = view.getAttribute('data-nodes');
@@ -681,14 +702,14 @@ function startGameCreative(arr) {
                 });
 
                 function moveAt(e) {
-                    view.style.left = (e.pageX - shiftX - 8) + 'px';
-                    view.style.top = (e.pageY - shiftY) + 'px';
+                    view.style.left = (getPageX(e) - shiftX - 8) + 'px';
+                    view.style.top = (getPageY(e) - shiftY) + 'px';
                 }
 
                 function getRowAndCol(e) {
                     let offset = solutionArea.offset();
-                    let containerX = e.pageX - offset.left;
-                    let containerY = e.pageY - offset.top;
+                    let containerX = getPageX(e) - offset.left;
+                    let containerY = getPageY(e) - offset.top;
                     let row = Math.round((containerY - shiftY) / tableCellWidth);
                     let column = Math.round((containerX - shiftX) / tableCellWidth);
                     return {row, column};
