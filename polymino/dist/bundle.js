@@ -12060,7 +12060,7 @@ function startGame(arr) {
 
                     console.log(piecesSet);
                     if (piecesSet == solutionLength) {
-                        alertWithInterval('Congratulations!', 50);
+                        alertWithInterval('Поздравляем!', 50);
                         computed.find('.piece').each(placePieceNoInterval);
                         level++;
                         score = parseInt(score) + parseInt(scoreForLevel);
@@ -12180,7 +12180,7 @@ function resetField() {
 
     computed.find('#add-piece').click(function () {
         if (score - pieceCost < 0) {
-            alertWithInterval("You haven't got enough money!");
+            alertWithInterval("У вас недостаточно средств на счете!");
             return;
         }
         score = score - pieceCost;
@@ -12264,7 +12264,7 @@ function resetField() {
             piecesSet++;
             console.log(piecesSet);
             if (piecesSet == solutionLength) {
-                alertWithInterval('Congratulations!', 50);
+                alertWithInterval('Поздравляем!', 50);
                 computed.find('.piece').each(placePieceNoInterval);
                 level++;
                 score = parseInt(score) + parseInt(scoreForLevel);
@@ -12277,7 +12277,7 @@ function resetField() {
 
     computed.find('#give-up').click(function () {
         if (score - giveUpCost < 0) {
-            alertWithInterval("You haven't got enough money!");
+            alertWithInterval("У вас недостаточно средств на счете!");
             return;
         }
         score = score - giveUpCost;
@@ -12346,7 +12346,7 @@ function startGameCreative(arr) {
     solutionPiecesCreative = findSolutionWithPiece(arr);
 
     if (!solutionPiecesCreative) {
-        alertWithInterval('There is no solution!', interval * (stepOfIntervalCreative + 1));
+        alertWithInterval('Нет решений!', interval * (stepOfIntervalCreative + 1));
         creative.find('#give-up-creative').hide();
         return;
     }
@@ -12474,7 +12474,7 @@ function startGameCreative(arr) {
                     if (piecesSetCreative == solutionLengthCreative && !isGameFinished) {
                         isGameFinished = true;
                         creative.find('#give-up-creative').hide();
-                        alertWithInterval('Congratulations!', 50);
+                        alertWithInterval('Поздравляем!', 50);
                     }
                 };
             };
@@ -12591,7 +12591,7 @@ function resetFieldCreative() {
     creative.find('#go').click(function () {
         resetFieldCreative();
         if (creative.find('span.statisticSpan .bad').length > 0) {
-            alert("It's impossible to cover table with such number of empty cells!");
+            alert("Невозможно покрыть фигурами поле с таким числом пустым клеток!");
             return;
         }
         (0, _shufflePieces.shufflePieces)(_pieces.pieces);
