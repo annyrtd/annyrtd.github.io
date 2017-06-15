@@ -116,6 +116,7 @@ is-small-screen .creative .polyomino-area {
 
 .creative .piece td {
 	width: 32px;
+	min-width: 32px;
 	height: 32px;
 }
 
