@@ -7,20 +7,21 @@ window.onerror = function (message, url, lineNo){
 
 function supportsPromise() {
     return typeof Promise !== "undefined";
-}
+}/*
 
 function supportsWeakMap() {
     return typeof WeakMap !== "undefined";
-}
+}*/
 
 if(!supportsPromise()) {
     document.write(
         '<script src="Promise.js"></script>\n'
     );
 }
+/*
 
 if(!supportsWeakMap()) {
     document.write(
         '<script src="weakmap.js"></script>\n'
     );
-}
+}*/

@@ -3,7 +3,7 @@ import {countStatistic} from './statistics';
 const INFINITY = 'Infinity';
 
 function setUpPieceSelectionArea(area, selectAllId, deselectAllId, creative) {
-    const containerPieceMap = new WeakMap();
+    const containerPieceMap = new Map();
     const containers = [];
 /*
     let datalist = document.createElement('datalist');

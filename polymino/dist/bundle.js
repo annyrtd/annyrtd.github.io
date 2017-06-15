@@ -11533,7 +11533,7 @@ var _statistics = __webpack_require__(2);
 var INFINITY = 'Infinity';
 
 function setUpPieceSelectionArea(area, selectAllId, deselectAllId, creative) {
-    var containerPieceMap = new WeakMap();
+    var containerPieceMap = new Map();
     var containers = [];
     /*
         let datalist = document.createElement('datalist');
