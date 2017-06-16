@@ -359,6 +359,7 @@ function startGame(arr) {
                     console.log(piecesSet);
                     if (piecesSet == solutionLength) {
                         alertWithInterval('Поздравляем!', 50);
+                        printScore();
                         computed.find('.piece').each(placePieceNoInterval);
                         level++;
                         score = parseInt(score) + parseInt(scoreForLevel);
