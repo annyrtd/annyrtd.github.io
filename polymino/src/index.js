@@ -359,11 +359,13 @@ function startGame(arr) {
                     console.log(piecesSet);
                     if (piecesSet == solutionLength) {
                         alertWithInterval('Поздравляем!', 50);
-                        printScore();
                         computed.find('.piece').each(placePieceNoInterval);
                         level++;
                         score = parseInt(score) + parseInt(scoreForLevel);
+
+                        printScore();
                         saveToLocalStorage();
+
                         computed.find('#give-up, #add-piece').prop('disabled', true);
                         computed.find('#next').prop('disabled', false);
                     }
