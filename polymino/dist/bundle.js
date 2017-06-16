@@ -12749,6 +12749,23 @@ function resetField() {
         generatePolyminoTable();
     });
 
+    computed.find('#clear-field').click(function () {
+        computed.find('.piece.pieceSet').each(function () {
+            var view = this;
+            view.style.position = '';
+            view.style.left = '';
+            view.style.top = '';
+            view.style.display = '';
+            (0, _jquery2.default)(view).removeClass('pieceSet');
+        });
+
+        computed.find('.cell.set').each(function () {
+            (0, _jquery2.default)(this).removeClass('set').removeAttr('data-piece');
+        });
+
+        piecesSet = 0;
+    });
+
     var uncheckedPieces = [];
 
     (0, _jquery2.default)('#computed').change(function () {
