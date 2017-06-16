@@ -613,6 +613,25 @@ $(document).ready(
             }
         );
 
+        computed.find('#clear-field').click(
+            function() {
+                computed.find('.piece.pieceSet').each(function(){
+                    const view = this;
+                    view.style.position = '';
+                    view.style.left = '';
+                    view.style.top = '';
+                    view.style.display = '';
+                    $(view).removeClass('pieceSet');
+                });
+
+                computed.find('.cell.set').each(function() {
+                    $(this).removeClass('set').removeAttr('data-piece');
+                });
+
+                piecesSet = 0;
+            }
+        );
+
         let uncheckedPieces = [];
 
         $('#computed').change(
