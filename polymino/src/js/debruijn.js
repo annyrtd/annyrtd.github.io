@@ -65,30 +65,7 @@ function removePiece(arr, nodes, i, j) {
     }
 }
 
-// additional functions
 function countBruijnSolutions(arr) {
-    let next = getNextBruijnHole(arr);
-    if (next) {
-        let numberOfSolutions = 0;
-        for (let index = 0; index < pieces.length; index++) {
-            let piece = pieces[index];
-            let nodes = piece.nodes;
-            let root = piece.root;
-            let offsetX = next.row - root.row;
-            let offsetY = next.column - root.column;
-            if(isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
-                placePiece(arr, nodes, next.row - root.row, next.column - root.column);
-                numberOfSolutions += countBruijnSolutions(arr);
-                removePiece(arr, nodes, next.row - root.row, next.column - root.column);
-            }
-        }
-        return numberOfSolutions;
-    } else {
-        return 1;
-    }
-}
-
-function countBruijnSolutionsWithPiece(arr) {
     let next = getNextBruijnHole(arr);
     if (next) {
         let numberOfSolutions = 0;
@@ -102,7 +79,7 @@ function countBruijnSolutionsWithPiece(arr) {
                 if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
                     placePiece(arr, nodes, next.row - root.row, next.column - root.column);
                     piece.numberOfUsages--;
-                    numberOfSolutions += countBruijnSolutionsWithPiece(arr);
+                    numberOfSolutions += countBruijnSolutions(arr);
                     removePiece(arr, nodes, next.row - root.row, next.column - root.column);
                     piece.numberOfUsages++;
                 }
@@ -143,4 +120,4 @@ function searchBruijnWithPiece(arr, solution) {
     }
 }
 
-export {searchBruijn, countBruijnSolutions, countBruijnSolutionsWithPiece, searchBruijnWithPiece};
+export {searchBruijn, countBruijnSolutions, searchBruijnWithPiece};

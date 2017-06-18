@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 26);
+/******/ 	return __webpack_require__(__webpack_require__.s = 25);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -101,7 +101,7 @@ module.exports = function (fn) {
 
 var assign        = __webpack_require__(9)
   , normalizeOpts = __webpack_require__(16)
-  , isCallable    = __webpack_require__(44)
+  , isCallable    = __webpack_require__(45)
   , contains      = __webpack_require__(19)
 
   , d;
@@ -169,7 +169,7 @@ d.gs = function (dscr, get, set/*, options*/) {
 "use strict";
 
 
-module.exports = __webpack_require__(64)() ? Symbol : __webpack_require__(66);
+module.exports = __webpack_require__(65)() ? Symbol : __webpack_require__(67);
 
 
 /***/ }),
@@ -653,9 +653,9 @@ module.exports = function (x) {
 "use strict";
 
 
-module.exports = __webpack_require__(39)()
+module.exports = __webpack_require__(40)()
 	? Object.assign
-	: __webpack_require__(40);
+	: __webpack_require__(41);
 
 
 /***/ }),
@@ -670,7 +670,7 @@ var clear    = __webpack_require__(14)
   , callable = __webpack_require__(1)
   , value    = __webpack_require__(0)
   , d        = __webpack_require__(2)
-  , autoBind = __webpack_require__(27)
+  , autoBind = __webpack_require__(28)
   , Symbol   = __webpack_require__(3)
 
   , defineProperty = Object.defineProperty
@@ -11216,7 +11216,7 @@ module.exports = function () {
 "use strict";
 
 
-var toInteger = __webpack_require__(37)
+var toInteger = __webpack_require__(38)
 
   , max = Math.max;
 
@@ -11275,7 +11275,7 @@ module.exports = function (/*customCreate*/) {
 
 
 
-var isObject      = __webpack_require__(45)
+var isObject      = __webpack_require__(46)
   , value         = __webpack_require__(0)
 
   , isPrototypeOf = Object.prototype.isPrototypeOf
@@ -11342,7 +11342,7 @@ module.exports = (function (status) {
 	return false;
 }())));
 
-__webpack_require__(42);
+__webpack_require__(43);
 
 
 /***/ }),
@@ -11352,9 +11352,9 @@ __webpack_require__(42);
 "use strict";
 
 
-module.exports = __webpack_require__(51)()
+module.exports = __webpack_require__(52)()
 	? String.prototype.contains
-	: __webpack_require__(52);
+	: __webpack_require__(53);
 
 
 /***/ }),
@@ -11364,7 +11364,7 @@ module.exports = __webpack_require__(51)()
 "use strict";
 
 
-var isIterable = __webpack_require__(56);
+var isIterable = __webpack_require__(57);
 
 module.exports = function (value) {
 	if (!isIterable(value)) throw new TypeError(value + " is not iterable");
@@ -11374,553 +11374,6 @@ module.exports = function (value) {
 
 /***/ }),
 /* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.searchBruijnWithPiece = exports.countBruijnSolutionsWithPiece = exports.countBruijnSolutions = exports.searchBruijn = undefined;
-
-var _pieces = __webpack_require__(5);
-
-var _classes = __webpack_require__(4);
-
-function getNextBruijnHole(arr) {
-    for (var column = 0; column < arr[0].length; column++) {
-        for (var row = 0; row < arr.length; row++) {
-            if (arr[row][column] == 0) return { row: row, column: column };
-        }
-    }
-}
-
-function searchBruijn(arr, solution) {
-    var next = getNextBruijnHole(arr);
-    if (next) {
-        for (var index = 0; index < _pieces.pieces.length; index++) {
-            var piece = _pieces.pieces[index];
-            var nodes = piece.nodes;
-            var root = piece.root;
-            var offsetX = next.row - root.row;
-            var offsetY = next.column - root.column;
-            if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
-                // TODO: add offset
-                solution.push(placePiece(arr, nodes, next.row - root.row, next.column - root.column));
-                if (searchBruijn(arr, solution)) {
-                    removePiece(arr, nodes, next.row - root.row, next.column - root.column);
-                    return true;
-                }
-                removePiece(arr, nodes, next.row - root.row, next.column - root.column);
-                solution.pop();
-            }
-        }
-    } else {
-        return true;
-    }
-}
-
-function isPossibleToPlace(arr, nodes, i, j) {
-    for (var k = 0; k < nodes.length; k++) {
-        if (arr[i + nodes[k].row] === undefined || arr[i + nodes[k].row][j + nodes[k].column] === undefined || arr[i + nodes[k].row][j + nodes[k].column] === 1) {
-            return false;
-        }
-    }
-    return true;
-}
-
-function placePiece(arr, nodes, i, j) {
-    var newNodes = [];
-
-    for (var k = 0; k < nodes.length; k++) {
-        var row = i + nodes[k].row;
-        var col = j + nodes[k].column;
-        newNodes.push([row, col]);
-        arr[row][col] = 1;
-    }
-
-    return new _classes.Piece(newNodes);
-}
-
-function removePiece(arr, nodes, i, j) {
-    for (var k = 0; k < nodes.length; k++) {
-        arr[i + nodes[k].row][j + nodes[k].column] = 0;
-    }
-}
-
-// additional functions
-function countBruijnSolutions(arr) {
-    var next = getNextBruijnHole(arr);
-    if (next) {
-        var numberOfSolutions = 0;
-        for (var index = 0; index < _pieces.pieces.length; index++) {
-            var piece = _pieces.pieces[index];
-            var nodes = piece.nodes;
-            var root = piece.root;
-            var offsetX = next.row - root.row;
-            var offsetY = next.column - root.column;
-            if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
-                placePiece(arr, nodes, next.row - root.row, next.column - root.column);
-                numberOfSolutions += countBruijnSolutions(arr);
-                removePiece(arr, nodes, next.row - root.row, next.column - root.column);
-            }
-        }
-        return numberOfSolutions;
-    } else {
-        return 1;
-    }
-}
-
-function countBruijnSolutionsWithPiece(arr) {
-    var next = getNextBruijnHole(arr);
-    if (next) {
-        var numberOfSolutions = 0;
-        for (var index = 0; index < _pieces.pieces.length; index++) {
-            var piece = _pieces.pieces[index];
-            if (piece.numberOfUsages > 0) {
-                var nodes = piece.nodes;
-                var root = piece.root;
-                var offsetX = next.row - root.row;
-                var offsetY = next.column - root.column;
-                if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
-                    placePiece(arr, nodes, next.row - root.row, next.column - root.column);
-                    piece.numberOfUsages--;
-                    numberOfSolutions += countBruijnSolutionsWithPiece(arr);
-                    removePiece(arr, nodes, next.row - root.row, next.column - root.column);
-                    piece.numberOfUsages++;
-                }
-            }
-        }
-        return numberOfSolutions;
-    } else {
-        return 1;
-    }
-}
-
-function searchBruijnWithPiece(arr, solution) {
-    var next = getNextBruijnHole(arr);
-    if (next) {
-        for (var index = 0; index < _pieces.pieces.length; index++) {
-            var piece = _pieces.pieces[index];
-            if (piece.numberOfUsages > 0) {
-                var nodes = piece.nodes;
-                var root = piece.root;
-                var offsetX = next.row - root.row;
-                var offsetY = next.column - root.column;
-                if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
-                    solution.push(placePiece(arr, nodes, next.row - root.row, next.column - root.column));
-                    piece.numberOfUsages--;
-                    if (searchBruijnWithPiece(arr, solution)) {
-                        removePiece(arr, nodes, next.row - root.row, next.column - root.column);
-                        piece.numberOfUsages++;
-                        return true;
-                    }
-                    removePiece(arr, nodes, next.row - root.row, next.column - root.column);
-                    piece.numberOfUsages++;
-                    solution.pop();
-                }
-            }
-        }
-    } else {
-        return true;
-    }
-}
-
-exports.searchBruijn = searchBruijn;
-exports.countBruijnSolutions = countBruijnSolutions;
-exports.countBruijnSolutionsWithPiece = countBruijnSolutionsWithPiece;
-exports.searchBruijnWithPiece = searchBruijnWithPiece;
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.searchDLXWithPiece = exports.countDLXsolutionsWithPiece = exports.createXListForExactCoverProblemWithPiece = exports.countDLXsolutions = exports.printDLX = exports.searchDLX = exports.createXListForExactCoverProblem = undefined;
-
-var _pieces = __webpack_require__(5);
-
-var _classes = __webpack_require__(4);
-
-// Prepare for DLX
-function createXListForExactCoverProblem(arr) {
-    var header = createInitialXList(arr);
-    for (var p = 0, piece, nodes; p < _pieces.pieces.length; p++) {
-        piece = _pieces.pieces[p];
-        nodes = piece.nodes;
-        for (var i = 0; i + piece.maxrow < arr.length; i++) {
-            for (var j = 0; j + piece.maxcol < arr[i].length; j++) {
-                if (isMatch(arr, nodes, i, j)) {
-                    addNewRow(header, nodes, i, j);
-                }
-            }
-        }
-    }
-
-    return header;
-}
-
-//create initial Xlist with header and empty columns
-function createInitialXList(arr) {
-    var header = new _classes.RootObject({});
-    var previousColumn = header;
-    var currentColumn = void 0,
-        node = void 0;
-    for (var i = 0; i < arr.length; i++) {
-        for (var j = 0; j < arr[i].length; j++) {
-            if (arr[i][j] == 0) {
-                // do I need nodeToString and stringToNode???
-                node = new _classes.Node(i, j);
-                currentColumn = new _classes.ColumnObject({ left: previousColumn, name: node });
-                currentColumn.up = currentColumn;
-                currentColumn.down = currentColumn;
-                currentColumn.column = currentColumn;
-                previousColumn.right = currentColumn;
-                previousColumn = currentColumn;
-            }
-        }
-    }
-    currentColumn.right = header;
-    header.left = currentColumn;
-    return header;
-}
-
-function isMatch(arr, nodes, i, j) {
-    for (var k = 0; k < nodes.length; k++) {
-        if (arr[i + nodes[k].row][j + nodes[k].column] == 1) {
-            return false;
-        }
-    }
-    return true;
-}
-
-//TODO: (only  a note for a programmer) nodes should be sorted in a right order
-function addNewRow(header, nodes, row, column) {
-    var node = nodes[0];
-    var currentNode = new _classes.Node(node.row + row, node.column + column);
-
-    var data = void 0,
-        startRowData = addNewDataObject(header, currentNode);
-    var previousData = startRowData;
-
-    for (var n = 1; n < nodes.length; n++) {
-        node = nodes[n];
-        currentNode = new _classes.Node(node.row + row, node.column + column);
-        data = addNewDataObject(header, currentNode, previousData);
-        previousData.right = data;
-        previousData = data;
-    }
-
-    startRowData.left = data;
-    data.right = startRowData;
-}
-
-function addNewDataObject(header, currentNode, previousData) {
-    var current = findColumnForNode(header, currentNode);
-    if (current === undefined) {
-        return;
-    }
-
-    var data = new _classes.DataObject({ column: current, down: current, up: current.up, left: previousData });
-
-    data.up.down = data;
-    data.down.up = data;
-    current.size++;
-
-    return data;
-}
-
-function createXListForExactCoverProblemWithPiece(arr) {
-    var header = createInitialXList(arr);
-    for (var p = 0, piece, nodes; p < _pieces.pieces.length; p++) {
-        piece = _pieces.pieces[p];
-        nodes = piece.nodes;
-        for (var i = 0; i + piece.maxrow < arr.length; i++) {
-            for (var j = 0; j + piece.maxcol < arr[i].length; j++) {
-                if (isMatch(arr, nodes, i, j)) {
-                    addNewRowWithPiece(header, nodes, i, j, piece);
-                }
-            }
-        }
-    }
-
-    return header;
-}
-
-function addNewRowWithPiece(header, nodes, row, column, piece) {
-    var node = nodes[0];
-    var currentNode = new _classes.Node(node.row + row, node.column + column);
-
-    var data = void 0,
-        startRowData = addNewDataObjectWithPiece(header, currentNode, piece);
-    var previousData = startRowData;
-
-    for (var n = 1; n < nodes.length; n++) {
-        node = nodes[n];
-        currentNode = new _classes.Node(node.row + row, node.column + column);
-        data = addNewDataObjectWithPiece(header, currentNode, piece, previousData);
-        previousData.right = data;
-        previousData = data;
-    }
-
-    startRowData.left = data;
-    data.right = startRowData;
-}
-
-function addNewDataObjectWithPiece(header, currentNode, piece, previousData) {
-    var current = findColumnForNode(header, currentNode);
-    if (current === undefined) {
-        return;
-    }
-
-    var data = new _classes.PieceDataObject({ piece: piece, column: current, down: current, up: current.up, left: previousData });
-
-    data.up.down = data;
-    data.down.up = data;
-    current.size++;
-
-    return data;
-}
-
-function findColumnForNode(header, node) {
-    var current = header.right;
-    while (current != header) {
-        if (current.name.equalsTo(node)) {
-            return current;
-        }
-        current = current.right;
-    }
-    return undefined;
-}
-
-// DLX algorithm
-function searchDLX(header, solution, k) {
-    if (header.right == header) {
-        return true;
-    } else {
-        var isSolutionFound = false;
-        var current = chooseColumn(header);
-        coverColumn(current);
-        var row = current.down;
-
-        while (row != current && !isSolutionFound) {
-            solution[k] = row;
-
-            var j = row.right;
-            while (j != row) {
-                coverColumn(j.column);
-                j = j.right;
-            }
-            isSolutionFound = searchDLX(header, solution, k + 1);
-            row = solution[k];
-            current = row.column;
-            j = row.left;
-            while (j != row) {
-                uncoverColumn(j.column);
-                j = j.left;
-            }
-            row = row.down;
-        }
-
-        uncoverColumn(current);
-        return isSolutionFound;
-    }
-}
-
-function chooseColumn(header) {
-    var j = header.right;
-    var current = j;
-    var size = j.size;
-
-    while (j != header) {
-        if (j.size < size) {
-            current = j;
-            size = j.size;
-        }
-        j = j.right;
-    }
-
-    return current;
-}
-
-function coverColumn(current) {
-    current.right.left = current.left;
-    current.left.right = current.right;
-    var i = current.down;
-    while (i != current) {
-        var j = i.right;
-        while (j != i) {
-            j.down.up = j.up;
-            j.up.down = j.down;
-            j.column.size--;
-
-            j = j.right;
-        }
-
-        i = i.down;
-    }
-}
-
-function uncoverColumn(current) {
-    var i = current.up;
-    while (i != current) {
-        var j = i.left;
-        while (j != i) {
-            j.column.size++;
-            j.down.up = j;
-            j.up.down = j;
-
-            j = j.left;
-        }
-
-        i = i.up;
-    }
-    current.right.left = current;
-    current.left.right = current;
-}
-
-function printDLX(solution) {
-    var pieces = [];
-    //console.log(`Solution(${solution.length} pieces):`);
-    for (var i = 0; i < solution.length; i++) {
-        var o = solution[i];
-        var f = solution[i].left;
-        var str = '';
-        var nodes = [];
-        while (o != f) {
-            nodes.push(o.column.name.toArray());
-            str += o.column.name.toString() + '   ';
-            o = o.right;
-        }
-        nodes.push(o.column.name.toArray());
-        str += o.column.name.toString();
-        pieces.push(new _classes.Piece(nodes));
-        //console.log(str);
-    }
-    return pieces;
-}
-
-//additional functions
-function countDLXsolutions(header, k) {
-    if (header.right == header) {
-        return 1;
-    } else {
-        var numberOfSolutions = 0;
-        var current = chooseColumn(header);
-        coverColumn(current);
-        var row = current.down;
-
-        while (row != current) {
-            var j = row.right;
-            while (j != row) {
-                coverColumn(j.column);
-                j = j.right;
-            }
-            numberOfSolutions += countDLXsolutions(header, k + 1);
-
-            current = row.column;
-            j = row.left;
-            while (j != row) {
-                uncoverColumn(j.column);
-                j = j.left;
-            }
-            row = row.down;
-        }
-
-        uncoverColumn(current);
-        return numberOfSolutions;
-    }
-}
-
-function countDLXsolutionsWithPiece(header, k) {
-    if (header.right == header) {
-        return 1;
-    } else {
-        var numberOfSolutions = 0;
-        var current = chooseColumn(header);
-        coverColumn(current);
-        var row = current.down;
-
-        while (row != current) {
-            if (row.piece.numberOfUsages > 0) {
-                row.piece.numberOfUsages--;
-                var j = row.right;
-                while (j != row) {
-                    coverColumn(j.column);
-                    j = j.right;
-                }
-                numberOfSolutions += countDLXsolutionsWithPiece(header, k + 1);
-
-                current = row.column;
-                j = row.left;
-                while (j != row) {
-                    uncoverColumn(j.column);
-                    j = j.left;
-                }
-                row.piece.numberOfUsages++;
-            }
-            row = row.down;
-        }
-
-        uncoverColumn(current);
-        return numberOfSolutions;
-    }
-}
-
-function searchDLXWithPiece(header, solution, k) {
-    if (header.right === header) {
-        return true;
-    } else {
-        var isSolutionFound = false;
-        var current = chooseColumn(header);
-        coverColumn(current);
-        var row = current.down;
-
-        while (row !== current && !isSolutionFound) {
-            if (row.piece.numberOfUsages > 0) {
-                solution[k] = row;
-                row.piece.numberOfUsages--;
-
-                var j = row.right;
-                while (j !== row) {
-                    coverColumn(j.column);
-                    j = j.right;
-                }
-                isSolutionFound = searchDLXWithPiece(header, solution, k + 1);
-                row = solution[k];
-                row.piece.numberOfUsages++;
-                current = row.column;
-                j = row.left;
-                while (j !== row) {
-                    uncoverColumn(j.column);
-                    j = j.left;
-                }
-            }
-
-            row = row.down;
-        }
-
-        uncoverColumn(current);
-        return isSolutionFound;
-    }
-}
-
-exports.createXListForExactCoverProblem = createXListForExactCoverProblem;
-exports.searchDLX = searchDLX;
-exports.printDLX = printDLX;
-exports.countDLXsolutions = countDLXsolutions;
-exports.createXListForExactCoverProblemWithPiece = createXListForExactCoverProblemWithPiece;
-exports.countDLXsolutionsWithPiece = countDLXsolutionsWithPiece;
-exports.searchDLXWithPiece = searchDLXWithPiece;
-
-/***/ }),
-/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11955,7 +11408,7 @@ function getCoordinates(elem) {
 exports.getCoordinates = getCoordinates;
 
 /***/ }),
-/* 24 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11970,7 +11423,7 @@ var _pieces = __webpack_require__(5);
 
 var _statistics = __webpack_require__(11);
 
-var Map = __webpack_require__(58);
+var Map = __webpack_require__(59);
 
 var INFINITY = 'Infinity';
 
@@ -12074,7 +11527,7 @@ function createInput(piece, id) {
 exports.setUpPieceSelectionArea = setUpPieceSelectionArea;
 
 /***/ }),
-/* 25 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12105,83 +11558,20 @@ function shufflePieces(arrayOfPieces) {
 exports.shufflePieces = shufflePieces;
 
 /***/ }),
-/* 26 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _jquery = __webpack_require__(13);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.countSolutions = exports.findSolutionWithPiece = exports.findSolution = undefined;
 
-var _jquery2 = _interopRequireDefault(_jquery);
+var _dlx = __webpack_require__(27);
 
-var _classes = __webpack_require__(4);
-
-var _dlx = __webpack_require__(22);
-
-var _debruijn = __webpack_require__(21);
-
-var _pieces = __webpack_require__(5);
-
-var _pieceSelection = __webpack_require__(24);
-
-var _transformTableToMatrix = __webpack_require__(12);
-
-var _shufflePieces = __webpack_require__(25);
-
-var _statistics = __webpack_require__(11);
-
-var _getCoordinates = __webpack_require__(23);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var interval = 200;
-var stepOfInterval = 0;
-var piecesSet = 0;
-var solutionLength = void 0;
-var solutionPieces = void 0;
-//let timeStart;
-var scoreForLevel = 500;
-
-var stepOfIntervalCreative = 0;
-var piecesSetCreative = 0;
-var solutionPiecesCreative = void 0;
-
-var repeats = 2;
-var level = 0;
-var score = 0;
-var pieceCost = 400;
-var giveUpCost = void 0;
-var tableCellWidth = 35;
-
-var computed = void 0;
-var creative = void 0;
-
-var numberOfRowsCreative = void 0,
-    numberOfColumnsCreative = void 0;
-
-function saveToLocalStorage() {
-    if (localStorage) {
-        localStorage['level'] = parseInt(level);
-        localStorage['score'] = parseInt(score);
-    }
-}
-
-function restoreFromLocalStorage() {
-    if (localStorage) {
-        if (parseInt(localStorage.getItem('level'))) {
-            level = parseInt(localStorage['level']);
-        } else {
-            localStorage['level'] = level = 0;
-        }
-
-        if (parseInt(localStorage.getItem('score'))) {
-            score = parseInt(localStorage['score']);
-        } else {
-            localStorage['score'] = score = 0;
-        }
-    }
-}
+var _debruijn = __webpack_require__(26);
 
 function shouldDeBruijnBeUsed(arr) {
     var freeCells = 0,
@@ -12242,15 +11632,96 @@ function countSolutions(arr) {
     var numberOfSolutions = void 0;
 
     if (shouldDeBruijnBeUsed(arr)) {
-        numberOfSolutions = (0, _debruijn.countBruijnSolutionsWithPiece)(arr);
+        numberOfSolutions = (0, _debruijn.countBruijnSolutions)(arr);
         console.log('debruijn: ' + numberOfSolutions + ' solutions');
     } else {
         var header = (0, _dlx.createXListForExactCoverProblemWithPiece)(arr);
-        numberOfSolutions = (0, _dlx.countDLXsolutionsWithPiece)(header, 0);
+        numberOfSolutions = (0, _dlx.countDLXsolutions)(header, 0);
         console.log('dlx: ' + numberOfSolutions + ' solutions');
     }
 
-    (0, _jquery2.default)('#numberOfSolutions').html('\u0427\u0438\u0441\u043B\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0439: ' + numberOfSolutions);
+    return numberOfSolutions;
+}
+
+exports.findSolution = findSolution;
+exports.findSolutionWithPiece = findSolutionWithPiece;
+exports.countSolutions = countSolutions;
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _jquery = __webpack_require__(13);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _classes = __webpack_require__(4);
+
+var _pieces = __webpack_require__(5);
+
+var _pieceSelection = __webpack_require__(22);
+
+var _transformTableToMatrix = __webpack_require__(12);
+
+var _shufflePieces = __webpack_require__(23);
+
+var _statistics = __webpack_require__(11);
+
+var _getCoordinates = __webpack_require__(21);
+
+var _solvePolymino = __webpack_require__(24);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var interval = 200;
+var stepOfInterval = 0;
+var piecesSet = 0;
+var solutionLength = void 0;
+var solutionPieces = void 0;
+//let timeStart;
+var scoreForLevel = 500;
+
+var stepOfIntervalCreative = 0;
+var piecesSetCreative = 0;
+var solutionPiecesCreative = void 0;
+
+var repeats = 2;
+var level = 0;
+var score = 0;
+var pieceCost = 400;
+var giveUpCost = void 0;
+var tableCellWidth = 35;
+
+var computed = void 0;
+var creative = void 0;
+
+var numberOfRowsCreative = void 0,
+    numberOfColumnsCreative = void 0;
+
+function saveToLocalStorage() {
+    if (localStorage) {
+        localStorage['level'] = parseInt(level);
+        localStorage['score'] = parseInt(score);
+    }
+}
+
+function restoreFromLocalStorage() {
+    if (localStorage) {
+        if (parseInt(localStorage.getItem('level'))) {
+            level = parseInt(localStorage['level']);
+        } else {
+            localStorage['level'] = level = 0;
+        }
+
+        if (parseInt(localStorage.getItem('score'))) {
+            score = parseInt(localStorage['score']);
+        } else {
+            localStorage['score'] = score = 0;
+        }
+    }
 }
 
 /***** SCRIPT.JS *****/
@@ -12355,7 +11826,7 @@ function startGame(arr) {
     piecesSet = 0;
     var solutionArea = computed.find('div.solutionArea');
 
-    solutionPieces = findSolution(arr);
+    solutionPieces = (0, _solvePolymino.findSolution)(arr);
     if (!solutionPieces) {
         console.log('no solution');
         generatePolyminoTable();
@@ -12805,7 +12276,7 @@ function startGameCreative(arr) {
     stepOfIntervalCreative = 0;
     piecesSetCreative = 0;
     //timeStart = performance && performance.now? performance.now() : 0;
-    solutionPiecesCreative = findSolutionWithPiece(arr);
+    solutionPiecesCreative = (0, _solvePolymino.findSolutionWithPiece)(arr);
 
     if (!solutionPiecesCreative) {
         alertWithInterval('Нет решений!', interval * (stepOfIntervalCreative + 1));
@@ -13117,16 +12588,150 @@ function resetFieldCreative() {
     });
 
     creative.find('#countSolutions').click(function () {
-        var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
-        if (creative.find('span.statisticSpan .bad').length > 0) {
-            (0, _jquery2.default)('#numberOfSolutions').html('\u0427\u0438\u0441\u043B\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0439: 0');
-            return;
+        var numberOfSolutions = 0;
+        if (creative.find('span.statisticSpan .bad').length == 0) {
+            var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);
+            numberOfSolutions = (0, _solvePolymino.countSolutions)(arr);
         }
-        setTimeout(function () {
-            countSolutions(arr);
-        }, 0);
+        (0, _jquery2.default)('#numberOfSolutions').html('\u0427\u0438\u0441\u043B\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u0439: ' + numberOfSolutions);
     });
 });
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.searchBruijnWithPiece = exports.countBruijnSolutions = exports.searchBruijn = undefined;
+
+var _pieces = __webpack_require__(5);
+
+var _classes = __webpack_require__(4);
+
+function getNextBruijnHole(arr) {
+    for (var column = 0; column < arr[0].length; column++) {
+        for (var row = 0; row < arr.length; row++) {
+            if (arr[row][column] == 0) return { row: row, column: column };
+        }
+    }
+}
+
+function searchBruijn(arr, solution) {
+    var next = getNextBruijnHole(arr);
+    if (next) {
+        for (var index = 0; index < _pieces.pieces.length; index++) {
+            var piece = _pieces.pieces[index];
+            var nodes = piece.nodes;
+            var root = piece.root;
+            var offsetX = next.row - root.row;
+            var offsetY = next.column - root.column;
+            if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
+                // TODO: add offset
+                solution.push(placePiece(arr, nodes, next.row - root.row, next.column - root.column));
+                if (searchBruijn(arr, solution)) {
+                    removePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                    return true;
+                }
+                removePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                solution.pop();
+            }
+        }
+    } else {
+        return true;
+    }
+}
+
+function isPossibleToPlace(arr, nodes, i, j) {
+    for (var k = 0; k < nodes.length; k++) {
+        if (arr[i + nodes[k].row] === undefined || arr[i + nodes[k].row][j + nodes[k].column] === undefined || arr[i + nodes[k].row][j + nodes[k].column] === 1) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function placePiece(arr, nodes, i, j) {
+    var newNodes = [];
+
+    for (var k = 0; k < nodes.length; k++) {
+        var row = i + nodes[k].row;
+        var col = j + nodes[k].column;
+        newNodes.push([row, col]);
+        arr[row][col] = 1;
+    }
+
+    return new _classes.Piece(newNodes);
+}
+
+function removePiece(arr, nodes, i, j) {
+    for (var k = 0; k < nodes.length; k++) {
+        arr[i + nodes[k].row][j + nodes[k].column] = 0;
+    }
+}
+
+function countBruijnSolutions(arr) {
+    var next = getNextBruijnHole(arr);
+    if (next) {
+        var numberOfSolutions = 0;
+        for (var index = 0; index < _pieces.pieces.length; index++) {
+            var piece = _pieces.pieces[index];
+            if (piece.numberOfUsages > 0) {
+                var nodes = piece.nodes;
+                var root = piece.root;
+                var offsetX = next.row - root.row;
+                var offsetY = next.column - root.column;
+                if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
+                    placePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                    piece.numberOfUsages--;
+                    numberOfSolutions += countBruijnSolutions(arr);
+                    removePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                    piece.numberOfUsages++;
+                }
+            }
+        }
+        return numberOfSolutions;
+    } else {
+        return 1;
+    }
+}
+
+function searchBruijnWithPiece(arr, solution) {
+    var next = getNextBruijnHole(arr);
+    if (next) {
+        for (var index = 0; index < _pieces.pieces.length; index++) {
+            var piece = _pieces.pieces[index];
+            if (piece.numberOfUsages > 0) {
+                var nodes = piece.nodes;
+                var root = piece.root;
+                var offsetX = next.row - root.row;
+                var offsetY = next.column - root.column;
+                if (isPossibleToPlace(arr, nodes, offsetX, offsetY)) {
+                    solution.push(placePiece(arr, nodes, next.row - root.row, next.column - root.column));
+                    piece.numberOfUsages--;
+                    if (searchBruijnWithPiece(arr, solution)) {
+                        removePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                        piece.numberOfUsages++;
+                        return true;
+                    }
+                    removePiece(arr, nodes, next.row - root.row, next.column - root.column);
+                    piece.numberOfUsages++;
+                    solution.pop();
+                }
+            }
+        }
+    } else {
+        return true;
+    }
+}
+
+exports.searchBruijn = searchBruijn;
+exports.countBruijnSolutions = countBruijnSolutions;
+exports.searchBruijnWithPiece = searchBruijnWithPiece;
 
 /***/ }),
 /* 27 */
@@ -13135,10 +12740,365 @@ function resetFieldCreative() {
 "use strict";
 
 
-var copy             = __webpack_require__(41)
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.searchDLXWithPiece = exports.countDLXsolutions = exports.createXListForExactCoverProblemWithPiece = exports.printDLX = exports.searchDLX = exports.createXListForExactCoverProblem = undefined;
+
+var _pieces = __webpack_require__(5);
+
+var _classes = __webpack_require__(4);
+
+// Prepare for DLX
+function createXListForExactCoverProblem(arr) {
+    var header = createInitialXList(arr);
+    for (var p = 0, piece, nodes; p < _pieces.pieces.length; p++) {
+        piece = _pieces.pieces[p];
+        nodes = piece.nodes;
+        for (var i = 0; i + piece.maxrow < arr.length; i++) {
+            for (var j = 0; j + piece.maxcol < arr[i].length; j++) {
+                if (isMatch(arr, nodes, i, j)) {
+                    addNewRow(header, nodes, i, j);
+                }
+            }
+        }
+    }
+
+    return header;
+}
+
+//create initial Xlist with header and empty columns
+function createInitialXList(arr) {
+    var header = new _classes.RootObject({});
+    var previousColumn = header;
+    var currentColumn = void 0,
+        node = void 0;
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < arr[i].length; j++) {
+            if (arr[i][j] == 0) {
+                // do I need nodeToString and stringToNode???
+                node = new _classes.Node(i, j);
+                currentColumn = new _classes.ColumnObject({ left: previousColumn, name: node });
+                currentColumn.up = currentColumn;
+                currentColumn.down = currentColumn;
+                currentColumn.column = currentColumn;
+                previousColumn.right = currentColumn;
+                previousColumn = currentColumn;
+            }
+        }
+    }
+    currentColumn.right = header;
+    header.left = currentColumn;
+    return header;
+}
+
+function isMatch(arr, nodes, i, j) {
+    for (var k = 0; k < nodes.length; k++) {
+        if (arr[i + nodes[k].row][j + nodes[k].column] == 1) {
+            return false;
+        }
+    }
+    return true;
+}
+
+//TODO: (only  a note for a programmer) nodes should be sorted in a right order
+function addNewRow(header, nodes, row, column) {
+    var node = nodes[0];
+    var currentNode = new _classes.Node(node.row + row, node.column + column);
+
+    var data = void 0,
+        startRowData = addNewDataObject(header, currentNode);
+    var previousData = startRowData;
+
+    for (var n = 1; n < nodes.length; n++) {
+        node = nodes[n];
+        currentNode = new _classes.Node(node.row + row, node.column + column);
+        data = addNewDataObject(header, currentNode, previousData);
+        previousData.right = data;
+        previousData = data;
+    }
+
+    startRowData.left = data;
+    data.right = startRowData;
+}
+
+function addNewDataObject(header, currentNode, previousData) {
+    var current = findColumnForNode(header, currentNode);
+    if (current === undefined) {
+        return;
+    }
+
+    var data = new _classes.DataObject({ column: current, down: current, up: current.up, left: previousData });
+
+    data.up.down = data;
+    data.down.up = data;
+    current.size++;
+
+    return data;
+}
+
+function findColumnForNode(header, node) {
+    var current = header.right;
+    while (current != header) {
+        if (current.name.equalsTo(node)) {
+            return current;
+        }
+        current = current.right;
+    }
+    return undefined;
+}
+
+// DLX algorithm
+function searchDLX(header, solution, k) {
+    if (header.right == header) {
+        return true;
+    } else {
+        var isSolutionFound = false;
+        var current = chooseColumn(header);
+        coverColumn(current);
+        var row = current.down;
+
+        while (row != current && !isSolutionFound) {
+            solution[k] = row;
+
+            var j = row.right;
+            while (j != row) {
+                coverColumn(j.column);
+                j = j.right;
+            }
+            isSolutionFound = searchDLX(header, solution, k + 1);
+            row = solution[k];
+            current = row.column;
+            j = row.left;
+            while (j != row) {
+                uncoverColumn(j.column);
+                j = j.left;
+            }
+            row = row.down;
+        }
+
+        uncoverColumn(current);
+        return isSolutionFound;
+    }
+}
+
+function chooseColumn(header) {
+    var j = header.right;
+    var current = j;
+    var size = j.size;
+
+    while (j != header) {
+        if (j.size < size) {
+            current = j;
+            size = j.size;
+        }
+        j = j.right;
+    }
+
+    return current;
+}
+
+function coverColumn(current) {
+    current.right.left = current.left;
+    current.left.right = current.right;
+    var i = current.down;
+    while (i != current) {
+        var j = i.right;
+        while (j != i) {
+            j.down.up = j.up;
+            j.up.down = j.down;
+            j.column.size--;
+
+            j = j.right;
+        }
+
+        i = i.down;
+    }
+}
+
+function uncoverColumn(current) {
+    var i = current.up;
+    while (i != current) {
+        var j = i.left;
+        while (j != i) {
+            j.column.size++;
+            j.down.up = j;
+            j.up.down = j;
+
+            j = j.left;
+        }
+
+        i = i.up;
+    }
+    current.right.left = current;
+    current.left.right = current;
+}
+
+function printDLX(solution) {
+    var pieces = [];
+    //console.log(`Solution(${solution.length} pieces):`);
+    for (var i = 0; i < solution.length; i++) {
+        var o = solution[i];
+        var f = solution[i].left;
+        var str = '';
+        var nodes = [];
+        while (o != f) {
+            nodes.push(o.column.name.toArray());
+            str += o.column.name.toString() + '   ';
+            o = o.right;
+        }
+        nodes.push(o.column.name.toArray());
+        str += o.column.name.toString();
+        pieces.push(new _classes.Piece(nodes));
+        //console.log(str);
+    }
+    return pieces;
+}
+
+// functions with piece constraints
+function createXListForExactCoverProblemWithPiece(arr) {
+    var header = createInitialXList(arr);
+    for (var p = 0, piece, nodes; p < _pieces.pieces.length; p++) {
+        piece = _pieces.pieces[p];
+        nodes = piece.nodes;
+        for (var i = 0; i + piece.maxrow < arr.length; i++) {
+            for (var j = 0; j + piece.maxcol < arr[i].length; j++) {
+                if (isMatch(arr, nodes, i, j)) {
+                    addNewRowWithPiece(header, nodes, i, j, piece);
+                }
+            }
+        }
+    }
+
+    return header;
+}
+
+function addNewRowWithPiece(header, nodes, row, column, piece) {
+    var node = nodes[0];
+    var currentNode = new _classes.Node(node.row + row, node.column + column);
+
+    var data = void 0,
+        startRowData = addNewDataObjectWithPiece(header, currentNode, piece);
+    var previousData = startRowData;
+
+    for (var n = 1; n < nodes.length; n++) {
+        node = nodes[n];
+        currentNode = new _classes.Node(node.row + row, node.column + column);
+        data = addNewDataObjectWithPiece(header, currentNode, piece, previousData);
+        previousData.right = data;
+        previousData = data;
+    }
+
+    startRowData.left = data;
+    data.right = startRowData;
+}
+
+function addNewDataObjectWithPiece(header, currentNode, piece, previousData) {
+    var current = findColumnForNode(header, currentNode);
+    if (current === undefined) {
+        return;
+    }
+
+    var data = new _classes.PieceDataObject({ piece: piece, column: current, down: current, up: current.up, left: previousData });
+
+    data.up.down = data;
+    data.down.up = data;
+    current.size++;
+
+    return data;
+}
+
+function countDLXsolutions(header, k) {
+    if (header.right == header) {
+        return 1;
+    } else {
+        var numberOfSolutions = 0;
+        var current = chooseColumn(header);
+        coverColumn(current);
+        var row = current.down;
+
+        while (row != current) {
+            if (row.piece.numberOfUsages > 0) {
+                row.piece.numberOfUsages--;
+                var j = row.right;
+                while (j != row) {
+                    coverColumn(j.column);
+                    j = j.right;
+                }
+                numberOfSolutions += countDLXsolutions(header, k + 1);
+
+                current = row.column;
+                j = row.left;
+                while (j != row) {
+                    uncoverColumn(j.column);
+                    j = j.left;
+                }
+                row.piece.numberOfUsages++;
+            }
+            row = row.down;
+        }
+
+        uncoverColumn(current);
+        return numberOfSolutions;
+    }
+}
+
+function searchDLXWithPiece(header, solution, k) {
+    if (header.right === header) {
+        return true;
+    } else {
+        var isSolutionFound = false;
+        var current = chooseColumn(header);
+        coverColumn(current);
+        var row = current.down;
+
+        while (row !== current && !isSolutionFound) {
+            if (row.piece.numberOfUsages > 0) {
+                solution[k] = row;
+                row.piece.numberOfUsages--;
+
+                var j = row.right;
+                while (j !== row) {
+                    coverColumn(j.column);
+                    j = j.right;
+                }
+                isSolutionFound = searchDLXWithPiece(header, solution, k + 1);
+                row = solution[k];
+                row.piece.numberOfUsages++;
+                current = row.column;
+                j = row.left;
+                while (j !== row) {
+                    uncoverColumn(j.column);
+                    j = j.left;
+                }
+            }
+
+            row = row.down;
+        }
+
+        uncoverColumn(current);
+        return isSolutionFound;
+    }
+}
+
+exports.createXListForExactCoverProblem = createXListForExactCoverProblem;
+exports.searchDLX = searchDLX;
+exports.printDLX = printDLX;
+exports.createXListForExactCoverProblemWithPiece = createXListForExactCoverProblemWithPiece;
+exports.countDLXsolutions = countDLXsolutions;
+exports.searchDLXWithPiece = searchDLXWithPiece;
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var copy             = __webpack_require__(42)
   , normalizeOptions = __webpack_require__(16)
   , ensureCallable   = __webpack_require__(1)
-  , map              = __webpack_require__(49)
+  , map              = __webpack_require__(50)
   , callable         = __webpack_require__(1)
   , validValue       = __webpack_require__(0)
 
@@ -13168,7 +13128,7 @@ module.exports = function (props/*, options*/) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13204,19 +13164,19 @@ module.exports = function (searchElement/*, fromIndex*/) {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(30)()
+module.exports = __webpack_require__(31)()
 	? Array.from
-	: __webpack_require__(31);
+	: __webpack_require__(32);
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13232,7 +13192,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13240,7 +13200,7 @@ module.exports = function () {
 
 var iteratorSymbol = __webpack_require__(3).iterator
   , isArguments    = __webpack_require__(6)
-  , isFunction     = __webpack_require__(32)
+  , isFunction     = __webpack_require__(33)
   , toPosInt       = __webpack_require__(15)
   , callable       = __webpack_require__(1)
   , validValue     = __webpack_require__(0)
@@ -13345,7 +13305,7 @@ module.exports = function (arrayLike/*, mapFn, thisArg*/) {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13353,21 +13313,11 @@ module.exports = function (arrayLike/*, mapFn, thisArg*/) {
 
 var toString = Object.prototype.toString
 
-  , id = toString.call(__webpack_require__(33));
+  , id = toString.call(__webpack_require__(34));
 
 module.exports = function (f) {
 	return (typeof f === "function") && (toString.call(f) === id);
 };
-
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function () {};
 
 
 /***/ }),
@@ -13377,13 +13327,23 @@ module.exports = function () {};
 "use strict";
 
 
-module.exports = __webpack_require__(35)()
-	? Math.sign
-	: __webpack_require__(36);
+module.exports = function () {};
 
 
 /***/ }),
 /* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(36)()
+	? Math.sign
+	: __webpack_require__(37);
+
+
+/***/ }),
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13397,7 +13357,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13411,13 +13371,13 @@ module.exports = function (value) {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var sign = __webpack_require__(34)
+var sign = __webpack_require__(35)
 
   , abs = Math.abs, floor = Math.floor;
 
@@ -13430,7 +13390,7 @@ module.exports = function (value) {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13466,7 +13426,7 @@ module.exports = function (method, defVal) {
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13482,13 +13442,13 @@ module.exports = function () {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var keys  = __webpack_require__(46)
+var keys  = __webpack_require__(47)
   , value = __webpack_require__(0)
 
   , max = Math.max;
@@ -13511,13 +13471,13 @@ module.exports = function (dest, src/*, …srcn*/) {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var aFrom  = __webpack_require__(29)
+var aFrom  = __webpack_require__(30)
   , assign = __webpack_require__(9)
   , value  = __webpack_require__(0);
 
@@ -13537,7 +13497,7 @@ module.exports = function (obj/*, propertyNames, options*/) {
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13580,17 +13540,17 @@ module.exports = (function () {
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(38)('forEach');
+module.exports = __webpack_require__(39)('forEach');
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13602,7 +13562,7 @@ module.exports = function (obj) { return typeof obj === 'function'; };
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13616,19 +13576,19 @@ module.exports = function (x) {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(47)()
+module.exports = __webpack_require__(48)()
 	? Object.keys
-	: __webpack_require__(48);
+	: __webpack_require__(49);
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13643,7 +13603,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13657,14 +13617,14 @@ module.exports = function (object) {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var callable = __webpack_require__(1)
-  , forEach  = __webpack_require__(43)
+  , forEach  = __webpack_require__(44)
 
   , call = Function.prototype.call;
 
@@ -13679,7 +13639,7 @@ module.exports = function (obj, cb/*, thisArg*/) {
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13695,7 +13655,7 @@ module.exports = function (arg/*, …args*/) {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13710,7 +13670,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13724,7 +13684,7 @@ module.exports = function (searchString/*, position*/) {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13761,7 +13721,7 @@ ArrayIterator.prototype = Object.create(Iterator.prototype, {
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13770,7 +13730,7 @@ ArrayIterator.prototype = Object.create(Iterator.prototype, {
 var isArguments = __webpack_require__(6)
   , callable    = __webpack_require__(1)
   , isString    = __webpack_require__(8)
-  , get         = __webpack_require__(55)
+  , get         = __webpack_require__(56)
 
   , isArray = Array.isArray, call = Function.prototype.call
   , some = Array.prototype.some;
@@ -13814,7 +13774,7 @@ module.exports = function (iterable, cb/*, thisArg*/) {
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13822,8 +13782,8 @@ module.exports = function (iterable, cb/*, thisArg*/) {
 
 var isArguments    = __webpack_require__(6)
   , isString       = __webpack_require__(8)
-  , ArrayIterator  = __webpack_require__(53)
-  , StringIterator = __webpack_require__(57)
+  , ArrayIterator  = __webpack_require__(54)
+  , StringIterator = __webpack_require__(58)
   , iterable       = __webpack_require__(20)
   , iteratorSymbol = __webpack_require__(3).iterator;
 
@@ -13836,7 +13796,7 @@ module.exports = function (obj) {
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13858,7 +13818,7 @@ module.exports = function (value) {
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13902,17 +13862,17 @@ StringIterator.prototype = Object.create(Iterator.prototype, {
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(59)() ? Map : __webpack_require__(63);
+module.exports = __webpack_require__(60)() ? Map : __webpack_require__(64);
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13951,7 +13911,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13967,18 +13927,18 @@ module.exports = (function () {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(50)('key',
+module.exports = __webpack_require__(51)('key',
 	'value', 'key+value');
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13988,7 +13948,7 @@ var setPrototypeOf    = __webpack_require__(7)
   , d                 = __webpack_require__(2)
   , Iterator          = __webpack_require__(10)
   , toStringTagSymbol = __webpack_require__(3).toStringTag
-  , kinds             = __webpack_require__(61)
+  , kinds             = __webpack_require__(62)
 
   , defineProperties = Object.defineProperties
   , unBind = Iterator.prototype._unBind
@@ -14023,24 +13983,24 @@ Object.defineProperty(MapIterator.prototype, toStringTagSymbol,
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var clear          = __webpack_require__(14)
-  , eIndexOf       = __webpack_require__(28)
+  , eIndexOf       = __webpack_require__(29)
   , setPrototypeOf = __webpack_require__(7)
   , callable       = __webpack_require__(1)
   , validValue     = __webpack_require__(0)
   , d              = __webpack_require__(2)
-  , ee             = __webpack_require__(68)
+  , ee             = __webpack_require__(69)
   , Symbol         = __webpack_require__(3)
   , iterator       = __webpack_require__(20)
-  , forOf          = __webpack_require__(54)
-  , Iterator       = __webpack_require__(62)
-  , isNative       = __webpack_require__(60)
+  , forOf          = __webpack_require__(55)
+  , Iterator       = __webpack_require__(63)
+  , isNative       = __webpack_require__(61)
 
   , call = Function.prototype.call
   , defineProperties = Object.defineProperties, getPrototypeOf = Object.getPrototypeOf
@@ -14134,7 +14094,7 @@ Object.defineProperty(MapPoly.prototype, Symbol.toStringTag, d('c', 'Map'));
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14158,7 +14118,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14174,7 +14134,7 @@ module.exports = function (x) {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14183,7 +14143,7 @@ module.exports = function (x) {
 
 
 var d              = __webpack_require__(2)
-  , validateSymbol = __webpack_require__(67)
+  , validateSymbol = __webpack_require__(68)
 
   , create = Object.create, defineProperties = Object.defineProperties
   , defineProperty = Object.defineProperty, objPrototype = Object.prototype
@@ -14299,13 +14259,13 @@ defineProperty(HiddenSymbol.prototype, SymbolPolyfill.toPrimitive,
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var isSymbol = __webpack_require__(65);
+var isSymbol = __webpack_require__(66);
 
 module.exports = function (value) {
 	if (!isSymbol(value)) throw new TypeError(value + " is not a symbol");
@@ -14314,7 +14274,7 @@ module.exports = function (value) {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
