@@ -1,7 +1,8 @@
 'use strict';
 
 import $ from "jquery";
-import {Node, Piece} from './js/classes';
+import {Node} from './js/Node';
+import {Piece} from './js/Piece';
 import {pieces} from './js/pieces';
 import {setUpPieceSelectionArea} from './js/pieceSelection';
 import {transformTableToMatrix} from './js/transformTableToMatrix';

@@ -1,5 +1,7 @@
 import {pieces} from './pieces';
-import {RootObject, DataObject, ColumnObject, Node, Piece, PieceDataObject} from './classes';
+import {RootObject, DataObject, ColumnObject, PieceDataObject} from './dlxClasses';
+import {Piece} from './Piece';
+import {Node} from './Node';
 
 // Prepare for DLX
 function createXListForExactCoverProblem(arr) {

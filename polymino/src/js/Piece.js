@@ -1,56 +1,4 @@
-class RootObject {
-    constructor({left, right}) {
-        this.left = left;
-        this.right = right;
-    }
-}
-
-class DataObject extends RootObject{
-    constructor({left, right, up, down, column}) {
-        super({left, right});
-        this.up = up;
-        this.down = down;
-        this.column = column;
-    }
-}
-
-class PieceDataObject extends DataObject{
-    constructor({left, right, up, down, column, piece}) {
-        super({left, right, up, down, column});
-        this.piece = piece;
-    }
-}
-
-class ColumnObject extends DataObject{
-    constructor({left, right, up, down, column, size = 0, name}) {
-        super({left, right, up, down, column});
-        this.size = size;
-        this.name = name;
-    }
-}
-
-class Node {
-    constructor(row, column) {
-        this.row =  row;
-        this.column = column;
-    }
-    //example: "1,1"
-    static fromString(str) {
-        let position = str.indexOf(',');
-        let row = str.substr(0, position);
-        let column = str.substr(position + 1);
-        return new Node(row, column);
-    }
-    toString() {
-        return this.row + ',' + this.column;
-    }
-    equalsTo(node) {
-        return (this.row == node.row) && (this.column == node.column);
-    }
-    toArray() {
-        return [this.row, this.column];
-    }
-}
+import {Node} from './Node';
 
 class Piece {
     constructor(coordinates, color = getRandomColor(), numberOfUsages = Infinity) {
@@ -150,4 +98,4 @@ function getRandomColor() {
     return color;
 }
 
-export {Node, Piece, ColumnObject, DataObject, RootObject, PieceDataObject};
+export {Piece};

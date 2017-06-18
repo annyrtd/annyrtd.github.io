@@ -1,4 +1,4 @@
-import {Node} from './classes';
+import {Node} from './Node';
 import {transformTableToMatrix} from './transformTableToMatrix';
 import {piecesLength} from './pieces';
 

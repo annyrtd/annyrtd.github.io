@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 25);
+/******/ 	return __webpack_require__(__webpack_require__.s = 26);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -99,10 +99,10 @@ module.exports = function (fn) {
 "use strict";
 
 
-var assign        = __webpack_require__(9)
-  , normalizeOpts = __webpack_require__(16)
-  , isCallable    = __webpack_require__(45)
-  , contains      = __webpack_require__(19)
+var assign        = __webpack_require__(10)
+  , normalizeOpts = __webpack_require__(17)
+  , isCallable    = __webpack_require__(47)
+  , contains      = __webpack_require__(20)
 
   , d;
 
@@ -169,7 +169,7 @@ d.gs = function (dscr, get, set/*, options*/) {
 "use strict";
 
 
-module.exports = __webpack_require__(65)() ? Symbol : __webpack_require__(67);
+module.exports = __webpack_require__(67)() ? Symbol : __webpack_require__(69);
 
 
 /***/ }),
@@ -182,264 +182,9 @@ module.exports = __webpack_require__(65)() ? Symbol : __webpack_require__(67);
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var RootObject = function RootObject(_ref) {
-    var left = _ref.left,
-        right = _ref.right;
-
-    _classCallCheck(this, RootObject);
-
-    this.left = left;
-    this.right = right;
-};
-
-var DataObject = function (_RootObject) {
-    _inherits(DataObject, _RootObject);
-
-    function DataObject(_ref2) {
-        var left = _ref2.left,
-            right = _ref2.right,
-            up = _ref2.up,
-            down = _ref2.down,
-            column = _ref2.column;
-
-        _classCallCheck(this, DataObject);
-
-        var _this = _possibleConstructorReturn(this, (DataObject.__proto__ || Object.getPrototypeOf(DataObject)).call(this, { left: left, right: right }));
-
-        _this.up = up;
-        _this.down = down;
-        _this.column = column;
-        return _this;
-    }
-
-    return DataObject;
-}(RootObject);
-
-var PieceDataObject = function (_DataObject) {
-    _inherits(PieceDataObject, _DataObject);
-
-    function PieceDataObject(_ref3) {
-        var left = _ref3.left,
-            right = _ref3.right,
-            up = _ref3.up,
-            down = _ref3.down,
-            column = _ref3.column,
-            piece = _ref3.piece;
-
-        _classCallCheck(this, PieceDataObject);
-
-        var _this2 = _possibleConstructorReturn(this, (PieceDataObject.__proto__ || Object.getPrototypeOf(PieceDataObject)).call(this, { left: left, right: right, up: up, down: down, column: column }));
-
-        _this2.piece = piece;
-        return _this2;
-    }
-
-    return PieceDataObject;
-}(DataObject);
-
-var ColumnObject = function (_DataObject2) {
-    _inherits(ColumnObject, _DataObject2);
-
-    function ColumnObject(_ref4) {
-        var left = _ref4.left,
-            right = _ref4.right,
-            up = _ref4.up,
-            down = _ref4.down,
-            column = _ref4.column,
-            _ref4$size = _ref4.size,
-            size = _ref4$size === undefined ? 0 : _ref4$size,
-            name = _ref4.name;
-
-        _classCallCheck(this, ColumnObject);
-
-        var _this3 = _possibleConstructorReturn(this, (ColumnObject.__proto__ || Object.getPrototypeOf(ColumnObject)).call(this, { left: left, right: right, up: up, down: down, column: column }));
-
-        _this3.size = size;
-        _this3.name = name;
-        return _this3;
-    }
-
-    return ColumnObject;
-}(DataObject);
-
-var Node = function () {
-    function Node(row, column) {
-        _classCallCheck(this, Node);
-
-        this.row = row;
-        this.column = column;
-    }
-    //example: "1,1"
-
-
-    _createClass(Node, [{
-        key: 'toString',
-        value: function toString() {
-            return this.row + ',' + this.column;
-        }
-    }, {
-        key: 'equalsTo',
-        value: function equalsTo(node) {
-            return this.row == node.row && this.column == node.column;
-        }
-    }, {
-        key: 'toArray',
-        value: function toArray() {
-            return [this.row, this.column];
-        }
-    }], [{
-        key: 'fromString',
-        value: function fromString(str) {
-            var position = str.indexOf(',');
-            var row = str.substr(0, position);
-            var column = str.substr(position + 1);
-            return new Node(row, column);
-        }
-    }]);
-
-    return Node;
-}();
-
-var Piece = function () {
-    function Piece(coordinates) {
-        var color = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : getRandomColor();
-        var numberOfUsages = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Infinity;
-
-        _classCallCheck(this, Piece);
-
-        this.color = color;
-        var nodes = [];
-        var maxrow = coordinates[0][0];
-        var minrow = coordinates[0][0];
-        var maxcol = coordinates[0][1];
-        var mincol = coordinates[0][1];
-        for (var i = 0; i < coordinates.length; i++) {
-            nodes.push(new Node(coordinates[i][0], coordinates[i][1]));
-            if (coordinates[i][0] > maxrow) {
-                maxrow = coordinates[i][0];
-            }
-            if (coordinates[i][1] > maxcol) {
-                maxcol = coordinates[i][1];
-            }
-
-            if (coordinates[i][0] < minrow) {
-                minrow = coordinates[i][0];
-            }
-            if (coordinates[i][1] < mincol) {
-                mincol = coordinates[i][1];
-            }
-        }
-
-        this.nodes = nodes;
-        this.maxrow = maxrow;
-        this.minrow = minrow;
-        this.maxcol = maxcol;
-        this.mincol = mincol;
-        this.root = Piece.getPieceRoot(nodes);
-        this.numberOfUsages = numberOfUsages;
-    }
-
-    _createClass(Piece, [{
-        key: 'getView',
-        value: function getView() {
-            var _this4 = this;
-
-            if (this.view) {
-                return this.view;
-            }
-
-            var color = this.color;
-            var tbody = document.createElement('tbody');
-            var table = document.createElement('table');
-
-            for (var i = this.minrow; i <= this.maxrow; i++) {
-                var tr = document.createElement('tr');
-                for (var j = this.mincol; j <= this.maxcol; j++) {
-                    var td = document.createElement('td');
-                    tr.appendChild(td);
-                }
-                tbody.appendChild(tr);
-            }
-
-            this.nodes.forEach(function (node) {
-                var cell = tbody.children[node.row - _this4.minrow].children[node.column - _this4.mincol];
-                cell.style.backgroundColor = color;
-                cell.setAttribute('class', 'pieceCell');
-                cell.style.border = '1px solid black';
-            });
-
-            table.setAttribute('class', 'piece');
-            table.setAttribute('data-nodes', this.nodes.map(function (item) {
-                return new Node(item.row - _this4.minrow, item.column - _this4.mincol).toString();
-            }).join('-'));
-            table.appendChild(tbody);
-
-            this.view = table;
-            return table;
-        }
-    }], [{
-        key: 'getPieceRoot',
-        value: function getPieceRoot(nodes) {
-            var minimum = nodes[0];
-
-            for (var k = 1; k < nodes.length; k++) {
-                if (nodes[k].column < minimum.column) {
-                    minimum = nodes[k];
-                } else if (nodes[k].column == minimum.column) {
-                    if (nodes[k].row < minimum.row) {
-                        minimum = nodes[k];
-                    }
-                }
-            }
-
-            return minimum;
-        }
-    }]);
-
-    return Piece;
-}();
-
-function getRandomColor() {
-    var letters = '0123456789ABCDEF'.split('');
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 12 + 2)];
-    }
-    if (color == '#000000' || color == '#FFFFFF') {
-        return '#333333';
-    }
-    return color;
-}
-
-exports.Node = Node;
-exports.Piece = Piece;
-exports.ColumnObject = ColumnObject;
-exports.DataObject = DataObject;
-exports.RootObject = RootObject;
-exports.PieceDataObject = PieceDataObject;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
 exports.piecesLength = exports.deactivatePiece = exports.activatePiece = exports.pieces = undefined;
 
-var _classes = __webpack_require__(4);
+var _Piece = __webpack_require__(6);
 
 Array.prototype.remove = function () {
     var what = void 0,
@@ -477,82 +222,82 @@ new Piece([
 ]),*/
 
 // Size 4
-new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 1]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 0], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 2]]), new _classes.Piece([[0, 1], [1, 1], [2, 0], [2, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [0, 2], [1, 0], [1, 1]]), new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 1]]), new _classes.Piece([[0, 0], [0, 1], [1, 1], [1, 2]]), new _classes.Piece([[0, 1], [1, 0], [1, 1], [2, 0]]), new _classes.Piece([[0, 0], [0, 1], [0, 2], [0, 3]]), new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0]]), new _classes.Piece([[0, 0], [0, 1], [1, 0], [1, 1]]),
+new _Piece.Piece([[0, 0], [1, 0], [1, 1], [2, 0]]), new _Piece.Piece([[0, 0], [0, 1], [0, 2], [1, 1]]), new _Piece.Piece([[0, 1], [1, 0], [1, 1], [1, 2]]), new _Piece.Piece([[0, 1], [1, 0], [1, 1], [2, 1]]), new _Piece.Piece([[0, 0], [0, 1], [1, 0], [2, 0]]), new _Piece.Piece([[0, 0], [0, 1], [0, 2], [1, 2]]), new _Piece.Piece([[0, 1], [1, 1], [2, 0], [2, 1]]), new _Piece.Piece([[0, 0], [1, 0], [1, 1], [1, 2]]), new _Piece.Piece([[0, 1], [0, 2], [1, 0], [1, 1]]), new _Piece.Piece([[0, 0], [1, 0], [1, 1], [2, 1]]), new _Piece.Piece([[0, 0], [0, 1], [1, 1], [1, 2]]), new _Piece.Piece([[0, 1], [1, 0], [1, 1], [2, 0]]), new _Piece.Piece([[0, 0], [0, 1], [0, 2], [0, 3]]), new _Piece.Piece([[0, 0], [1, 0], [2, 0], [3, 0]]), new _Piece.Piece([[0, 0], [0, 1], [1, 0], [1, 1]]),
 
 // Size 5
 
 //  OO
 // OO
 //  O
-new _classes.Piece([[0, 1], [0, 2], [1, 0], [1, 1], [2, 1]]),
+new _Piece.Piece([[0, 1], [0, 2], [1, 0], [1, 1], [2, 1]]),
 //  O
 // OOO
 //   O
-new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2], [2, 2]]),
+new _Piece.Piece([[0, 1], [1, 0], [1, 1], [1, 2], [2, 2]]),
 //  O
 //  OO
 // OO
-new _classes.Piece([[0, 1], [1, 1], [1, 2], [2, 0], [2, 1]]),
+new _Piece.Piece([[0, 1], [1, 1], [1, 2], [2, 0], [2, 1]]),
 // O
 // OOO
 //  O
-new _classes.Piece([[0, 0], [1, 0], [1, 1], [1, 2], [2, 1]]),
+new _Piece.Piece([[0, 0], [1, 0], [1, 1], [1, 2], [2, 1]]),
 
 // O
 // O
 // O
 // O
 // O
-new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]]),
+new _Piece.Piece([[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]]),
 // 00000
-new _classes.Piece([[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]]),
+new _Piece.Piece([[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]]),
 
 // O
 // O
 // O
 // OO
-new _classes.Piece([[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]]),
+new _Piece.Piece([[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]]),
 //  O
 //  O
 // OO
 // O
-new _classes.Piece([[0, 1], [1, 1], [2, 0], [2, 1], [3, 0]]),
+new _Piece.Piece([[0, 1], [1, 1], [2, 0], [2, 1], [3, 0]]),
 
 // OO
 // OO
 // O
-new _classes.Piece([[0, 0], [0, 1], [1, 0], [1, 1], [2, 0]]),
+new _Piece.Piece([[0, 0], [0, 1], [1, 0], [1, 1], [2, 0]]),
 // OOO
 //  O
 //  O
-new _classes.Piece([[0, 0], [0, 1], [0, 2], [1, 1], [2, 1]]),
+new _Piece.Piece([[0, 0], [0, 1], [0, 2], [1, 1], [2, 1]]),
 
 // O O
 // OOO
-new _classes.Piece([[0, 0], [0, 2], [1, 0], [1, 1], [1, 2]]),
+new _Piece.Piece([[0, 0], [0, 2], [1, 0], [1, 1], [1, 2]]),
 // O
 // O
 // OOO
-new _classes.Piece([[0, 0], [1, 0], [2, 0], [2, 1], [2, 2]]),
+new _Piece.Piece([[0, 0], [1, 0], [2, 0], [2, 1], [2, 2]]),
 
 // O
 // OO
 //  OO
-new _classes.Piece([[0, 0], [1, 0], [1, 1], [2, 1], [2, 2]]),
+new _Piece.Piece([[0, 0], [1, 0], [1, 1], [2, 1], [2, 2]]),
 //  O
 // OOO
 //  O
-new _classes.Piece([[0, 1], [1, 0], [1, 1], [1, 2], [2, 1]]),
+new _Piece.Piece([[0, 1], [1, 0], [1, 1], [1, 2], [2, 1]]),
 
 // O
 // O
 // OO
 // O
-new _classes.Piece([[0, 0], [1, 0], [2, 0], [2, 1], [3, 0]]),
+new _Piece.Piece([[0, 0], [1, 0], [2, 0], [2, 1], [3, 0]]),
 // OO
 //  O
 //  OO
-new _classes.Piece([[0, 0], [0, 1], [1, 1], [2, 1], [2, 2]])];
+new _Piece.Piece([[0, 0], [0, 1], [1, 1], [2, 1], [2, 2]])];
 var pieces = [];
 var piecesLength = [];
 
@@ -604,7 +349,193 @@ exports.deactivatePiece = deactivatePiece;
 exports.piecesLength = piecesLength;
 
 /***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Node = function () {
+    function Node(row, column) {
+        _classCallCheck(this, Node);
+
+        this.row = row;
+        this.column = column;
+    }
+    //example: "1,1"
+
+
+    _createClass(Node, [{
+        key: 'toString',
+        value: function toString() {
+            return this.row + ',' + this.column;
+        }
+    }, {
+        key: 'equalsTo',
+        value: function equalsTo(node) {
+            return this.row == node.row && this.column == node.column;
+        }
+    }, {
+        key: 'toArray',
+        value: function toArray() {
+            return [this.row, this.column];
+        }
+    }], [{
+        key: 'fromString',
+        value: function fromString(str) {
+            var position = str.indexOf(',');
+            var row = str.substr(0, position);
+            var column = str.substr(position + 1);
+            return new Node(row, column);
+        }
+    }]);
+
+    return Node;
+}();
+
+exports.Node = Node;
+
+/***/ }),
 /* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Piece = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Node = __webpack_require__(5);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Piece = function () {
+    function Piece(coordinates) {
+        var color = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : getRandomColor();
+        var numberOfUsages = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Infinity;
+
+        _classCallCheck(this, Piece);
+
+        this.color = color;
+        var nodes = [];
+        var maxrow = coordinates[0][0];
+        var minrow = coordinates[0][0];
+        var maxcol = coordinates[0][1];
+        var mincol = coordinates[0][1];
+        for (var i = 0; i < coordinates.length; i++) {
+            nodes.push(new _Node.Node(coordinates[i][0], coordinates[i][1]));
+            if (coordinates[i][0] > maxrow) {
+                maxrow = coordinates[i][0];
+            }
+            if (coordinates[i][1] > maxcol) {
+                maxcol = coordinates[i][1];
+            }
+
+            if (coordinates[i][0] < minrow) {
+                minrow = coordinates[i][0];
+            }
+            if (coordinates[i][1] < mincol) {
+                mincol = coordinates[i][1];
+            }
+        }
+
+        this.nodes = nodes;
+        this.maxrow = maxrow;
+        this.minrow = minrow;
+        this.maxcol = maxcol;
+        this.mincol = mincol;
+        this.root = Piece.getPieceRoot(nodes);
+        this.numberOfUsages = numberOfUsages;
+    }
+
+    _createClass(Piece, [{
+        key: 'getView',
+        value: function getView() {
+            var _this = this;
+
+            if (this.view) {
+                return this.view;
+            }
+
+            var color = this.color;
+            var tbody = document.createElement('tbody');
+            var table = document.createElement('table');
+
+            for (var i = this.minrow; i <= this.maxrow; i++) {
+                var tr = document.createElement('tr');
+                for (var j = this.mincol; j <= this.maxcol; j++) {
+                    var td = document.createElement('td');
+                    tr.appendChild(td);
+                }
+                tbody.appendChild(tr);
+            }
+
+            this.nodes.forEach(function (node) {
+                var cell = tbody.children[node.row - _this.minrow].children[node.column - _this.mincol];
+                cell.style.backgroundColor = color;
+                cell.setAttribute('class', 'pieceCell');
+                cell.style.border = '1px solid black';
+            });
+
+            table.setAttribute('class', 'piece');
+            table.setAttribute('data-nodes', this.nodes.map(function (item) {
+                return new _Node.Node(item.row - _this.minrow, item.column - _this.mincol).toString();
+            }).join('-'));
+            table.appendChild(tbody);
+
+            this.view = table;
+            return table;
+        }
+    }], [{
+        key: 'getPieceRoot',
+        value: function getPieceRoot(nodes) {
+            var minimum = nodes[0];
+
+            for (var k = 1; k < nodes.length; k++) {
+                if (nodes[k].column < minimum.column) {
+                    minimum = nodes[k];
+                } else if (nodes[k].column == minimum.column) {
+                    if (nodes[k].row < minimum.row) {
+                        minimum = nodes[k];
+                    }
+                }
+            }
+
+            return minimum;
+        }
+    }]);
+
+    return Piece;
+}();
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 12 + 2)];
+    }
+    if (color == '#000000' || color == '#FFFFFF') {
+        return '#333333';
+    }
+    return color;
+}
+
+exports.Piece = Piece;
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -618,19 +549,19 @@ module.exports = function (x) { return (toString.call(x) === id); };
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(17)()
+module.exports = __webpack_require__(18)()
 	? Object.setPrototypeOf
-	: __webpack_require__(18);
+	: __webpack_require__(19);
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -647,30 +578,30 @@ module.exports = function (x) {
 
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = __webpack_require__(40)()
-	? Object.assign
-	: __webpack_require__(41);
-
-
-/***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var clear    = __webpack_require__(14)
-  , assign   = __webpack_require__(9)
+module.exports = __webpack_require__(42)()
+	? Object.assign
+	: __webpack_require__(43);
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var clear    = __webpack_require__(15)
+  , assign   = __webpack_require__(10)
   , callable = __webpack_require__(1)
   , value    = __webpack_require__(0)
   , d        = __webpack_require__(2)
-  , autoBind = __webpack_require__(28)
+  , autoBind = __webpack_require__(30)
   , Symbol   = __webpack_require__(3)
 
   , defineProperty = Object.defineProperty
@@ -756,7 +687,7 @@ defineProperty(Iterator.prototype, Symbol.toStringTag, d('', 'Iterator'));
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -767,11 +698,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.countStatistic = undefined;
 
-var _classes = __webpack_require__(4);
+var _Node = __webpack_require__(5);
 
-var _transformTableToMatrix = __webpack_require__(12);
+var _transformTableToMatrix = __webpack_require__(13);
 
-var _pieces = __webpack_require__(5);
+var _pieces = __webpack_require__(4);
 
 // Counting connected components in a table
 function countStatistic(creative) {
@@ -824,7 +755,7 @@ function getStartNode(arr) {
     for (var i = 0; i < arr.length; i++) {
         for (var j = 0; j < arr[i].length; j++) {
             if (arr[i][j] == 0) {
-                return new _classes.Node(i, j);
+                return new _Node.Node(i, j);
             }
         }
     }
@@ -859,10 +790,10 @@ function getNeighbours(node, arr) {
     //neighbours[neighbours.length] = new Node(node.row + 1, node.column - 1);
     //neighbours[neighbours.length] = new Node(node.row + 1, node.column + 1);
 
-    neighbours[neighbours.length] = new _classes.Node(node.row - 1, node.column);
-    neighbours[neighbours.length] = new _classes.Node(node.row, node.column - 1);
-    neighbours[neighbours.length] = new _classes.Node(node.row, node.column + 1);
-    neighbours[neighbours.length] = new _classes.Node(node.row + 1, node.column);
+    neighbours[neighbours.length] = new _Node.Node(node.row - 1, node.column);
+    neighbours[neighbours.length] = new _Node.Node(node.row, node.column - 1);
+    neighbours[neighbours.length] = new _Node.Node(node.row, node.column + 1);
+    neighbours[neighbours.length] = new _Node.Node(node.row + 1, node.column);
 
     for (var i = 0; i < neighbours.length; i++) {
         if (neighbours[i].row < 0 || neighbours[i].column < 0 || neighbours[i].row >= arr.length || neighbours[i].column >= arr[0].length || arr[neighbours[i].row][neighbours[i].column] == 1) {
@@ -896,7 +827,7 @@ function checkIfProperNumber(number) {
 exports.countStatistic = countStatistic;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -907,7 +838,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.transformTableToMatrix = undefined;
 
-var _jquery = __webpack_require__(13);
+var _jquery = __webpack_require__(14);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -931,7 +862,7 @@ function transformTableToMatrix(container) {
 exports.transformTableToMatrix = transformTableToMatrix;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -11191,7 +11122,7 @@ return jQuery;
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11210,13 +11141,13 @@ module.exports = function () {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var toInteger = __webpack_require__(38)
+var toInteger = __webpack_require__(40)
 
   , max = Math.max;
 
@@ -11224,7 +11155,7 @@ module.exports = function (value) { return max(0, toInteger(value)); };
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11248,7 +11179,7 @@ module.exports = function (options/*, …options*/) {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11266,7 +11197,7 @@ module.exports = function (/*customCreate*/) {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11275,7 +11206,7 @@ module.exports = function (/*customCreate*/) {
 
 
 
-var isObject      = __webpack_require__(46)
+var isObject      = __webpack_require__(48)
   , value         = __webpack_require__(0)
 
   , isPrototypeOf = Object.prototype.isPrototypeOf
@@ -11342,19 +11273,7 @@ module.exports = (function (status) {
 	return false;
 }())));
 
-__webpack_require__(43);
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = __webpack_require__(52)()
-	? String.prototype.contains
-	: __webpack_require__(53);
+__webpack_require__(45);
 
 
 /***/ }),
@@ -11364,7 +11283,19 @@ module.exports = __webpack_require__(52)()
 "use strict";
 
 
-var isIterable = __webpack_require__(57);
+module.exports = __webpack_require__(54)()
+	? String.prototype.contains
+	: __webpack_require__(55);
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var isIterable = __webpack_require__(59);
 
 module.exports = function (value) {
 	if (!isIterable(value)) throw new TypeError(value + " is not iterable");
@@ -11373,7 +11304,7 @@ module.exports = function (value) {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11408,7 +11339,7 @@ function getCoordinates(elem) {
 exports.getCoordinates = getCoordinates;
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11419,11 +11350,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.setUpPieceSelectionArea = undefined;
 
-var _pieces = __webpack_require__(5);
+var _pieces = __webpack_require__(4);
 
-var _statistics = __webpack_require__(11);
+var _statistics = __webpack_require__(12);
 
-var Map = __webpack_require__(59);
+var Map = __webpack_require__(61);
 
 var INFINITY = 'Infinity';
 
@@ -11527,7 +11458,7 @@ function createInput(piece, id) {
 exports.setUpPieceSelectionArea = setUpPieceSelectionArea;
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11558,7 +11489,7 @@ function shufflePieces(arrayOfPieces) {
 exports.shufflePieces = shufflePieces;
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11569,9 +11500,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.countSolutions = exports.findSolutionWithPiece = exports.findSolution = undefined;
 
-var _dlx = __webpack_require__(27);
+var _dlx = __webpack_require__(28);
 
-var _debruijn = __webpack_require__(26);
+var _debruijn = __webpack_require__(27);
 
 function shouldDeBruijnBeUsed(arr) {
     var freeCells = 0,
@@ -11648,31 +11579,33 @@ exports.findSolutionWithPiece = findSolutionWithPiece;
 exports.countSolutions = countSolutions;
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _jquery = __webpack_require__(13);
+var _jquery = __webpack_require__(14);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _classes = __webpack_require__(4);
+var _Node = __webpack_require__(5);
 
-var _pieces = __webpack_require__(5);
+var _Piece = __webpack_require__(6);
 
-var _pieceSelection = __webpack_require__(22);
+var _pieces = __webpack_require__(4);
 
-var _transformTableToMatrix = __webpack_require__(12);
+var _pieceSelection = __webpack_require__(23);
 
-var _shufflePieces = __webpack_require__(23);
+var _transformTableToMatrix = __webpack_require__(13);
 
-var _statistics = __webpack_require__(11);
+var _shufflePieces = __webpack_require__(24);
 
-var _getCoordinates = __webpack_require__(21);
+var _statistics = __webpack_require__(12);
 
-var _solvePolymino = __webpack_require__(24);
+var _getCoordinates = __webpack_require__(22);
+
+var _solvePolymino = __webpack_require__(25);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11871,7 +11804,7 @@ function startGame(arr) {
                 var isPieceSet = true;
                 var currentCoordinatesAttribute = view.getAttribute('data-nodes');
                 var currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(function (item) {
-                    return _classes.Node.fromString(item);
+                    return _Node.Node.fromString(item);
                 });
 
                 var row = void 0,
@@ -12021,7 +11954,7 @@ function placePieceNoInterval() {
 
     var index = parseInt(piece.attr('id').replace('piece', ''));
     var solutionPiece = solutionPieces[index];
-    coverPieceInTable(new _classes.Piece(currentPieceTdCoordinates, solutionPiece.color));
+    coverPieceInTable(new _Piece.Piece(currentPieceTdCoordinates, solutionPiece.color));
 
     //coverPieceInTable(solutionPieces[index]);
 
@@ -12113,7 +12046,7 @@ function resetField() {
             var column = Math.round((left + 8) / tableCellWidth);
             var currentCoordinatesAttribute = removedPiece.attr('data-nodes');
             var currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(function (item) {
-                return _classes.Node.fromString(item);
+                return _Node.Node.fromString(item);
             });
 
             currentPieceTdCoordinates.forEach(function (item) {
@@ -12155,7 +12088,7 @@ function resetField() {
             var column = Math.round((left + 8) / tableCellWidth);
             var currentCoordinatesAttribute = coveringPiece.attr('data-nodes');
             var currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(function (item) {
-                return _classes.Node.fromString(item);
+                return _Node.Node.fromString(item);
             });
 
             currentPieceTdCoordinates.forEach(function (item) {
@@ -12311,7 +12244,7 @@ function startGameCreative(arr) {
                 var isPieceSet = true;
                 var currentCoordinatesAttributeCreative = view.getAttribute('data-nodes');
                 var currentPieceTdCoordinatesCreative = currentCoordinatesAttributeCreative.split('-').map(function (item) {
-                    return _classes.Node.fromString(item);
+                    return _Node.Node.fromString(item);
                 });
 
                 var _getRowAndCol3 = getRowAndCol(e),
@@ -12598,7 +12531,7 @@ function resetFieldCreative() {
 });
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12609,9 +12542,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.searchBruijnWithPiece = exports.countBruijnSolutions = exports.searchBruijn = undefined;
 
-var _pieces = __webpack_require__(5);
+var _pieces = __webpack_require__(4);
 
-var _classes = __webpack_require__(4);
+var _Piece = __webpack_require__(6);
 
 function getNextBruijnHole(arr) {
     for (var column = 0; column < arr[0].length; column++) {
@@ -12665,7 +12598,7 @@ function placePiece(arr, nodes, i, j) {
         arr[row][col] = 1;
     }
 
-    return new _classes.Piece(newNodes);
+    return new _Piece.Piece(newNodes);
 }
 
 function removePiece(arr, nodes, i, j) {
@@ -12734,7 +12667,7 @@ exports.countBruijnSolutions = countBruijnSolutions;
 exports.searchBruijnWithPiece = searchBruijnWithPiece;
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12745,9 +12678,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.searchDLXWithPiece = exports.countDLXsolutions = exports.createXListForExactCoverProblemWithPiece = exports.printDLX = exports.searchDLX = exports.createXListForExactCoverProblem = undefined;
 
-var _pieces = __webpack_require__(5);
+var _pieces = __webpack_require__(4);
 
-var _classes = __webpack_require__(4);
+var _dlxClasses = __webpack_require__(29);
+
+var _Piece = __webpack_require__(6);
+
+var _Node = __webpack_require__(5);
 
 // Prepare for DLX
 function createXListForExactCoverProblem(arr) {
@@ -12769,7 +12706,7 @@ function createXListForExactCoverProblem(arr) {
 
 //create initial Xlist with header and empty columns
 function createInitialXList(arr) {
-    var header = new _classes.RootObject({});
+    var header = new _dlxClasses.RootObject({});
     var previousColumn = header;
     var currentColumn = void 0,
         node = void 0;
@@ -12777,8 +12714,8 @@ function createInitialXList(arr) {
         for (var j = 0; j < arr[i].length; j++) {
             if (arr[i][j] == 0) {
                 // do I need nodeToString and stringToNode???
-                node = new _classes.Node(i, j);
-                currentColumn = new _classes.ColumnObject({ left: previousColumn, name: node });
+                node = new _Node.Node(i, j);
+                currentColumn = new _dlxClasses.ColumnObject({ left: previousColumn, name: node });
                 currentColumn.up = currentColumn;
                 currentColumn.down = currentColumn;
                 currentColumn.column = currentColumn;
@@ -12804,7 +12741,7 @@ function isMatch(arr, nodes, i, j) {
 //TODO: (only  a note for a programmer) nodes should be sorted in a right order
 function addNewRow(header, nodes, row, column) {
     var node = nodes[0];
-    var currentNode = new _classes.Node(node.row + row, node.column + column);
+    var currentNode = new _Node.Node(node.row + row, node.column + column);
 
     var data = void 0,
         startRowData = addNewDataObject(header, currentNode);
@@ -12812,7 +12749,7 @@ function addNewRow(header, nodes, row, column) {
 
     for (var n = 1; n < nodes.length; n++) {
         node = nodes[n];
-        currentNode = new _classes.Node(node.row + row, node.column + column);
+        currentNode = new _Node.Node(node.row + row, node.column + column);
         data = addNewDataObject(header, currentNode, previousData);
         previousData.right = data;
         previousData = data;
@@ -12828,7 +12765,7 @@ function addNewDataObject(header, currentNode, previousData) {
         return;
     }
 
-    var data = new _classes.DataObject({ column: current, down: current, up: current.up, left: previousData });
+    var data = new _dlxClasses.DataObject({ column: current, down: current, up: current.up, left: previousData });
 
     data.up.down = data;
     data.down.up = data;
@@ -12949,7 +12886,7 @@ function printDLX(solution) {
         }
         nodes.push(o.column.name.toArray());
         str += o.column.name.toString();
-        pieces.push(new _classes.Piece(nodes));
+        pieces.push(new _Piece.Piece(nodes));
         //console.log(str);
     }
     return pieces;
@@ -12975,7 +12912,7 @@ function createXListForExactCoverProblemWithPiece(arr) {
 
 function addNewRowWithPiece(header, nodes, row, column, piece) {
     var node = nodes[0];
-    var currentNode = new _classes.Node(node.row + row, node.column + column);
+    var currentNode = new _Node.Node(node.row + row, node.column + column);
 
     var data = void 0,
         startRowData = addNewDataObjectWithPiece(header, currentNode, piece);
@@ -12983,7 +12920,7 @@ function addNewRowWithPiece(header, nodes, row, column, piece) {
 
     for (var n = 1; n < nodes.length; n++) {
         node = nodes[n];
-        currentNode = new _classes.Node(node.row + row, node.column + column);
+        currentNode = new _Node.Node(node.row + row, node.column + column);
         data = addNewDataObjectWithPiece(header, currentNode, piece, previousData);
         previousData.right = data;
         previousData = data;
@@ -12999,7 +12936,7 @@ function addNewDataObjectWithPiece(header, currentNode, piece, previousData) {
         return;
     }
 
-    var data = new _classes.PieceDataObject({ piece: piece, column: current, down: current, up: current.up, left: previousData });
+    var data = new _dlxClasses.PieceDataObject({ piece: piece, column: current, down: current, up: current.up, left: previousData });
 
     data.up.down = data;
     data.down.up = data;
@@ -13089,16 +13026,118 @@ exports.countDLXsolutions = countDLXsolutions;
 exports.searchDLXWithPiece = searchDLXWithPiece;
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var copy             = __webpack_require__(42)
-  , normalizeOptions = __webpack_require__(16)
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var RootObject = function RootObject(_ref) {
+    var left = _ref.left,
+        right = _ref.right;
+
+    _classCallCheck(this, RootObject);
+
+    this.left = left;
+    this.right = right;
+};
+
+var DataObject = function (_RootObject) {
+    _inherits(DataObject, _RootObject);
+
+    function DataObject(_ref2) {
+        var left = _ref2.left,
+            right = _ref2.right,
+            up = _ref2.up,
+            down = _ref2.down,
+            column = _ref2.column;
+
+        _classCallCheck(this, DataObject);
+
+        var _this = _possibleConstructorReturn(this, (DataObject.__proto__ || Object.getPrototypeOf(DataObject)).call(this, { left: left, right: right }));
+
+        _this.up = up;
+        _this.down = down;
+        _this.column = column;
+        return _this;
+    }
+
+    return DataObject;
+}(RootObject);
+
+var PieceDataObject = function (_DataObject) {
+    _inherits(PieceDataObject, _DataObject);
+
+    function PieceDataObject(_ref3) {
+        var left = _ref3.left,
+            right = _ref3.right,
+            up = _ref3.up,
+            down = _ref3.down,
+            column = _ref3.column,
+            piece = _ref3.piece;
+
+        _classCallCheck(this, PieceDataObject);
+
+        var _this2 = _possibleConstructorReturn(this, (PieceDataObject.__proto__ || Object.getPrototypeOf(PieceDataObject)).call(this, { left: left, right: right, up: up, down: down, column: column }));
+
+        _this2.piece = piece;
+        return _this2;
+    }
+
+    return PieceDataObject;
+}(DataObject);
+
+var ColumnObject = function (_DataObject2) {
+    _inherits(ColumnObject, _DataObject2);
+
+    function ColumnObject(_ref4) {
+        var left = _ref4.left,
+            right = _ref4.right,
+            up = _ref4.up,
+            down = _ref4.down,
+            column = _ref4.column,
+            _ref4$size = _ref4.size,
+            size = _ref4$size === undefined ? 0 : _ref4$size,
+            name = _ref4.name;
+
+        _classCallCheck(this, ColumnObject);
+
+        var _this3 = _possibleConstructorReturn(this, (ColumnObject.__proto__ || Object.getPrototypeOf(ColumnObject)).call(this, { left: left, right: right, up: up, down: down, column: column }));
+
+        _this3.size = size;
+        _this3.name = name;
+        return _this3;
+    }
+
+    return ColumnObject;
+}(DataObject);
+
+exports.ColumnObject = ColumnObject;
+exports.DataObject = DataObject;
+exports.RootObject = RootObject;
+exports.PieceDataObject = PieceDataObject;
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var copy             = __webpack_require__(44)
+  , normalizeOptions = __webpack_require__(17)
   , ensureCallable   = __webpack_require__(1)
-  , map              = __webpack_require__(50)
+  , map              = __webpack_require__(52)
   , callable         = __webpack_require__(1)
   , validValue       = __webpack_require__(0)
 
@@ -13128,13 +13167,13 @@ module.exports = function (props/*, options*/) {
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var toPosInt = __webpack_require__(15)
+var toPosInt = __webpack_require__(16)
   , value    = __webpack_require__(0)
 
   , indexOf = Array.prototype.indexOf
@@ -13164,19 +13203,19 @@ module.exports = function (searchElement/*, fromIndex*/) {
 
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(31)()
+module.exports = __webpack_require__(33)()
 	? Array.from
-	: __webpack_require__(32);
+	: __webpack_require__(34);
 
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13192,19 +13231,19 @@ module.exports = function () {
 
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var iteratorSymbol = __webpack_require__(3).iterator
-  , isArguments    = __webpack_require__(6)
-  , isFunction     = __webpack_require__(33)
-  , toPosInt       = __webpack_require__(15)
+  , isArguments    = __webpack_require__(7)
+  , isFunction     = __webpack_require__(35)
+  , toPosInt       = __webpack_require__(16)
   , callable       = __webpack_require__(1)
   , validValue     = __webpack_require__(0)
-  , isString       = __webpack_require__(8)
+  , isString       = __webpack_require__(9)
 
   , isArray = Array.isArray, call = Function.prototype.call
   , desc = { configurable: true, enumerable: true, writable: true, value: null }
@@ -13305,7 +13344,7 @@ module.exports = function (arrayLike/*, mapFn, thisArg*/) {
 
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13313,7 +13352,7 @@ module.exports = function (arrayLike/*, mapFn, thisArg*/) {
 
 var toString = Object.prototype.toString
 
-  , id = toString.call(__webpack_require__(34));
+  , id = toString.call(__webpack_require__(36));
 
 module.exports = function (f) {
 	return (typeof f === "function") && (toString.call(f) === id);
@@ -13321,7 +13360,7 @@ module.exports = function (f) {
 
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13331,19 +13370,19 @@ module.exports = function () {};
 
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(36)()
+module.exports = __webpack_require__(38)()
 	? Math.sign
-	: __webpack_require__(37);
+	: __webpack_require__(39);
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13357,7 +13396,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13371,13 +13410,13 @@ module.exports = function (value) {
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var sign = __webpack_require__(35)
+var sign = __webpack_require__(37)
 
   , abs = Math.abs, floor = Math.floor;
 
@@ -13390,7 +13429,7 @@ module.exports = function (value) {
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13426,7 +13465,7 @@ module.exports = function (method, defVal) {
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13442,13 +13481,13 @@ module.exports = function () {
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var keys  = __webpack_require__(47)
+var keys  = __webpack_require__(49)
   , value = __webpack_require__(0)
 
   , max = Math.max;
@@ -13471,14 +13510,14 @@ module.exports = function (dest, src/*, …srcn*/) {
 
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var aFrom  = __webpack_require__(30)
-  , assign = __webpack_require__(9)
+var aFrom  = __webpack_require__(32)
+  , assign = __webpack_require__(10)
   , value  = __webpack_require__(0);
 
 module.exports = function (obj/*, propertyNames, options*/) {
@@ -13497,7 +13536,7 @@ module.exports = function (obj/*, propertyNames, options*/) {
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13507,8 +13546,8 @@ module.exports = function (obj/*, propertyNames, options*/) {
 
 var create = Object.create, shim;
 
-if (!__webpack_require__(17)()) {
-	shim = __webpack_require__(18);
+if (!__webpack_require__(18)()) {
+	shim = __webpack_require__(19);
 }
 
 module.exports = (function () {
@@ -13540,17 +13579,17 @@ module.exports = (function () {
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(39)('forEach');
+module.exports = __webpack_require__(41)('forEach');
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13562,7 +13601,7 @@ module.exports = function (obj) { return typeof obj === 'function'; };
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13576,19 +13615,19 @@ module.exports = function (x) {
 
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(48)()
+module.exports = __webpack_require__(50)()
 	? Object.keys
-	: __webpack_require__(49);
+	: __webpack_require__(51);
 
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13603,7 +13642,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13617,14 +13656,14 @@ module.exports = function (object) {
 
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var callable = __webpack_require__(1)
-  , forEach  = __webpack_require__(44)
+  , forEach  = __webpack_require__(46)
 
   , call = Function.prototype.call;
 
@@ -13639,7 +13678,7 @@ module.exports = function (obj, cb/*, thisArg*/) {
 
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13655,7 +13694,7 @@ module.exports = function (arg/*, …args*/) {
 
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13670,7 +13709,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13684,16 +13723,16 @@ module.exports = function (searchString/*, position*/) {
 
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var setPrototypeOf = __webpack_require__(7)
-  , contains       = __webpack_require__(19)
+var setPrototypeOf = __webpack_require__(8)
+  , contains       = __webpack_require__(20)
   , d              = __webpack_require__(2)
-  , Iterator       = __webpack_require__(10)
+  , Iterator       = __webpack_require__(11)
 
   , defineProperty = Object.defineProperty
   , ArrayIterator;
@@ -13721,16 +13760,16 @@ ArrayIterator.prototype = Object.create(Iterator.prototype, {
 
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var isArguments = __webpack_require__(6)
+var isArguments = __webpack_require__(7)
   , callable    = __webpack_require__(1)
-  , isString    = __webpack_require__(8)
-  , get         = __webpack_require__(56)
+  , isString    = __webpack_require__(9)
+  , get         = __webpack_require__(58)
 
   , isArray = Array.isArray, call = Function.prototype.call
   , some = Array.prototype.some;
@@ -13774,17 +13813,17 @@ module.exports = function (iterable, cb/*, thisArg*/) {
 
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var isArguments    = __webpack_require__(6)
-  , isString       = __webpack_require__(8)
-  , ArrayIterator  = __webpack_require__(54)
-  , StringIterator = __webpack_require__(58)
-  , iterable       = __webpack_require__(20)
+var isArguments    = __webpack_require__(7)
+  , isString       = __webpack_require__(9)
+  , ArrayIterator  = __webpack_require__(56)
+  , StringIterator = __webpack_require__(60)
+  , iterable       = __webpack_require__(21)
   , iteratorSymbol = __webpack_require__(3).iterator;
 
 module.exports = function (obj) {
@@ -13796,14 +13835,14 @@ module.exports = function (obj) {
 
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var isArguments    = __webpack_require__(6)
-  , isString       = __webpack_require__(8)
+var isArguments    = __webpack_require__(7)
+  , isString       = __webpack_require__(9)
   , iteratorSymbol = __webpack_require__(3).iterator
 
   , isArray = Array.isArray;
@@ -13818,7 +13857,7 @@ module.exports = function (value) {
 
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13827,9 +13866,9 @@ module.exports = function (value) {
 
 
 
-var setPrototypeOf = __webpack_require__(7)
+var setPrototypeOf = __webpack_require__(8)
   , d              = __webpack_require__(2)
-  , Iterator       = __webpack_require__(10)
+  , Iterator       = __webpack_require__(11)
 
   , defineProperty = Object.defineProperty
   , StringIterator;
@@ -13862,17 +13901,17 @@ StringIterator.prototype = Object.create(Iterator.prototype, {
 
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(60)() ? Map : __webpack_require__(64);
+module.exports = __webpack_require__(62)() ? Map : __webpack_require__(66);
 
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13911,7 +13950,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13927,28 +13966,28 @@ module.exports = (function () {
 
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(51)('key',
+module.exports = __webpack_require__(53)('key',
 	'value', 'key+value');
 
 
 /***/ }),
-/* 63 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var setPrototypeOf    = __webpack_require__(7)
+var setPrototypeOf    = __webpack_require__(8)
   , d                 = __webpack_require__(2)
-  , Iterator          = __webpack_require__(10)
+  , Iterator          = __webpack_require__(11)
   , toStringTagSymbol = __webpack_require__(3).toStringTag
-  , kinds             = __webpack_require__(62)
+  , kinds             = __webpack_require__(64)
 
   , defineProperties = Object.defineProperties
   , unBind = Iterator.prototype._unBind
@@ -13983,24 +14022,24 @@ Object.defineProperty(MapIterator.prototype, toStringTagSymbol,
 
 
 /***/ }),
-/* 64 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var clear          = __webpack_require__(14)
-  , eIndexOf       = __webpack_require__(29)
-  , setPrototypeOf = __webpack_require__(7)
+var clear          = __webpack_require__(15)
+  , eIndexOf       = __webpack_require__(31)
+  , setPrototypeOf = __webpack_require__(8)
   , callable       = __webpack_require__(1)
   , validValue     = __webpack_require__(0)
   , d              = __webpack_require__(2)
-  , ee             = __webpack_require__(69)
+  , ee             = __webpack_require__(71)
   , Symbol         = __webpack_require__(3)
-  , iterator       = __webpack_require__(20)
-  , forOf          = __webpack_require__(55)
-  , Iterator       = __webpack_require__(63)
-  , isNative       = __webpack_require__(61)
+  , iterator       = __webpack_require__(21)
+  , forOf          = __webpack_require__(57)
+  , Iterator       = __webpack_require__(65)
+  , isNative       = __webpack_require__(63)
 
   , call = Function.prototype.call
   , defineProperties = Object.defineProperties, getPrototypeOf = Object.getPrototypeOf
@@ -14094,7 +14133,7 @@ Object.defineProperty(MapPoly.prototype, Symbol.toStringTag, d('c', 'Map'));
 
 
 /***/ }),
-/* 65 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14118,7 +14157,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 66 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14134,7 +14173,7 @@ module.exports = function (x) {
 
 
 /***/ }),
-/* 67 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14143,7 +14182,7 @@ module.exports = function (x) {
 
 
 var d              = __webpack_require__(2)
-  , validateSymbol = __webpack_require__(68)
+  , validateSymbol = __webpack_require__(70)
 
   , create = Object.create, defineProperties = Object.defineProperties
   , defineProperty = Object.defineProperty, objPrototype = Object.prototype
@@ -14259,13 +14298,13 @@ defineProperty(HiddenSymbol.prototype, SymbolPolyfill.toPrimitive,
 
 
 /***/ }),
-/* 68 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var isSymbol = __webpack_require__(66);
+var isSymbol = __webpack_require__(68);
 
 module.exports = function (value) {
 	if (!isSymbol(value)) throw new TypeError(value + " is not a symbol");
@@ -14274,7 +14313,7 @@ module.exports = function (value) {
 
 
 /***/ }),
-/* 69 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

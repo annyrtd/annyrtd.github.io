@@ -1,4 +1,4 @@
-import {Piece} from './classes';
+import {Piece} from './Piece';
 Array.prototype.remove = function() {
     let what, a = arguments, L = a.length, ax;
     while (L && this.length) {

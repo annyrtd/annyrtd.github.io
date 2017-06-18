@@ -1,5 +1,5 @@
 import {pieces} from './pieces';
-import {Piece} from "./classes";
+import {Piece} from "./Piece";
 
 function getNextBruijnHole(arr) {
     for (let column = 0; column < arr[0].length; column++) {
