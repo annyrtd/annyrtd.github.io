@@ -47,7 +47,6 @@ function restoreFromLocalStorage() {
 
 /***** SCRIPT.JS *****/
 function generatePolyminoTable() {
-    saveToLocalStorage();
     initialSetUp();
     const table = computed.find('table.polytable');
     let {numberOfRows, numberOfColumns, numberOfBarriers, area} = countNumbersForTable();

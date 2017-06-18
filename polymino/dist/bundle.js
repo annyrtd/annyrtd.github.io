@@ -11702,7 +11702,6 @@ function restoreFromLocalStorage() {
 
 /***** SCRIPT.JS *****/
 function generatePolyminoTable() {
-    saveToLocalStorage();
     initialSetUp();
     var table = computed.find('table.polytable');
 
