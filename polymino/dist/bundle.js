@@ -11468,7 +11468,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 // algo: https://en.wikipedia.org/wiki/Fisher-Yates_shuffle
-function shufflePieces(arrayOfPieces) {
+function shuffleArray(arrayOfPieces) {
     var currentIndex = arrayOfPieces.length,
         randomIndex = void 0;
 
@@ -11486,7 +11486,7 @@ function shufflePieces(arrayOfPieces) {
     }
 }
 
-exports.shufflePieces = shufflePieces;
+exports.shuffleArray = shuffleArray;
 
 /***/ }),
 /* 25 */
@@ -11599,7 +11599,7 @@ var _pieceSelection = __webpack_require__(23);
 
 var _transformTableToMatrix = __webpack_require__(13);
 
-var _shufflePieces = __webpack_require__(24);
+var _shuffleArray = __webpack_require__(24);
 
 var _statistics = __webpack_require__(12);
 
@@ -11684,7 +11684,7 @@ function generatePolyminoTable() {
         (0, _jquery2.default)(allCells[Math.floor(Math.random() * (area - _i))]).removeClass('empty-cell').addClass('border-cell');
     }
 
-    (0, _shufflePieces.shufflePieces)(_pieces.pieces);
+    (0, _shuffleArray.shuffleArray)(_pieces.pieces);
     var arr = (0, _transformTableToMatrix.transformTableToMatrix)(computed);
     startGame(arr);
 }
@@ -11778,7 +11778,7 @@ function startGame(arr) {
         return;
     }
 
-    (0, _shufflePieces.shufflePieces)(solutionPieces);
+    (0, _shuffleArray.shuffleArray)(solutionPieces);
 
     solutionPieces.forEach(function (piece, index) {
         var view = piece.getView();
@@ -12218,7 +12218,7 @@ function startGameCreative(arr) {
     }
 
     var solutionLengthCreative = solutionPiecesCreative.length;
-    (0, _shufflePieces.shufflePieces)(solutionPiecesCreative);
+    (0, _shuffleArray.shuffleArray)(solutionPiecesCreative);
 
     solutionPiecesCreative.forEach(function (piece, index) {
         var view = piece.getView();
@@ -12460,7 +12460,7 @@ function resetFieldCreative() {
             alert("Невозможно покрыть фигурами поле с таким числом пустым клеток!");
             return;
         }
-        (0, _shufflePieces.shufflePieces)(_pieces.pieces);
+        (0, _shuffleArray.shuffleArray)(_pieces.pieces);
         creative.find('#give-up-creative').show();
 
         var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);

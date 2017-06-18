@@ -1,6 +1,6 @@
 // algo: https://en.wikipedia.org/wiki/Fisher-Yates_shuffle
-function shufflePieces(arrayOfPieces) {
-    let currentIndex = arrayOfPieces.length, randomIndex;
+function shuffleArray(array) {
+    let currentIndex = array.length, randomIndex;
 
     // While there remain elements to shuffle...
     while (0 !== currentIndex) {
@@ -10,8 +10,8 @@ function shufflePieces(arrayOfPieces) {
         currentIndex -= 1;
 
         // And swap it with the current element.
-        [arrayOfPieces[currentIndex], arrayOfPieces[randomIndex]] = [arrayOfPieces[randomIndex], arrayOfPieces[currentIndex]];
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
     }
 }
 
-export {shufflePieces};
+export {shuffleArray};

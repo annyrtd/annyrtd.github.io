@@ -6,7 +6,7 @@ import {Piece} from './js/Piece';
 import {pieces} from './js/pieces';
 import {setUpPieceSelectionArea} from './js/pieceSelection';
 import {transformTableToMatrix} from './js/transformTableToMatrix';
-import {shufflePieces} from './js/shufflePieces';
+import {shuffleArray} from './js/shuffleArray';
 import {countStatistic} from './js/statistics';
 import {getCoordinates} from './js/getCoordinates';
 import {findSolution, findSolutionWithPiece, countSolutions} from './js/solvePolymino';
@@ -82,7 +82,7 @@ function generatePolyminoTable() {
             .addClass('border-cell');
     }
 
-    shufflePieces(pieces);
+    shuffleArray(pieces);
     const arr = transformTableToMatrix(computed);
     startGame(arr);
 }
@@ -174,7 +174,7 @@ function startGame(arr) {
         return;
     }
 
-    shufflePieces(solutionPieces);
+    shuffleArray(solutionPieces);
 
     solutionPieces.forEach((piece, index) => {
         let view = piece.getView();
@@ -614,7 +614,7 @@ function startGameCreative(arr) {
     }
 
     let solutionLengthCreative = solutionPiecesCreative.length;
-    shufflePieces(solutionPiecesCreative);
+    shuffleArray(solutionPiecesCreative);
 
     solutionPiecesCreative.forEach((piece, index) => {
         let view = piece.getView();
@@ -857,7 +857,7 @@ $(document).ready(
                     alert("Невозможно покрыть фигурами поле с таким числом пустым клеток!");
                     return;
                 }
-                shufflePieces(pieces);
+                shuffleArray(pieces);
                 creative.find('#give-up-creative').show();
 
                 const arr = transformTableToMatrix(creative);
