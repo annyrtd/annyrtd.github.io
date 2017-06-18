@@ -8,15 +8,15 @@ import {setUpPieceSelectionArea} from './js/pieceSelection';
 import {transformTableToMatrix} from './js/transformTableToMatrix';
 import {shuffleArray} from './js/shuffleArray';
 import {countStatistic} from './js/statistics';
-import {getCoordinates} from './js/getCoordinates';
+import {getCoordinates, getPageX, getPageY} from './js/getCoordinates';
 import {findSolution, findSolutionWithPiece, countSolutions} from './js/solvePolymino';
+import {saveIntegerToLocalStorage, restoreIntegerFromLocalStorage} from './js/localStorage';
 
 const interval = 200;
 let stepOfInterval = 0;
 let piecesSet = 0;
 let solutionLength;
 let solutionPieces;
-//let timeStart;
 const scoreForLevel = 500;
 
 let stepOfIntervalCreative = 0;
@@ -36,26 +36,13 @@ let creative;
 let numberOfRowsCreative, numberOfColumnsCreative;
 
 function saveToLocalStorage() {
-    if (localStorage) {
-        localStorage['level'] = parseInt(level);
-        localStorage['score'] = parseInt(score);
-    }
+    saveIntegerToLocalStorage('level', level);
+    saveIntegerToLocalStorage('score', score);
 }
 
 function restoreFromLocalStorage() {
-    if (localStorage) {
-        if(parseInt(localStorage.getItem('level'))) {
-            level = parseInt(localStorage['level']);
-        } else {
-            localStorage['level'] = level = 0;
-        }
-
-        if(parseInt(localStorage.getItem('score'))) {
-            score = parseInt(localStorage['score']);
-        } else {
-            localStorage['score'] = score = 0;
-        }
-    }
+    level = restoreIntegerFromLocalStorage('level');
+    score = restoreIntegerFromLocalStorage('score');
 }
 
 /***** SCRIPT.JS *****/
@@ -127,28 +114,6 @@ function countNumbersForTable() {
     return {numberOfRows, numberOfColumns, numberOfBarriers, area};
 }
 
-function getPageX(event) {
-    if(event.pageX) {
-        return event.pageX;
-    } else {
-        const touches = event.changedTouches;
-        if(touches && touches[0]) {
-            return touches[0].pageX;
-        }
-    }
-}
-
-function getPageY(event) {
-    if(event.pageY) {
-        return event.pageY;
-    } else {
-        const touches = event.changedTouches;
-        if(touches && touches[0]) {
-            return touches[0].pageY;
-        }
-    }
-}
-
 function startGame(arr) {
     stepOfInterval = 0;
     //timeStart = performance && performance.now? performance.now() : 0;
@@ -176,146 +141,141 @@ function startGame(arr) {
 
     shuffleArray(solutionPieces);
 
-    solutionPieces.forEach((piece, index) => {
-        let view = piece.getView();
-        solutionArea.append(view);
-        view.setAttribute('id', `piece${index}`);
+    solutionPieces.forEach((piece, index) =>
+        setUpPieceEvents(solutionArea, piece, index)
+    );
+}
 
-        $(view).find('td.pieceCell').each(function() {
-            let cell = this;
+function setUpPieceEvents(solutionArea, piece, index) {
+    let view = piece.getView();
+    solutionArea.append(view);
+    view.setAttribute('id', `piece${index}`);
 
-            cell.ontouchcancel = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
+    $(view).find('td.pieceCell').each(function() {
+        let cell = this;
+
+        cell.ontouchcancel = preventDefaultBehavior;
+
+        cell.ontouchstart = cell.onmousedown = function(e) {
+            preventDefaultBehavior(e);
+            view.style.display = '';
+            const coords = getCoordinates(view);
+            const shiftX = getPageX(e) - coords.left;
+            const shiftY = getPageY(e) - coords.top;
+
+            let isPieceSet = true;
+            let currentCoordinatesAttribute = view.getAttribute('data-nodes');
+            let currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(item => Node.fromString(item));
+
+            let {row, column} = getRowAndCol(e);
+            let isPieceRemoved = false;
+            currentPieceTdCoordinates.forEach(item => {
+                let tdRow = parseInt(item.row) + row;
+                let tdCol = parseInt(item.column) + column;
+                let td = computed.find(`#td-${tdRow}-${tdCol}`);
+                if (td.hasClass('set') && !isPieceRemoved) {
+                    isPieceRemoved = true;
+                    piecesSet--;
+                }
+                td.removeClass('set');
+                td.removeAttr('data-piece');
+            });
+
+            function moveAt(e) {
+                view.style.left = (getPageX(e) - shiftX - 8) + 'px';
+                view.style.top = (getPageY(e) - shiftY) + 'px';
+            }
+
+            function getRowAndCol(e) {
+                let offset = solutionArea.offset();
+                let containerX = getPageX(e) - offset.left;
+                let containerY = getPageY(e) - offset.top;
+                let row = Math.round((containerY - shiftY) / tableCellWidth);
+                let column = Math.round((containerX - shiftX) / tableCellWidth);
+                return {row, column};
+            }
+
+            view.style.zIndex = 1000; // над другими элементами
+            view.style.position = 'absolute';
+            document.body.appendChild(view);
+            moveAt(e);
+
+            cell.ontouchmove = document.onmousemove = function (e) {
+                preventDefaultBehavior(e);
+                moveAt(e);
             };
 
-            cell.ontouchstart = cell.onmousedown = function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                view.style.display = '';
-                const coords = getCoordinates(view);
-                const shiftX = getPageX(e) - coords.left;
-                const shiftY = getPageY(e) - coords.top;
-
-                let isPieceSet = true;
-                let currentCoordinatesAttribute = view.getAttribute('data-nodes');
-                let currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(item => Node.fromString(item));
-
-                let row, column;
-                ({row, column} = getRowAndCol(e));
-                let isPieceRemoved = false;
-                currentPieceTdCoordinates.forEach(item => {
+            cell.ontouchend = cell.onmouseup = function (e) {
+                let {row, column} = getRowAndCol(e);
+                let rowPosition = row * tableCellWidth;
+                let columnPosition = column * tableCellWidth;
+                let currentPieceCells = [];
+                currentPieceTdCoordinates.every(item => {
                     let tdRow = parseInt(item.row) + row;
                     let tdCol = parseInt(item.column) + column;
-                    let td = computed.find(`#td-${tdRow}-${tdCol}`);
-                    if (td.hasClass('set') && !isPieceRemoved) {
-                        isPieceRemoved = true;
-                        piecesSet--;
+                    let cell = computed.find(`#td-${tdRow}-${tdCol}`)
+                        .not('.set').not('.border-cell');
+
+                    if (cell.length > 0) {
+                        currentPieceCells.push(cell);
+                    } else {
+                        isPieceSet = false;
+                        return false;
                     }
-                    td.removeClass('set');
-                    td.removeAttr('data-piece');
+
+                    return true;
                 });
 
-                function moveAt(e) {
-                    view.style.left = (getPageX(e) - shiftX - 8) + 'px';
-                    view.style.top = (getPageY(e) - shiftY) + 'px';
-                }
+                solutionArea.append(view);
 
-                function getRowAndCol(e) {
-                    let offset = solutionArea.offset();
-                    let containerX = getPageX(e) - offset.left;
-                    let containerY = getPageY(e) - offset.top;
-                    let row = Math.round((containerY - shiftY) / tableCellWidth);
-                    let column = Math.round((containerX - shiftX) / tableCellWidth);
-                    return {row, column};
-                }
-
-                view.style.zIndex = 1000; // над другими элементами
-                view.style.position = 'absolute';
-                document.body.appendChild(view);
-                moveAt(e);
-
-                cell.ontouchmove = document.onmousemove = function (e) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    moveAt(e);
-                };
-
-                cell.ontouchend = cell.onmouseup = function (e) {
-                    let row, column;
-                    ({row, column} = getRowAndCol(e));
-                    let rowPosition = row * tableCellWidth;
-                    let columnPosition = column * tableCellWidth;
-                    let currentPieceCells = [];
-                    currentPieceTdCoordinates.every(item => {
-                        let tdRow = parseInt(item.row) + row;
-                        let tdCol = parseInt(item.column) + column;
-                        let cell = computed.find(`#td-${tdRow}-${tdCol}`)
-                            .not('.set').not('.border-cell');
-
-                        if (cell.length > 0) {
-                            currentPieceCells.push(cell);
-                        } else {
-                            isPieceSet = false;
-                            return false;
-                        }
-
-                        return true;
+                if (isPieceSet) {
+                    currentPieceCells.forEach(item => {
+                        item.addClass('set');
+                        item.attr('data-piece', $(view).attr('id'));
                     });
+                    view.style.left = `${columnPosition - 8}px`;
+                    view.style.top = `${rowPosition}px`;
+                    view.style.display = 'block';
+                    $(view).addClass('pieceSet');
+                    piecesSet++;
+                } else {
+                    view.style.position = '';
+                    view.style.left = '';
+                    view.style.top = '';
+                    view.style.display = '';
+                    $(view).removeClass('pieceSet');
+                }
 
-                    solutionArea.append(view);
+                cell.ontouchmove = document.onmousemove = null;
+                cell.ontouchend = cell.onmouseup = null;
+                view.style.zIndex = '';
 
-                    if (isPieceSet) {
-                        currentPieceCells.forEach(item => {
-                            item.addClass('set');
-                            item.attr('data-piece', $(view).attr('id'));
-                        });
-                        view.style.left = `${columnPosition - 8}px`;
-                        view.style.top = `${rowPosition}px`;
-                        view.style.display = 'block';
-                        $(view).addClass('pieceSet');
-                        piecesSet++;
-                    } else {
-                        view.style.position = '';
-                        view.style.left = '';
-                        view.style.top = '';
-                        view.style.display = '';
-                        $(view).removeClass('pieceSet');
-                    }
+                console.log(piecesSet);
+                if (piecesSet == solutionLength) {
+                    alertWithInterval('Поздравляем!', 50);
+                    computed.find('.piece').each(placePieceNoInterval);
+                    level++;
+                    score = parseInt(score) + parseInt(scoreForLevel);
 
-                    cell.ontouchmove = document.onmousemove = null;
-                    cell.ontouchend = cell.onmouseup = null;
-                    view.style.zIndex = '';
+                    printScore();
+                    saveToLocalStorage();
 
-                    console.log(piecesSet);
-                    if (piecesSet == solutionLength) {
-                        alertWithInterval('Поздравляем!', 50);
-                        computed.find('.piece').each(placePieceNoInterval);
-                        level++;
-                        score = parseInt(score) + parseInt(scoreForLevel);
-
-                        printScore();
-                        saveToLocalStorage();
-
-                        computed.find('#give-up, #add-piece').prop('disabled', true);
-                        computed.find('#next').prop('disabled', false);
-                    }
-                };
+                    computed.find('#give-up, #add-piece').prop('disabled', true);
+                    computed.find('#next').prop('disabled', false);
+                }
             };
-
-            cell.ondragstart = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-                return false;
-            };
-        });
-
-        view.ondragstart = function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-            return false;
         };
+
+        cell.ondragstart = preventDefaultBehavior;
     });
+
+    view.ondragstart = preventDefaultBehavior;
+}
+
+function preventDefaultBehavior(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    return false;
 }
 
 function placePiece() {
@@ -598,13 +558,11 @@ $(document).ready(
 );
 
 /***** SCRIPT-CREATIVE.JS *****/
-
 function startGameCreative(arr) {
     let isGameFinished = false;
     const solutionArea = creative.find('div.solutionArea');
     stepOfIntervalCreative = 0;
     piecesSetCreative = 0;
-    //timeStart = performance && performance.now? performance.now() : 0;
     solutionPiecesCreative = findSolutionWithPiece(arr);
 
     if (!solutionPiecesCreative) {
@@ -624,14 +582,10 @@ function startGameCreative(arr) {
         $(view).find('td.pieceCell').each(function() {
             let cell = this;
 
-            cell.ontouchcancel = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-            };
+            cell.ontouchcancel = preventDefaultBehavior;
 
             cell.ontouchstart = cell.onmousedown = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
+                preventDefaultBehavior(e);
                 view.style.display = '';
                 const coords = getCoordinates(view);
                 const shiftX = getPageX(e) - coords.left;
@@ -674,14 +628,12 @@ function startGameCreative(arr) {
                 moveAt(e);
 
                 cell.ontouchmove = document.onmousemove = function (e) {
-                    e.stopPropagation();
-                    e.preventDefault();
+                    preventDefaultBehavior(e);
                     moveAt(e);
                 };
 
                 cell.ontouchend = cell.onmouseup = function (e) {
-                    let row, column;
-                    ({row, column} = getRowAndCol(e));
+                    let {row, column} = getRowAndCol(e);
                     let rowPosition = row * tableCellWidth;
                     let columnPosition = column * tableCellWidth;
                     let currentPieceCells = [];
@@ -731,18 +683,10 @@ function startGameCreative(arr) {
                 };
             };
 
-            cell.ondragstart = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-                return false;
-            };
+            cell.ondragstart = preventDefaultBehavior;
         });
 
-        view.ondragstart = function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-            return false;
-        };
+        view.ondragstart = preventDefaultBehavior;
     });
 }
 

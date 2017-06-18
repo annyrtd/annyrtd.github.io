@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 26);
+/******/ 	return __webpack_require__(__webpack_require__.s = 27);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -101,7 +101,7 @@ module.exports = function (fn) {
 
 var assign        = __webpack_require__(10)
   , normalizeOpts = __webpack_require__(17)
-  , isCallable    = __webpack_require__(47)
+  , isCallable    = __webpack_require__(48)
   , contains      = __webpack_require__(20)
 
   , d;
@@ -169,7 +169,7 @@ d.gs = function (dscr, get, set/*, options*/) {
 "use strict";
 
 
-module.exports = __webpack_require__(67)() ? Symbol : __webpack_require__(69);
+module.exports = __webpack_require__(68)() ? Symbol : __webpack_require__(70);
 
 
 /***/ }),
@@ -584,9 +584,9 @@ module.exports = function (x) {
 "use strict";
 
 
-module.exports = __webpack_require__(42)()
+module.exports = __webpack_require__(43)()
 	? Object.assign
-	: __webpack_require__(43);
+	: __webpack_require__(44);
 
 
 /***/ }),
@@ -601,7 +601,7 @@ var clear    = __webpack_require__(15)
   , callable = __webpack_require__(1)
   , value    = __webpack_require__(0)
   , d        = __webpack_require__(2)
-  , autoBind = __webpack_require__(30)
+  , autoBind = __webpack_require__(31)
   , Symbol   = __webpack_require__(3)
 
   , defineProperty = Object.defineProperty
@@ -11147,7 +11147,7 @@ module.exports = function () {
 "use strict";
 
 
-var toInteger = __webpack_require__(40)
+var toInteger = __webpack_require__(41)
 
   , max = Math.max;
 
@@ -11206,7 +11206,7 @@ module.exports = function (/*customCreate*/) {
 
 
 
-var isObject      = __webpack_require__(48)
+var isObject      = __webpack_require__(49)
   , value         = __webpack_require__(0)
 
   , isPrototypeOf = Object.prototype.isPrototypeOf
@@ -11273,7 +11273,7 @@ module.exports = (function (status) {
 	return false;
 }())));
 
-__webpack_require__(45);
+__webpack_require__(46);
 
 
 /***/ }),
@@ -11283,9 +11283,9 @@ __webpack_require__(45);
 "use strict";
 
 
-module.exports = __webpack_require__(54)()
+module.exports = __webpack_require__(55)()
 	? String.prototype.contains
-	: __webpack_require__(55);
+	: __webpack_require__(56);
 
 
 /***/ }),
@@ -11295,7 +11295,7 @@ module.exports = __webpack_require__(54)()
 "use strict";
 
 
-var isIterable = __webpack_require__(59);
+var isIterable = __webpack_require__(60);
 
 module.exports = function (value) {
 	if (!isIterable(value)) throw new TypeError(value + " is not iterable");
@@ -11336,10 +11336,65 @@ function getCoordinates(elem) {
     return { top: Math.round(top), left: Math.round(left) };
 }
 
+function getPageX(event) {
+    if (event.pageX) {
+        return event.pageX;
+    } else {
+        var touches = event.changedTouches;
+        if (touches && touches[0]) {
+            return touches[0].pageX;
+        }
+    }
+}
+
+function getPageY(event) {
+    if (event.pageY) {
+        return event.pageY;
+    } else {
+        var touches = event.changedTouches;
+        if (touches && touches[0]) {
+            return touches[0].pageY;
+        }
+    }
+}
+
 exports.getCoordinates = getCoordinates;
+exports.getPageX = getPageX;
+exports.getPageY = getPageY;
 
 /***/ }),
 /* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function saveIntegerToLocalStorage(key, value) {
+    if (localStorage) {
+        localStorage[key] = parseInt(value);
+    }
+}
+
+function restoreIntegerFromLocalStorage(key) {
+    var value = 0;
+
+    if (localStorage) {
+        var restoredValue = parseInt(localStorage.getItem(key));
+        value = restoredValue ? restoredValue : 0;
+        saveIntegerToLocalStorage(key, value);
+    }
+
+    return value;
+}
+
+exports.saveIntegerToLocalStorage = saveIntegerToLocalStorage;
+exports.restoreIntegerFromLocalStorage = restoreIntegerFromLocalStorage;
+
+/***/ }),
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11354,7 +11409,7 @@ var _pieces = __webpack_require__(4);
 
 var _statistics = __webpack_require__(12);
 
-var Map = __webpack_require__(61);
+var Map = __webpack_require__(62);
 
 var INFINITY = 'Infinity';
 
@@ -11458,7 +11513,7 @@ function createInput(piece, id) {
 exports.setUpPieceSelectionArea = setUpPieceSelectionArea;
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11468,8 +11523,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 // algo: https://en.wikipedia.org/wiki/Fisher-Yates_shuffle
-function shuffleArray(arrayOfPieces) {
-    var currentIndex = arrayOfPieces.length,
+function shuffleArray(array) {
+    var currentIndex = array.length,
         randomIndex = void 0;
 
     // While there remain elements to shuffle...
@@ -11480,16 +11535,16 @@ function shuffleArray(arrayOfPieces) {
         currentIndex -= 1;
 
         // And swap it with the current element.
-        var _ref = [arrayOfPieces[randomIndex], arrayOfPieces[currentIndex]];
-        arrayOfPieces[currentIndex] = _ref[0];
-        arrayOfPieces[randomIndex] = _ref[1];
+        var _ref = [array[randomIndex], array[currentIndex]];
+        array[currentIndex] = _ref[0];
+        array[randomIndex] = _ref[1];
     }
 }
 
 exports.shuffleArray = shuffleArray;
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11500,9 +11555,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.countSolutions = exports.findSolutionWithPiece = exports.findSolution = undefined;
 
-var _dlx = __webpack_require__(28);
+var _dlx = __webpack_require__(29);
 
-var _debruijn = __webpack_require__(27);
+var _debruijn = __webpack_require__(28);
 
 function shouldDeBruijnBeUsed(arr) {
     var freeCells = 0,
@@ -11579,7 +11634,7 @@ exports.findSolutionWithPiece = findSolutionWithPiece;
 exports.countSolutions = countSolutions;
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11595,17 +11650,19 @@ var _Piece = __webpack_require__(6);
 
 var _pieces = __webpack_require__(4);
 
-var _pieceSelection = __webpack_require__(23);
+var _pieceSelection = __webpack_require__(24);
 
 var _transformTableToMatrix = __webpack_require__(13);
 
-var _shuffleArray = __webpack_require__(24);
+var _shuffleArray = __webpack_require__(25);
 
 var _statistics = __webpack_require__(12);
 
 var _getCoordinates = __webpack_require__(22);
 
-var _solvePolymino = __webpack_require__(25);
+var _solvePolymino = __webpack_require__(26);
+
+var _localStorage = __webpack_require__(23);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11614,7 +11671,6 @@ var stepOfInterval = 0;
 var piecesSet = 0;
 var solutionLength = void 0;
 var solutionPieces = void 0;
-//let timeStart;
 var scoreForLevel = 500;
 
 var stepOfIntervalCreative = 0;
@@ -11635,26 +11691,13 @@ var numberOfRowsCreative = void 0,
     numberOfColumnsCreative = void 0;
 
 function saveToLocalStorage() {
-    if (localStorage) {
-        localStorage['level'] = parseInt(level);
-        localStorage['score'] = parseInt(score);
-    }
+    (0, _localStorage.saveIntegerToLocalStorage)('level', level);
+    (0, _localStorage.saveIntegerToLocalStorage)('score', score);
 }
 
 function restoreFromLocalStorage() {
-    if (localStorage) {
-        if (parseInt(localStorage.getItem('level'))) {
-            level = parseInt(localStorage['level']);
-        } else {
-            localStorage['level'] = level = 0;
-        }
-
-        if (parseInt(localStorage.getItem('score'))) {
-            score = parseInt(localStorage['score']);
-        } else {
-            localStorage['score'] = score = 0;
-        }
-    }
+    level = (0, _localStorage.restoreIntegerFromLocalStorage)('level');
+    score = (0, _localStorage.restoreIntegerFromLocalStorage)('score');
 }
 
 /***** SCRIPT.JS *****/
@@ -11731,28 +11774,6 @@ function countNumbersForTable() {
     return { numberOfRows: numberOfRows, numberOfColumns: numberOfColumns, numberOfBarriers: numberOfBarriers, area: area };
 }
 
-function getPageX(event) {
-    if (event.pageX) {
-        return event.pageX;
-    } else {
-        var touches = event.changedTouches;
-        if (touches && touches[0]) {
-            return touches[0].pageX;
-        }
-    }
-}
-
-function getPageY(event) {
-    if (event.pageY) {
-        return event.pageY;
-    } else {
-        var touches = event.changedTouches;
-        if (touches && touches[0]) {
-            return touches[0].pageY;
-        }
-    }
-}
-
 function startGame(arr) {
     stepOfInterval = 0;
     //timeStart = performance && performance.now? performance.now() : 0;
@@ -11781,158 +11802,147 @@ function startGame(arr) {
     (0, _shuffleArray.shuffleArray)(solutionPieces);
 
     solutionPieces.forEach(function (piece, index) {
-        var view = piece.getView();
-        solutionArea.append(view);
-        view.setAttribute('id', 'piece' + index);
+        return setUpPieceEvents(solutionArea, piece, index);
+    });
+}
 
-        (0, _jquery2.default)(view).find('td.pieceCell').each(function () {
-            var cell = this;
+function setUpPieceEvents(solutionArea, piece, index) {
+    var view = piece.getView();
+    solutionArea.append(view);
+    view.setAttribute('id', 'piece' + index);
 
-            cell.ontouchcancel = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-            };
+    (0, _jquery2.default)(view).find('td.pieceCell').each(function () {
+        var cell = this;
 
-            cell.ontouchstart = cell.onmousedown = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-                view.style.display = '';
-                var coords = (0, _getCoordinates.getCoordinates)(view);
-                var shiftX = getPageX(e) - coords.left;
-                var shiftY = getPageY(e) - coords.top;
+        cell.ontouchcancel = preventDefaultBehavior;
 
-                var isPieceSet = true;
-                var currentCoordinatesAttribute = view.getAttribute('data-nodes');
-                var currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(function (item) {
-                    return _Node.Node.fromString(item);
-                });
+        cell.ontouchstart = cell.onmousedown = function (e) {
+            preventDefaultBehavior(e);
+            view.style.display = '';
+            var coords = (0, _getCoordinates.getCoordinates)(view);
+            var shiftX = (0, _getCoordinates.getPageX)(e) - coords.left;
+            var shiftY = (0, _getCoordinates.getPageY)(e) - coords.top;
 
-                var row = void 0,
-                    column = void 0;
+            var isPieceSet = true;
+            var currentCoordinatesAttribute = view.getAttribute('data-nodes');
+            var currentPieceTdCoordinates = currentCoordinatesAttribute.split('-').map(function (item) {
+                return _Node.Node.fromString(item);
+            });
 
-                var _getRowAndCol = getRowAndCol(e);
-
-                row = _getRowAndCol.row;
+            var _getRowAndCol = getRowAndCol(e),
+                row = _getRowAndCol.row,
                 column = _getRowAndCol.column;
 
-                var isPieceRemoved = false;
-                currentPieceTdCoordinates.forEach(function (item) {
-                    var tdRow = parseInt(item.row) + row;
-                    var tdCol = parseInt(item.column) + column;
-                    var td = computed.find('#td-' + tdRow + '-' + tdCol);
-                    if (td.hasClass('set') && !isPieceRemoved) {
-                        isPieceRemoved = true;
-                        piecesSet--;
-                    }
-                    td.removeClass('set');
-                    td.removeAttr('data-piece');
-                });
-
-                function moveAt(e) {
-                    view.style.left = getPageX(e) - shiftX - 8 + 'px';
-                    view.style.top = getPageY(e) - shiftY + 'px';
+            var isPieceRemoved = false;
+            currentPieceTdCoordinates.forEach(function (item) {
+                var tdRow = parseInt(item.row) + row;
+                var tdCol = parseInt(item.column) + column;
+                var td = computed.find('#td-' + tdRow + '-' + tdCol);
+                if (td.hasClass('set') && !isPieceRemoved) {
+                    isPieceRemoved = true;
+                    piecesSet--;
                 }
+                td.removeClass('set');
+                td.removeAttr('data-piece');
+            });
 
-                function getRowAndCol(e) {
-                    var offset = solutionArea.offset();
-                    var containerX = getPageX(e) - offset.left;
-                    var containerY = getPageY(e) - offset.top;
-                    var row = Math.round((containerY - shiftY) / tableCellWidth);
-                    var column = Math.round((containerX - shiftX) / tableCellWidth);
-                    return { row: row, column: column };
-                }
+            function moveAt(e) {
+                view.style.left = (0, _getCoordinates.getPageX)(e) - shiftX - 8 + 'px';
+                view.style.top = (0, _getCoordinates.getPageY)(e) - shiftY + 'px';
+            }
 
-                view.style.zIndex = 1000; // над другими элементами
-                view.style.position = 'absolute';
-                document.body.appendChild(view);
+            function getRowAndCol(e) {
+                var offset = solutionArea.offset();
+                var containerX = (0, _getCoordinates.getPageX)(e) - offset.left;
+                var containerY = (0, _getCoordinates.getPageY)(e) - offset.top;
+                var row = Math.round((containerY - shiftY) / tableCellWidth);
+                var column = Math.round((containerX - shiftX) / tableCellWidth);
+                return { row: row, column: column };
+            }
+
+            view.style.zIndex = 1000; // над другими элементами
+            view.style.position = 'absolute';
+            document.body.appendChild(view);
+            moveAt(e);
+
+            cell.ontouchmove = document.onmousemove = function (e) {
+                preventDefaultBehavior(e);
                 moveAt(e);
+            };
 
-                cell.ontouchmove = document.onmousemove = function (e) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    moveAt(e);
-                };
-
-                cell.ontouchend = cell.onmouseup = function (e) {
-                    var row = void 0,
-                        column = void 0;
-
-                    var _getRowAndCol2 = getRowAndCol(e);
-
-                    row = _getRowAndCol2.row;
+            cell.ontouchend = cell.onmouseup = function (e) {
+                var _getRowAndCol2 = getRowAndCol(e),
+                    row = _getRowAndCol2.row,
                     column = _getRowAndCol2.column;
 
-                    var rowPosition = row * tableCellWidth;
-                    var columnPosition = column * tableCellWidth;
-                    var currentPieceCells = [];
-                    currentPieceTdCoordinates.every(function (item) {
-                        var tdRow = parseInt(item.row) + row;
-                        var tdCol = parseInt(item.column) + column;
-                        var cell = computed.find('#td-' + tdRow + '-' + tdCol).not('.set').not('.border-cell');
+                var rowPosition = row * tableCellWidth;
+                var columnPosition = column * tableCellWidth;
+                var currentPieceCells = [];
+                currentPieceTdCoordinates.every(function (item) {
+                    var tdRow = parseInt(item.row) + row;
+                    var tdCol = parseInt(item.column) + column;
+                    var cell = computed.find('#td-' + tdRow + '-' + tdCol).not('.set').not('.border-cell');
 
-                        if (cell.length > 0) {
-                            currentPieceCells.push(cell);
-                        } else {
-                            isPieceSet = false;
-                            return false;
-                        }
-
-                        return true;
-                    });
-
-                    solutionArea.append(view);
-
-                    if (isPieceSet) {
-                        currentPieceCells.forEach(function (item) {
-                            item.addClass('set');
-                            item.attr('data-piece', (0, _jquery2.default)(view).attr('id'));
-                        });
-                        view.style.left = columnPosition - 8 + 'px';
-                        view.style.top = rowPosition + 'px';
-                        view.style.display = 'block';
-                        (0, _jquery2.default)(view).addClass('pieceSet');
-                        piecesSet++;
+                    if (cell.length > 0) {
+                        currentPieceCells.push(cell);
                     } else {
-                        view.style.position = '';
-                        view.style.left = '';
-                        view.style.top = '';
-                        view.style.display = '';
-                        (0, _jquery2.default)(view).removeClass('pieceSet');
+                        isPieceSet = false;
+                        return false;
                     }
 
-                    cell.ontouchmove = document.onmousemove = null;
-                    cell.ontouchend = cell.onmouseup = null;
-                    view.style.zIndex = '';
+                    return true;
+                });
 
-                    console.log(piecesSet);
-                    if (piecesSet == solutionLength) {
-                        alertWithInterval('Поздравляем!', 50);
-                        computed.find('.piece').each(placePieceNoInterval);
-                        level++;
-                        score = parseInt(score) + parseInt(scoreForLevel);
+                solutionArea.append(view);
 
-                        printScore();
-                        saveToLocalStorage();
+                if (isPieceSet) {
+                    currentPieceCells.forEach(function (item) {
+                        item.addClass('set');
+                        item.attr('data-piece', (0, _jquery2.default)(view).attr('id'));
+                    });
+                    view.style.left = columnPosition - 8 + 'px';
+                    view.style.top = rowPosition + 'px';
+                    view.style.display = 'block';
+                    (0, _jquery2.default)(view).addClass('pieceSet');
+                    piecesSet++;
+                } else {
+                    view.style.position = '';
+                    view.style.left = '';
+                    view.style.top = '';
+                    view.style.display = '';
+                    (0, _jquery2.default)(view).removeClass('pieceSet');
+                }
 
-                        computed.find('#give-up, #add-piece').prop('disabled', true);
-                        computed.find('#next').prop('disabled', false);
-                    }
-                };
+                cell.ontouchmove = document.onmousemove = null;
+                cell.ontouchend = cell.onmouseup = null;
+                view.style.zIndex = '';
+
+                console.log(piecesSet);
+                if (piecesSet == solutionLength) {
+                    alertWithInterval('Поздравляем!', 50);
+                    computed.find('.piece').each(placePieceNoInterval);
+                    level++;
+                    score = parseInt(score) + parseInt(scoreForLevel);
+
+                    printScore();
+                    saveToLocalStorage();
+
+                    computed.find('#give-up, #add-piece').prop('disabled', true);
+                    computed.find('#next').prop('disabled', false);
+                }
             };
-
-            cell.ondragstart = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-                return false;
-            };
-        });
-
-        view.ondragstart = function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-            return false;
         };
+
+        cell.ondragstart = preventDefaultBehavior;
     });
+
+    view.ondragstart = preventDefaultBehavior;
+}
+
+function preventDefaultBehavior(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    return false;
 }
 
 function placePiece() {
@@ -12202,13 +12212,11 @@ function resetField() {
 });
 
 /***** SCRIPT-CREATIVE.JS *****/
-
 function startGameCreative(arr) {
     var isGameFinished = false;
     var solutionArea = creative.find('div.solutionArea');
     stepOfIntervalCreative = 0;
     piecesSetCreative = 0;
-    //timeStart = performance && performance.now? performance.now() : 0;
     solutionPiecesCreative = (0, _solvePolymino.findSolutionWithPiece)(arr);
 
     if (!solutionPiecesCreative) {
@@ -12228,18 +12236,14 @@ function startGameCreative(arr) {
         (0, _jquery2.default)(view).find('td.pieceCell').each(function () {
             var cell = this;
 
-            cell.ontouchcancel = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-            };
+            cell.ontouchcancel = preventDefaultBehavior;
 
             cell.ontouchstart = cell.onmousedown = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
+                preventDefaultBehavior(e);
                 view.style.display = '';
                 var coords = (0, _getCoordinates.getCoordinates)(view);
-                var shiftX = getPageX(e) - coords.left;
-                var shiftY = getPageY(e) - coords.top;
+                var shiftX = (0, _getCoordinates.getPageX)(e) - coords.left;
+                var shiftY = (0, _getCoordinates.getPageY)(e) - coords.top;
 
                 var isPieceSet = true;
                 var currentCoordinatesAttributeCreative = view.getAttribute('data-nodes');
@@ -12264,14 +12268,14 @@ function startGameCreative(arr) {
                 });
 
                 function moveAt(e) {
-                    view.style.left = getPageX(e) - shiftX - 8 + 'px';
-                    view.style.top = getPageY(e) - shiftY + 'px';
+                    view.style.left = (0, _getCoordinates.getPageX)(e) - shiftX - 8 + 'px';
+                    view.style.top = (0, _getCoordinates.getPageY)(e) - shiftY + 'px';
                 }
 
                 function getRowAndCol(e) {
                     var offset = solutionArea.offset();
-                    var containerX = getPageX(e) - offset.left;
-                    var containerY = getPageY(e) - offset.top;
+                    var containerX = (0, _getCoordinates.getPageX)(e) - offset.left;
+                    var containerY = (0, _getCoordinates.getPageY)(e) - offset.top;
                     var row = Math.round((containerY - shiftY) / tableCellWidth);
                     var column = Math.round((containerX - shiftX) / tableCellWidth);
                     return { row: row, column: column };
@@ -12283,19 +12287,14 @@ function startGameCreative(arr) {
                 moveAt(e);
 
                 cell.ontouchmove = document.onmousemove = function (e) {
-                    e.stopPropagation();
-                    e.preventDefault();
+                    preventDefaultBehavior(e);
                     moveAt(e);
                 };
 
                 cell.ontouchend = cell.onmouseup = function (e) {
-                    var row = void 0,
-                        column = void 0;
-
-                    var _getRowAndCol4 = getRowAndCol(e);
-
-                    row = _getRowAndCol4.row;
-                    column = _getRowAndCol4.column;
+                    var _getRowAndCol4 = getRowAndCol(e),
+                        row = _getRowAndCol4.row,
+                        column = _getRowAndCol4.column;
 
                     var rowPosition = row * tableCellWidth;
                     var columnPosition = column * tableCellWidth;
@@ -12345,18 +12344,10 @@ function startGameCreative(arr) {
                 };
             };
 
-            cell.ondragstart = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-                return false;
-            };
+            cell.ondragstart = preventDefaultBehavior;
         });
 
-        view.ondragstart = function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-            return false;
-        };
+        view.ondragstart = preventDefaultBehavior;
     });
 }
 
@@ -12531,7 +12522,7 @@ function resetFieldCreative() {
 });
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12667,7 +12658,7 @@ exports.countBruijnSolutions = countBruijnSolutions;
 exports.searchBruijnWithPiece = searchBruijnWithPiece;
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12680,7 +12671,7 @@ exports.searchDLXWithPiece = exports.countDLXsolutions = exports.createXListForE
 
 var _pieces = __webpack_require__(4);
 
-var _dlxClasses = __webpack_require__(29);
+var _dlxClasses = __webpack_require__(30);
 
 var _Piece = __webpack_require__(6);
 
@@ -13026,7 +13017,7 @@ exports.countDLXsolutions = countDLXsolutions;
 exports.searchDLXWithPiece = searchDLXWithPiece;
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13128,16 +13119,16 @@ exports.RootObject = RootObject;
 exports.PieceDataObject = PieceDataObject;
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var copy             = __webpack_require__(44)
+var copy             = __webpack_require__(45)
   , normalizeOptions = __webpack_require__(17)
   , ensureCallable   = __webpack_require__(1)
-  , map              = __webpack_require__(52)
+  , map              = __webpack_require__(53)
   , callable         = __webpack_require__(1)
   , validValue       = __webpack_require__(0)
 
@@ -13167,7 +13158,7 @@ module.exports = function (props/*, options*/) {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13203,19 +13194,19 @@ module.exports = function (searchElement/*, fromIndex*/) {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(33)()
+module.exports = __webpack_require__(34)()
 	? Array.from
-	: __webpack_require__(34);
+	: __webpack_require__(35);
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13231,7 +13222,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13239,7 +13230,7 @@ module.exports = function () {
 
 var iteratorSymbol = __webpack_require__(3).iterator
   , isArguments    = __webpack_require__(7)
-  , isFunction     = __webpack_require__(35)
+  , isFunction     = __webpack_require__(36)
   , toPosInt       = __webpack_require__(16)
   , callable       = __webpack_require__(1)
   , validValue     = __webpack_require__(0)
@@ -13344,7 +13335,7 @@ module.exports = function (arrayLike/*, mapFn, thisArg*/) {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13352,21 +13343,11 @@ module.exports = function (arrayLike/*, mapFn, thisArg*/) {
 
 var toString = Object.prototype.toString
 
-  , id = toString.call(__webpack_require__(36));
+  , id = toString.call(__webpack_require__(37));
 
 module.exports = function (f) {
 	return (typeof f === "function") && (toString.call(f) === id);
 };
-
-
-/***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function () {};
 
 
 /***/ }),
@@ -13376,13 +13357,23 @@ module.exports = function () {};
 "use strict";
 
 
-module.exports = __webpack_require__(38)()
-	? Math.sign
-	: __webpack_require__(39);
+module.exports = function () {};
 
 
 /***/ }),
 /* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(39)()
+	? Math.sign
+	: __webpack_require__(40);
+
+
+/***/ }),
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13396,7 +13387,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13410,13 +13401,13 @@ module.exports = function (value) {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var sign = __webpack_require__(37)
+var sign = __webpack_require__(38)
 
   , abs = Math.abs, floor = Math.floor;
 
@@ -13429,7 +13420,7 @@ module.exports = function (value) {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13465,7 +13456,7 @@ module.exports = function (method, defVal) {
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13481,13 +13472,13 @@ module.exports = function () {
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var keys  = __webpack_require__(49)
+var keys  = __webpack_require__(50)
   , value = __webpack_require__(0)
 
   , max = Math.max;
@@ -13510,13 +13501,13 @@ module.exports = function (dest, src/*, …srcn*/) {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var aFrom  = __webpack_require__(32)
+var aFrom  = __webpack_require__(33)
   , assign = __webpack_require__(10)
   , value  = __webpack_require__(0);
 
@@ -13536,7 +13527,7 @@ module.exports = function (obj/*, propertyNames, options*/) {
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13579,17 +13570,17 @@ module.exports = (function () {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(41)('forEach');
+module.exports = __webpack_require__(42)('forEach');
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13601,7 +13592,7 @@ module.exports = function (obj) { return typeof obj === 'function'; };
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13615,19 +13606,19 @@ module.exports = function (x) {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(50)()
+module.exports = __webpack_require__(51)()
 	? Object.keys
-	: __webpack_require__(51);
+	: __webpack_require__(52);
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13642,7 +13633,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13656,14 +13647,14 @@ module.exports = function (object) {
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var callable = __webpack_require__(1)
-  , forEach  = __webpack_require__(46)
+  , forEach  = __webpack_require__(47)
 
   , call = Function.prototype.call;
 
@@ -13678,7 +13669,7 @@ module.exports = function (obj, cb/*, thisArg*/) {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13694,7 +13685,7 @@ module.exports = function (arg/*, …args*/) {
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13709,7 +13700,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13723,7 +13714,7 @@ module.exports = function (searchString/*, position*/) {
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13760,7 +13751,7 @@ ArrayIterator.prototype = Object.create(Iterator.prototype, {
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13769,7 +13760,7 @@ ArrayIterator.prototype = Object.create(Iterator.prototype, {
 var isArguments = __webpack_require__(7)
   , callable    = __webpack_require__(1)
   , isString    = __webpack_require__(9)
-  , get         = __webpack_require__(58)
+  , get         = __webpack_require__(59)
 
   , isArray = Array.isArray, call = Function.prototype.call
   , some = Array.prototype.some;
@@ -13813,7 +13804,7 @@ module.exports = function (iterable, cb/*, thisArg*/) {
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13821,8 +13812,8 @@ module.exports = function (iterable, cb/*, thisArg*/) {
 
 var isArguments    = __webpack_require__(7)
   , isString       = __webpack_require__(9)
-  , ArrayIterator  = __webpack_require__(56)
-  , StringIterator = __webpack_require__(60)
+  , ArrayIterator  = __webpack_require__(57)
+  , StringIterator = __webpack_require__(61)
   , iterable       = __webpack_require__(21)
   , iteratorSymbol = __webpack_require__(3).iterator;
 
@@ -13835,7 +13826,7 @@ module.exports = function (obj) {
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13857,7 +13848,7 @@ module.exports = function (value) {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13901,17 +13892,17 @@ StringIterator.prototype = Object.create(Iterator.prototype, {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(62)() ? Map : __webpack_require__(66);
+module.exports = __webpack_require__(63)() ? Map : __webpack_require__(67);
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13950,7 +13941,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13966,18 +13957,18 @@ module.exports = (function () {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(53)('key',
+module.exports = __webpack_require__(54)('key',
 	'value', 'key+value');
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13987,7 +13978,7 @@ var setPrototypeOf    = __webpack_require__(8)
   , d                 = __webpack_require__(2)
   , Iterator          = __webpack_require__(11)
   , toStringTagSymbol = __webpack_require__(3).toStringTag
-  , kinds             = __webpack_require__(64)
+  , kinds             = __webpack_require__(65)
 
   , defineProperties = Object.defineProperties
   , unBind = Iterator.prototype._unBind
@@ -14022,24 +14013,24 @@ Object.defineProperty(MapIterator.prototype, toStringTagSymbol,
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var clear          = __webpack_require__(15)
-  , eIndexOf       = __webpack_require__(31)
+  , eIndexOf       = __webpack_require__(32)
   , setPrototypeOf = __webpack_require__(8)
   , callable       = __webpack_require__(1)
   , validValue     = __webpack_require__(0)
   , d              = __webpack_require__(2)
-  , ee             = __webpack_require__(71)
+  , ee             = __webpack_require__(72)
   , Symbol         = __webpack_require__(3)
   , iterator       = __webpack_require__(21)
-  , forOf          = __webpack_require__(57)
-  , Iterator       = __webpack_require__(65)
-  , isNative       = __webpack_require__(63)
+  , forOf          = __webpack_require__(58)
+  , Iterator       = __webpack_require__(66)
+  , isNative       = __webpack_require__(64)
 
   , call = Function.prototype.call
   , defineProperties = Object.defineProperties, getPrototypeOf = Object.getPrototypeOf
@@ -14133,7 +14124,7 @@ Object.defineProperty(MapPoly.prototype, Symbol.toStringTag, d('c', 'Map'));
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14157,7 +14148,7 @@ module.exports = function () {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14173,7 +14164,7 @@ module.exports = function (x) {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14182,7 +14173,7 @@ module.exports = function (x) {
 
 
 var d              = __webpack_require__(2)
-  , validateSymbol = __webpack_require__(70)
+  , validateSymbol = __webpack_require__(71)
 
   , create = Object.create, defineProperties = Object.defineProperties
   , defineProperty = Object.defineProperty, objPrototype = Object.prototype
@@ -14298,13 +14289,13 @@ defineProperty(HiddenSymbol.prototype, SymbolPolyfill.toPrimitive,
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var isSymbol = __webpack_require__(68);
+var isSymbol = __webpack_require__(69);
 
 module.exports = function (value) {
 	if (!isSymbol(value)) throw new TypeError(value + " is not a symbol");
@@ -14313,7 +14304,7 @@ module.exports = function (value) {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

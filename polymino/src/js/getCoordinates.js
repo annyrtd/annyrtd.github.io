@@ -21,4 +21,26 @@ function getCoordinates(elem) {
     return {top: Math.round(top), left: Math.round(left)};
 }
 
-export {getCoordinates};
+function getPageX(event) {
+    if(event.pageX) {
+        return event.pageX;
+    } else {
+        const touches = event.changedTouches;
+        if(touches && touches[0]) {
+            return touches[0].pageX;
+        }
+    }
+}
+
+function getPageY(event) {
+    if(event.pageY) {
+        return event.pageY;
+    } else {
+        const touches = event.changedTouches;
+        if(touches && touches[0]) {
+            return touches[0].pageY;
+        }
+    }
+}
+
+export {getCoordinates, getPageX, getPageY};
