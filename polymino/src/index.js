@@ -562,7 +562,7 @@ $(document).ready(
             level = score = 0;
             saveToLocalStorage();
             computed.find('#give-up, #add-piece').prop('disabled', false);
-            $(this).prop('disabled', true);
+            computed.find('#next').prop('disabled', true);
             generatePolyminoTable();
         });
     }

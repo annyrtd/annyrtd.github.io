@@ -12217,7 +12217,7 @@ function resetField() {
         level = score = 0;
         saveToLocalStorage();
         computed.find('#give-up, #add-piece').prop('disabled', false);
-        (0, _jquery2.default)(this).prop('disabled', true);
+        computed.find('#next').prop('disabled', true);
         generatePolyminoTable();
     });
 });
