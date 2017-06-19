@@ -166,3 +166,8 @@ label.mdl-radio {
 .mdl-radio__ripple-container {
 	top: -2px;
 }
+
+#resetStatistics {
+	width: 204px;
+	margin: 16px;
+}

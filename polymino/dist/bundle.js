@@ -12188,6 +12188,8 @@ function resetField() {
             (0, _jquery2.default)('main.mdl-layout__content.creative').hide();
 
             pieceSelectionArea.hide();
+            (0, _jquery2.default)('#countSolutions').hide();
+            (0, _jquery2.default)('#resetStatistics').show();
             pieceSelectionArea.find('.pieceContainer').not('.selected').each(function (i, piece) {
                 uncheckedPieces.push((0, _jquery2.default)(piece));
                 (0, _jquery2.default)(piece).click();
@@ -12206,7 +12208,17 @@ function resetField() {
             });
             uncheckedPieces = [];
             pieceSelectionArea.show();
+            (0, _jquery2.default)('#countSolutions').show();
+            (0, _jquery2.default)('#resetStatistics').hide();
         }
+    });
+
+    (0, _jquery2.default)('#resetStatistics').click(function () {
+        level = score = 0;
+        saveToLocalStorage();
+        computed.find('#give-up, #add-piece').prop('disabled', false);
+        (0, _jquery2.default)(this).prop('disabled', true);
+        generatePolyminoTable();
     });
 });
 

@@ -34,6 +34,9 @@
 						<span class="mdl-radio__label">Ручной</span>
 					</label>
 				</div>
+				<button id="resetStatistics" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+					Сбросить статистику
+				</button>
 				<div class="pieceSelectionArea">
                     <div class="pieceSelectionArea-header">
                         <span class="bold">Выбранные фигуры</span>
@@ -57,6 +60,9 @@
 						</button>
                     </div>
                 </div>
+				<button style="display: none" id="countSolutions" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+					Подсчитать число решений
+				</button>
 			</div>
 		    <main class="mdl-layout__content computed">
 			    <div class="polyomino-area">
@@ -140,9 +146,6 @@
 						</div>
 						<button id="go" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
 							Старт
-						</button>
-						<button id="countSolutions" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-							Подсчитать число решений
 						</button>
 						<button style="display: none;" id="give-up-creative" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
 							Сдаться

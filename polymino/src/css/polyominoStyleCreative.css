@@ -229,3 +229,20 @@ is-small-screen .creative .polyomino-area {
 .selected .numberOfUsages {
 	display: block;
 }
+
+#countSolutions {
+	width: 255px;
+	margin: 16px;
+}
+
+@media screen and (max-width: 609px) {
+	#countSolutions {
+		width: 200px;
+		margin: 16px;
+		font-size: 11px;
+		padding-left: 8px;
+		padding-right: 8px;
+	}
+}
+
+
