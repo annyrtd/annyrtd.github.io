@@ -12522,7 +12522,7 @@ function resetFieldCreative() {
         (0, _statistics.countStatistic)(creative);
     });
 
-    creative.find('#countSolutions').click(function () {
+    (0, _jquery2.default)('#countSolutions').click(function () {
         var numberOfSolutions = 0;
         if (creative.find('span.statisticSpan .bad').length == 0) {
             var arr = (0, _transformTableToMatrix.transformTableToMatrix)(creative);

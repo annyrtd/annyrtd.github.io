@@ -882,7 +882,7 @@ $(document).ready(
             }
         );
 
-        creative.find('#countSolutions').click(
+        $('#countSolutions').click(
             function() {
                 let numberOfSolutions = 0;
                 if (creative.find('span.statisticSpan .bad').length == 0) {

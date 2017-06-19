@@ -233,6 +233,7 @@ is-small-screen .creative .polyomino-area {
 #countSolutions {
 	width: 255px;
 	margin-left: 40px;
+	margin-bottom: 16px;
 }
 
 @media screen and (max-width: 1024px) {
