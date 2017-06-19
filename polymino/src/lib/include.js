@@ -15,7 +15,7 @@ function supportsWeakMap() {
 
 if(!supportsPromise()) {
     document.write(
-        '<script src="Promise.js"></script>\n'
+        '<script src="src/lib/Promise.js"></script>\n'
     );
 }
 /*
