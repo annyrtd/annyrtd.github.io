@@ -857,6 +857,22 @@ $(document).ready(
             }
         );
 
+        creative.find('#clear-field-creative').click(
+            function() {
+                creative.find('.piece').each(function(){
+                    const view = this;
+                    view.style.position = '';
+                    view.style.left = '';
+                    view.style.top = '';
+                    view.style.display = '';
+                });
+
+                creative.find('.cell.set').removeClass('set');
+
+                piecesSetCreative = 0;
+            }
+        );
+
         creative.find('div.arrow-div').click(
             function () {
                 resetFieldCreative();

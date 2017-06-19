@@ -12499,6 +12499,20 @@ function resetFieldCreative() {
         (0, _statistics.countStatistic)(creative);
     });
 
+    creative.find('#clear-field-creative').click(function () {
+        creative.find('.piece').each(function () {
+            var view = this;
+            view.style.position = '';
+            view.style.left = '';
+            view.style.top = '';
+            view.style.display = '';
+        });
+
+        creative.find('.cell.set').removeClass('set');
+
+        piecesSetCreative = 0;
+    });
+
     creative.find('div.arrow-div').click(function () {
         resetFieldCreative();
         var direction = (0, _jquery2.default)(this).removeClass('arrow-div').attr('class').replace('arrow-', '');
