@@ -169,5 +169,16 @@ label.mdl-radio {
 
 #resetStatistics {
 	width: 204px;
-	margin: 16px;
+	margin: 16px 40px;
+}
+
+
+@media screen and (max-width: 1024px) {
+	#resetStatistics {
+		margin: 16px;
+	}
+
+	.modeDiv {
+		padding-left: 16px;
+	}
 }
