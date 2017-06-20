@@ -1,171 +1,169 @@
 .creative .polytable {
-	border-collapse: collapse;
-	border: 1px black solid;
-	float: left;
+    border-collapse: collapse;
+    border: 1px black solid;
+    float: left;
 }
 
 .creative .polytable td {
-	width: 32px;
-	height: 32px;
-	border: 1px black solid;
-	cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border: 1px black solid;
+    cursor: pointer;
 }
 
 .creative .empty-cell {
-	background-color: white;
+    background-color: white;
 }
 
 .creative .border-cell {
-	background-color: black;
+    background-color: black;
 }
 
 .creative .polyomino-area {
-	padding: 0 32px 32px;
+    padding: 0 32px 32px;
 }
-
 
 is-small-screen .creative .polyomino-area {
-	margin-left: 32px;
-	padding-top: 0px;
+    margin-left: 32px;
+    padding-top: 0px;
 }
 
-
 .creative .statistic {
-	margin: 16px 0;
-	display: flex;
-	align-items: center;
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
 }
 
 .creative .flexBarrier {
-	width: 100%;
-	height: 16px;
+    width: 100%;
+    height: 16px;
 }
 
 .creative #resetBarrierCells {
-	margin-left: 16px;
+    margin-left: 16px;
 }
 
 .creative .arrow-td, .arrow-tr {
-	border: none !important;
-	border-image-width: 0 !important;
-	vertical-align: middle;
-	cursor: default !important;
+    border: none !important;
+    border-image-width: 0 !important;
+    vertical-align: middle;
+    cursor: default !important;
 }
 
 .creative .arrow-div {
-	outline: none;
+    outline: none;
 }
 
 .creative .arrow-bottom {
-	width: 0;
-	height: 0;
-	border-left: 20px solid transparent;
-	border-right: 20px solid transparent;
-	border-top: 20px solid black;
-	cursor: pointer;
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid black;
+    cursor: pointer;
 }
 
 .creative .arrow-right {
-	width: 0;
-	height: 0;
-	border-top: 20px solid transparent;
-	border-bottom: 20px solid transparent;
-	border-left: 20px solid black;
-	cursor: pointer;
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 20px solid black;
+    cursor: pointer;
 }
 
 .creative .arrow-top {
-	width: 0;
-	height: 0;
-	border-right: 20px solid transparent;
-	border-left: 20px solid transparent;
-	border-bottom: 20px solid black;
-	cursor: pointer;
+    width: 0;
+    height: 0;
+    border-right: 20px solid transparent;
+    border-left: 20px solid transparent;
+    border-bottom: 20px solid black;
+    cursor: pointer;
 }
 
 .creative .arrow-left {
-	width: 0;
-	height: 0;
-	border-bottom: 20px solid transparent;
-	border-top: 20px solid transparent;
-	border-right: 20px solid black;
-	cursor: pointer;
+    width: 0;
+    height: 0;
+    border-bottom: 20px solid transparent;
+    border-top: 20px solid transparent;
+    border-right: 20px solid black;
+    cursor: pointer;
 }
 
 .creative .good {
-	color: #47DE17;
+    color: #47DE17;
 }
 
 .creative .bad {
-	color: red;
+    color: red;
 }
 
 .creative .solutionPieces {
-	position: relative;
-	display: flex;
-	max-width: 50%;
-	flex-wrap: wrap;
+    position: relative;
+    display: flex;
+    max-width: 50%;
+    flex-wrap: wrap;
 }
 
 .creative table.piece {
-	border-collapse: collapse;
-	margin: 4px;
-	cursor: pointer;
-	float: left;
+    border-collapse: collapse;
+    margin: 4px;
+    cursor: pointer;
+    float: left;
 }
 
 .creative .piece td {
-	width: 32px;
-	min-width: 32px;
-	height: 32px;
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
 }
 
 .creative .solutionArea {
-	position: relative;
-	/*display: flex;*/
-	width: 100%;
-	/*flex-wrap: wrap;*/
+    position: relative;
+    /*display: flex;*/
+    width: 100%;
+    /*flex-wrap: wrap;*/
 }
 
 .creative .solutionArea:after {
-	content: '';
-	clear: both;
-	display: block;
+    content: '';
+    clear: both;
+    display: block;
 }
 
 .creative .over {
-	border: 2px dashed #000;
+    border: 2px dashed #000;
 }
 
 .creative .game {
-	border: 1px black solid;
-	width: 280px;
-	height: 280px;
+    border: 1px black solid;
+    width: 280px;
+    height: 280px;
 }
 
 .creative .creative-buttons {
-	display: flex;
-	align-items: center;
+    display: flex;
+    align-items: center;
     flex-wrap: wrap;
 }
 
 .creative .creative-buttons > * {
-	margin-right: 32px;
+    margin-right: 32px;
     margin-bottom: 16px;
 }
 
 @media screen and (min-width: 610px) {
-	.mdl-layout__drawer.is-visible {
-		width: 50%;
-	}
+    .mdl-layout__drawer.is-visible {
+        width: 50%;
+    }
 }
 
 .pieceSelectionArea {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	align-items: center;
-	justify-content: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
 }
 
 .pieceSelectionArea .piece {
@@ -173,30 +171,30 @@ is-small-screen .creative .polyomino-area {
 }
 
 .pieceSelectionArea .pieceContainer {
-	padding: 16px;
-	cursor: pointer;
-	margin: 8px;
-	width: auto;
-	min-height: initial;
+    padding: 16px;
+    cursor: pointer;
+    margin: 8px;
+    width: auto;
+    min-height: initial;
 }
 
 .pieceSelectionArea .pieceContainer.selected {
-	padding-top: 14px;
-	padding-bottom: 18px;
+    padding-top: 14px;
+    padding-bottom: 18px;
 }
 
 .pieceSelectionArea-header {
     padding-left: 40px;
     padding-bottom: 16px;
     padding-top: 40px;
-	line-height: 24px;
-	font-size: 16px;
-	width: 100%;
+    line-height: 24px;
+    font-size: 16px;
+    width: 100%;
 }
 
 .selected-sample {
     padding: 0 12px;
-	display: inline;
+    display: inline;
 }
 
 .bold {
@@ -208,47 +206,47 @@ is-small-screen .creative .polyomino-area {
 }
 
 #select-all, #deselect-all {
-	margin: 12px 0;
+    margin: 12px 0;
 }
 
 #numberOfSolutions {
-	line-height: 24px;
-	height: 24px;
+    line-height: 24px;
+    height: 24px;
 }
 
 .numberOfUsages {
-	display: none;
-	width: 60px;
+    display: none;
+    width: 60px;
 }
 
-.numberOfUsages input{
-	width: 100%;
-	margin: 8px 0;
+.numberOfUsages input {
+    width: 100%;
+    margin: 8px 0;
 }
 
 .selected .numberOfUsages {
-	display: block;
+    display: block;
 }
 
 #countSolutions {
-	width: 258px;
-	margin-left: 40px;
-	margin-bottom: 16px;
+    width: 258px;
+    margin-left: 40px;
+    margin-bottom: 16px;
 }
 
 @media screen and (max-width: 1024px) {
-	#countSolutions {
-		margin-left: 16px;
-	}
+    #countSolutions {
+        margin-left: 16px;
+    }
 }
 
 @media screen and (max-width: 609px) {
-	#countSolutions {
-		width: 200px;
-		font-size: 11px;
-		padding-left: 8px;
-		padding-right: 8px;
-	}
+    #countSolutions {
+        width: 200px;
+        font-size: 11px;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
 }
 
 

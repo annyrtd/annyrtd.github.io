@@ -1,184 +1,182 @@
 .mdl-layout__drawer-button {
-	outline: none;
+    outline: none;
 }
 
-.is-small-screen .polyomino-area{
-	margin-left: 32px;
+.is-small-screen .polyomino-area {
+    margin-left: 32px;
 }
 
 .demo-layout-transparent {
-	background-color: #FFCD70;
+    background-color: #FFCD70;
 }
 
 .mdl-layout__content {
-	background-color: #FFEF92;
+    background-color: #FFEF92;
 }
 
 .polytable {
-	border-collapse: collapse;
-	border: 1px black solid;
-	float: left;
-	margin-bottom: 16px;
+    border-collapse: collapse;
+    border: 1px black solid;
+    float: left;
+    margin-bottom: 16px;
 }
 
 .polytable td {
-	min-width: 32px;
-	width: 32px;
-	height: 32px;
-	border: 1px black solid;
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+    border: 1px black solid;
 }
 
 .empty-cell {
-	background-color: white;
+    background-color: white;
 }
 
 .border-cell {
-	background-color: black;
+    background-color: black;
 }
 
 .polyomino-area {
-	padding: 0 32px 0;
+    padding: 0 32px 0;
 }
 
 .statistic {
-	align-items: center;
-	font-size: 17px;
+    align-items: center;
+    font-size: 17px;
 }
 
 table.piece {
-	border-collapse: collapse;
-	margin: 0 8px 8px;
-	float: left;
-	pointer-events: none;
+    border-collapse: collapse;
+    margin: 0 8px 8px;
+    float: left;
+    pointer-events: none;
 }
 
 .piece td {
-	width: 32px;
-	min-width: 32px;
-	height: 32px;
-	pointer-events: none;
-	border: 1px outset transparent;
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    pointer-events: none;
+    border: 1px outset transparent;
 }
 
 .piece td.pieceCell {
-	pointer-events: auto;
-	cursor: pointer;
+    pointer-events: auto;
+    cursor: pointer;
 }
 
 .solutionArea {
-	margin: 32px 0 0;
-	position: relative;
-	width: 100%;
+    margin: 32px 0 0;
+    position: relative;
+    width: 100%;
 }
 
 .solutionArea:after {
-	content: '';
-	clear: both;
-	display: block;
+    content: '';
+    clear: both;
+    display: block;
 }
 
 .menu {
-	display: flex;
-	padding: 32px 0;
+    display: flex;
+    padding: 32px 0;
 }
 
-
 .is-small-screen .menu {
-	padding-top: 20px;
+    padding-top: 20px;
 }
 
 .price {
-	line-height: 40px;
-	font-size: 17px;
+    line-height: 40px;
+    font-size: 17px;
 }
 
 .star {
-	font-size: 19px;
+    font-size: 19px;
 }
 
 .menu button {
-	margin: 0 0 16px 32px;
+    margin: 0 0 16px 32px;
 }
 
 .buttons {
-	display: flex;
-	flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 @media all and (max-width: 404px) {
-	.statistic {
-		font-size: 14px;
-	}
+    .statistic {
+        font-size: 14px;
+    }
 
-	.menu button {
-		font-size: 12px;
-	}
+    .menu button {
+        font-size: 12px;
+    }
 
-	.star {
-		font-size: 16px;
-	}
+    .star {
+        font-size: 16px;
+    }
 
-	.buttons .star {
-		font-size: 14px;
-	}
+    .buttons .star {
+        font-size: 14px;
+    }
 }
 
 @media all and (max-width: 360px) {
-	.statistic {
-		font-size: 12px;
-	}
+    .statistic {
+        font-size: 12px;
+    }
 
-	.menu button {
-		font-size: 10px;
-	}
+    .menu button {
+        font-size: 10px;
+    }
 
-	.star {
-		font-size: 14px;
-	}
+    .star {
+        font-size: 14px;
+    }
 
-	.buttons .star {
-		font-size: 12px;
-	}
+    .buttons .star {
+        font-size: 12px;
+    }
 }
 
 @media all and (max-width: 327px) {
-	.menu button {
-		padding: 0 8px;
-	}
+    .menu button {
+        padding: 0 8px;
+    }
 }
 
 .modeDiv {
-	padding-left: 40px;
+    padding-left: 40px;
 }
 
 label.mdl-radio {
-	line-height: 40px;
+    line-height: 40px;
 }
 
 .mdl-radio__outer-circle {
-	top: 11px;
+    top: 11px;
 }
 
 .mdl-radio__inner-circle {
-	top: 15px;
+    top: 15px;
 }
 
 .mdl-radio__ripple-container {
-	top: -2px;
+    top: -2px;
 }
 
 #resetStatistics {
-	width: 210px;
-	margin: 16px 40px;
+    width: 210px;
+    margin: 16px 40px;
 }
 
-
 @media screen and (max-width: 1024px) {
-	#resetStatistics {
-		margin: 16px;
-	}
+    #resetStatistics {
+        margin: 16px;
+    }
 
-	.modeDiv {
-		padding-left: 16px;
-	}
+    .modeDiv {
+        padding-left: 16px;
+    }
 }
