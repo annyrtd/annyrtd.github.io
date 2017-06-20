@@ -41,6 +41,8 @@
 }
 
 .statistic {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     font-size: 17px;
 }
@@ -78,6 +80,8 @@ table.piece {
 }
 
 .menu {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     padding: 32px 0;
 }
@@ -100,7 +104,10 @@ table.piece {
 }
 
 .buttons {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
 }
 

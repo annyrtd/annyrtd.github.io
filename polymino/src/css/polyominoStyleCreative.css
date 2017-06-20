@@ -30,7 +30,11 @@ is-small-screen .creative .polyomino-area {
 
 .creative .statistic {
     margin: 16px 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
 }
 
@@ -100,8 +104,11 @@ is-small-screen .creative .polyomino-area {
 
 .creative .solutionPieces {
     position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     max-width: 50%;
+    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
 }
 
@@ -142,8 +149,13 @@ is-small-screen .creative .polyomino-area {
 }
 
 .creative .creative-buttons {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
 }
 
@@ -159,10 +171,20 @@ is-small-screen .creative .polyomino-area {
 }
 
 .pieceSelectionArea {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
     flex-direction: row;
+    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 
@@ -248,5 +270,3 @@ is-small-screen .creative .polyomino-area {
         padding-right: 8px;
     }
 }
-
-
