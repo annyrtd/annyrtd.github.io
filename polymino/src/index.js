@@ -83,19 +83,20 @@ function countNumbersForTable() {
     const area = (numberOfPieces + numberOfBarriers) * 4;
     let numberOfRows, numberOfColumns;
     let side, index;
+    let sides = [[4, numberOfPieces + numberOfBarriers]];
     for (
         numberOfRows = index = 4, side = area / index, numberOfColumns = Math.floor(side);
         index < numberOfPieces + numberOfBarriers;
         index++, numberOfRows = index, side = area / index, numberOfColumns = Math.floor(side)
     ) {
-        if (side == numberOfColumns && Math.abs(numberOfColumns - numberOfRows) <= 5) {
-            break;
+        if (side == numberOfColumns) {
+            sides.push([numberOfRows, numberOfColumns]);
         }
     }
 
-    if (numberOfRows > numberOfColumns) {
-        [numberOfRows, numberOfColumns] = [numberOfColumns, numberOfRows];
-    }
+    let minimumDifference = sides.sort((a, b) => Math.abs(a[0] - a[1]) - Math.abs(b[0] - b[1]))[0].sort((a, b) => a - b);
+    numberOfRows = minimumDifference[0];
+    numberOfColumns = minimumDifference[1];
 
     let tableWidth = tableCellWidth * numberOfColumns + 32 * 2;
     let tableHeight = tableCellWidth * numberOfRows + 32 * 2;

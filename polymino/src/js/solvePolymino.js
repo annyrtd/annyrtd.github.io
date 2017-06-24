@@ -14,7 +14,8 @@ function shouldDeBruijnBeUsed(arr){
         }
     }
 
-    return (barriers < 8 && (freeCells + barriers) < 132) || (barriers >= 8 && barriers < 12 && (freeCells + barriers) < 96);
+    return  arr.length <= arr[0].length &&
+        (barriers < 8 && (freeCells + barriers) < 180) || (barriers >= 8 && barriers < 12 && (freeCells + barriers) < 96);
 }
 
 function findSolution(arr)  {

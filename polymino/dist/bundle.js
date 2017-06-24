@@ -11573,7 +11573,7 @@ function shouldDeBruijnBeUsed(arr) {
         }
     }
 
-    return barriers < 8 && freeCells + barriers < 132 || barriers >= 8 && barriers < 12 && freeCells + barriers < 96;
+    return arr.length <= arr[0].length && barriers < 8 && freeCells + barriers < 180 || barriers >= 8 && barriers < 12 && freeCells + barriers < 96;
 }
 
 function findSolution(arr) {
@@ -11743,17 +11743,20 @@ function countNumbersForTable() {
         numberOfColumns = void 0;
     var side = void 0,
         index = void 0;
+    var sides = [[4, numberOfPieces + numberOfBarriers]];
     for (numberOfRows = index = 4, side = area / index, numberOfColumns = Math.floor(side); index < numberOfPieces + numberOfBarriers; index++, numberOfRows = index, side = area / index, numberOfColumns = Math.floor(side)) {
-        if (side == numberOfColumns && Math.abs(numberOfColumns - numberOfRows) <= 5) {
-            break;
+        if (side == numberOfColumns) {
+            sides.push([numberOfRows, numberOfColumns]);
         }
     }
 
-    if (numberOfRows > numberOfColumns) {
-        var _ref = [numberOfColumns, numberOfRows];
-        numberOfRows = _ref[0];
-        numberOfColumns = _ref[1];
-    }
+    var minimumDifference = sides.sort(function (a, b) {
+        return Math.abs(a[0] - a[1]) - Math.abs(b[0] - b[1]);
+    })[0].sort(function (a, b) {
+        return a - b;
+    });
+    numberOfRows = minimumDifference[0];
+    numberOfColumns = minimumDifference[1];
 
     var tableWidth = tableCellWidth * numberOfColumns + 32 * 2;
     var tableHeight = tableCellWidth * numberOfRows + 32 * 2;
@@ -11764,9 +11767,9 @@ function countNumbersForTable() {
             numberOfColumns = 4;
             numberOfRows = numberOfPieces + numberOfBarriers;
         } else {
-            var _ref2 = [numberOfColumns, numberOfRows];
-            numberOfRows = _ref2[0];
-            numberOfColumns = _ref2[1];
+            var _ref = [numberOfColumns, numberOfRows];
+            numberOfRows = _ref[0];
+            numberOfColumns = _ref[1];
         }
     }
 
