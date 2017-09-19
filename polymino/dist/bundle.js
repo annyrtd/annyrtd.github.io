@@ -12166,7 +12166,10 @@ function resetField() {
     });
 
     computed.find('#clear-field').click(function () {
-        computed.find('.piece.pieceSet').each(function () {
+        var piecpiecesToRemove = computed.find('.piece.pieceSet');
+        var piecesToRemoveLength = piecpiecesToRemove.length;
+
+        piecpiecesToRemove.each(function () {
             var view = this;
             view.style.position = '';
             view.style.left = '';
@@ -12179,7 +12182,7 @@ function resetField() {
             (0, _jquery2.default)(this).removeClass('set').removeAttr('data-piece');
         });
 
-        piecesSet = 0;
+        piecesSet -= piecesToRemoveLength;
     });
 
     var uncheckedPieces = [];

@@ -506,7 +506,10 @@ $(document).ready(
 
         computed.find('#clear-field').click(
             function() {
-                computed.find('.piece.pieceSet').each(function(){
+                const piecpiecesToRemove = computed.find('.piece.pieceSet');
+                const piecesToRemoveLength = piecpiecesToRemove.length;
+
+                piecpiecesToRemove.each(function(){
                     const view = this;
                     view.style.position = '';
                     view.style.left = '';
@@ -519,7 +522,7 @@ $(document).ready(
                     $(this).removeClass('set').removeAttr('data-piece');
                 });
 
-                piecesSet = 0;
+                piecesSet -= piecesToRemoveLength;
             }
         );
 
