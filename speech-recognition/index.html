@@ -13,7 +13,7 @@ recognition.maxAlternatives = 5;
 recognition.start();
 
 recognition.onresult = function(event) {
-    document.getElementById('relust').innerText = 'You said: ', event.results[0][0].transcript;
+    document.getElementById('result').innerText = 'You said: ', event.results[0][0].transcript;
 };
 </script>
 <div id="result"></div>
