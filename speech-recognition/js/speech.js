@@ -26,7 +26,7 @@ function askUser() {
                 const currencyFrom = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].indexOf(foundWords[2]) >= 0);
                 const currencyTo = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].indexOf(foundWords[3]) >= 0);
 
-                if(!currencyFrom || !currencyTo) {
+                if(!currencyFrom || !currencyTo || isNaN(sum)) {
                     result.innerHTML += 'Невозможно сконвертировать данную валюту.<br><br>';
                 } else {
                     let convertedValue;
