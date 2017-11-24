@@ -1,7 +1,8 @@
 const WORD_FORMS = {
     'USD': ['доллар', 'доллары', 'долларов', 'доллара', 'долларах'],
     'RUB': ['руб.', 'рубль', 'рубли', 'рублей', 'рубля', 'рублях'],
-    'EUR': ['евро']
+    'EUR': ['евро'],
+    'JPY': ['йен', 'иен', 'йена', 'иена', 'иены', 'йены'],
 };
 
 window.onload = function () {
@@ -13,14 +14,19 @@ function askUser() {
         .then(text => {
             const result = document.getElementById('result');
 
-            if(text === 'выход') {
+            if(text.toLowerCase() === 'выход') {
                 result.innerHTML += 'Пока!';
                 return Promise.reject('');
             }
 
+            if(text.toLowerCase() === 'спасибо') {
+                result.innerHTML += 'Пожалуйста!<br><br>';
+                return Promise.resolve('');
+            }
+
             const foundWords = text.match( /переведи\s+([\d]+)\s+([а-я.]+)\s+в\s+([а-я]+)/i );
             if(foundWords === null || foundWords[1] === undefined || foundWords[2] === undefined || foundWords[3] === undefined) {
-                result.innerHTML += `Не удалось распознать фразу.<br><br>`;
+                result.innerHTML += `Не удалось распознать фразу: ${text}.<br><br>`;
             } else {
                 const sum = parseFloat(foundWords[1]);
                 const currencyFrom = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].indexOf(foundWords[2]) >= 0);
