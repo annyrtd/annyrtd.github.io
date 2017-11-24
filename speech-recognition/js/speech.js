@@ -19,7 +19,7 @@ function askUser() {
             }
 
             const foundWords = text.match( /переведи\s+([\d]+)\s+([а-я.]+)\s+в\s+([а-я]+)/i );
-            if(foundWords[1] === undefined || foundWords[2] === undefined || foundWords[3] === undefined) {
+            if(foundWords === null || foundWords[1] === undefined || foundWords[2] === undefined || foundWords[3] === undefined) {
                 result.innerHTML += `Не удалось распознать фразу/<br><br>`;
             } else {
                 const sum = parseFloat(foundWords[1]);
