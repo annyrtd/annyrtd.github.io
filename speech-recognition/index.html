@@ -4,9 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Speech Recognition</title>
-    <script src="speech.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/CBR_XML_Daily_Ru.js"></script>
+    <script src="//www.cbr-xml-daily.ru/daily_jsonp.js"></script>
+    <script src="js/speech.js"></script>
 </head>
 <body>
-<div id="result">Для выхода скажите 'стоп'. <br></div>
+<h2>Конвертер валют</h2>
+<div id="result">
+    Для выхода скажите 'стоп'. <br>
+    Пример фразы: "переведи 5 долларов в рубли". <br><br>
+</div>
+    <!--<div class="main-panel">
+        <h2>Ваш запрос:</h2>
+        <div id="request"></div>
+        <h2>Результат:</h2>
+        <div id="result"></div>
+    </div>-->
 </body>
 </html>
