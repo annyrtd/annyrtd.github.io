@@ -1,6 +1,6 @@
 const WORD_FORMS = {
     'USD': ['доллар', 'доллары', 'долларов', 'доллара', 'долларах'],
-    'RUB': ['рубль', 'рубли', 'рублей', 'рубля', 'рублях'],
+    'RUB': ['руб.', 'рубль', 'рубли', 'рублей', 'рубля', 'рублях'],
     'EUR': ['евро']
 };
 
@@ -18,24 +18,33 @@ function askUser() {
                 return Promise.reject('');
             }
 
-            const foundWords = text.match( /переведи\s+([\d]+)\s+([а-я]+)\s+в\s+([а-я]+)/i );
-            const sum = parseFloat(foundWords[1]);
-            const currencyFrom = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].indexOf(foundWords[2]) >= 0);
-            const currencyTo = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].indexOf(foundWords[3]) >= 0);
-            let convertedValue;
-
-            if(currencyFrom === 'RUB') {
-                convertedValue = convertFromRub(currencyTo, sum);
-            } else if(currencyTo === 'RUB') {
-                convertedValue = convertToRub(currencyFrom, sum);
+            const foundWords = text.match( /переведи\s+([\d]+)\s+([а-я.]+)\s+в\s+([а-я]+)/i );
+            if(foundWords[1] === undefined || foundWords[2] === undefined || foundWords[3] === undefined) {
+                result.innerHTML += `Не удалось распознать фразу/<br><br>`;
             } else {
-                convertedValue = convertFromRub(
-                    currencyTo,
-                    convertToRub(currencyFrom, sum)
-                );
-            }
+                const sum = parseFloat(foundWords[1]);
+                const currencyFrom = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].indexOf(foundWords[2]) >= 0);
+                const currencyTo = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].indexOf(foundWords[3]) >= 0);
 
-            result.innerHTML += `${text}<br>Результат: ${convertedValue}<br><br>`;
+                if(!currencyFrom || !currencyTo) {
+                    result.innerHTML += 'Невозможно сконвертировать данную валюту.<br><br>';
+                } else {
+                    let convertedValue;
+
+                    if (currencyFrom === 'RUB') {
+                        convertedValue = convertFromRub(currencyTo, sum);
+                    } else if (currencyTo === 'RUB') {
+                        convertedValue = convertToRub(currencyFrom, sum);
+                    } else {
+                        convertedValue = convertFromRub(
+                            currencyTo,
+                            convertToRub(currencyFrom, sum)
+                        );
+                    }
+
+                    result.innerHTML += `${text}<br>Результат: ${convertedValue}<br><br>`;
+                }
+            }
         })
         .then(askUser)
         .catch(() => {});
