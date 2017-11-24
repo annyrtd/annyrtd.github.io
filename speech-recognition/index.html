@@ -4,19 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Speech Recognition</title>
+    <script src="speech.js"></script>
 </head>
 <body>
-<div id="result"></div>
-<script>
-var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
-recognition.lang = 'ru';
-recognition.interimResults = false;
-recognition.maxAlternatives = 5;
-recognition.start();
-
-recognition.onresult = function(event) {
-    document.getElementById('result').innerText = 'Ты сказал: ' + event.results[0][0].transcript;
-};
-</script>
+<div id="result">Для выхода скажите 'стоп'. <br></div>
 </body>
 </html>
