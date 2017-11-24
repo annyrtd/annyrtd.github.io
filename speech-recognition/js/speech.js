@@ -13,7 +13,7 @@ function askUser() {
         .then(text => {
             const result = document.getElementById('result');
 
-            if(text === 'стоп') {
+            if(text === 'выход') {
                 result.innerHTML += 'Пока!';
                 return Promise.reject('');
             }
