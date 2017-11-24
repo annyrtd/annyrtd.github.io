@@ -5,6 +5,7 @@
     <title>Speech Recognition</title>
 </head>
 <body>
+<div id="result"></div>
 <script>
 var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
 recognition.lang = 'ru';
@@ -16,6 +17,5 @@ recognition.onresult = function(event) {
     document.getElementById('result').innerText = 'You said: ', event.results[0][0].transcript;
 };
 </script>
-<div id="result"></div>
 </body>
 </html>
