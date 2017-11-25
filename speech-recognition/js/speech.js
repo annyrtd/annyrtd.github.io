@@ -30,10 +30,12 @@ window.onload = function () {
     recognition.maxAlternatives = 5;
 
     recognition.onresult = function (event) {
-        detectCommand(event.results[event.results.length - 1][0].transcript);
         if(mobileAndTabletcheck()) {
+            detectCommand(event.results[event.results.length - 1][0].transcript);
             micButton.classList.remove('mdl-button--colored');
             recognition.stop();
+        } else{
+            detectCommand(event.results[event.results.length - 1][0].transcript);
         }
     };
 
