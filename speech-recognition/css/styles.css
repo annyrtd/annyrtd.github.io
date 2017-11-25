@@ -1,0 +1,40 @@
+.mdl-layout__header-row {
+    padding-left: 16px;
+}
+
+.flex-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.currency-value {
+    width: 150px;
+}
+
+.mdl-textfield {
+    width: 150px;
+}
+
+.mdl-textfield.currency-type-container {
+    width: 50px !important;
+}
+
+.mdl-textfield--floating-label .currency-value+.mdl-textfield__label {
+    width: 150px;
+}
+
+.mdl-textfield--floating-label .currency-type+.mdl-textfield__label {
+    width: 50px;
+}
+
+.convertion-block > * {
+    margin: 0 16px 0 0;
+}
+
+.mdl-menu__container {
+    border: 1px solid rgba(0,0,0,.12);
+}
+
+#start-recording {
+    margin: 0 16px;
+}
