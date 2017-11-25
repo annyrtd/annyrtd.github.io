@@ -12,7 +12,7 @@ const WORD_FORMS = {
         symbol: '€'
     },
     'JPY': {
-        names: ['йен', 'иен', 'йена', 'иена', 'иены', 'йены'],
+        names: ['йен', 'иен', 'йена', 'иена', 'иены', 'йены', 'иенах', 'йенах'],
         symbol: '¥'
     },
 };
@@ -77,13 +77,13 @@ window.onload = function () {
 function detectCommand(text) {
     const result = document.getElementById('result');
 
-    const foundWords = text.match(/переведи\s+([\d]+)\s+([а-я.]+)\s+в\s+([а-я]+)/i);
-    if (foundWords === null || foundWords[1] === undefined || foundWords[2] === undefined || foundWords[3] === undefined) {
+    const foundWords = text.match(/(переведи|сколько\s+будет)\s+([\d]+)\s+([а-я.]+)\s+в\s+([а-я]+)/i);
+    if (foundWords === null || foundWords[2] === undefined || foundWords[3] === undefined || foundWords[4] === undefined) {
         result.innerHTML += `Не удалось распознать команду: ${text}.<br><br>`;
     } else {
-        const sum = parseFloat(foundWords[1]);
-        const currencyFrom = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].names.indexOf(foundWords[2]) >= 0);
-        const currencyTo = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].names.indexOf(foundWords[3]) >= 0);
+        const sum = parseFloat(foundWords[2]);
+        const currencyFrom = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].names.indexOf(foundWords[3]) >= 0);
+        const currencyTo = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].names.indexOf(foundWords[4]) >= 0);
 
         if (!currencyFrom || !currencyTo || isNaN(sum)) {
             result.innerHTML += 'Невозможно сконвертировать данную валюту.<br><br>';
