@@ -23,6 +23,7 @@ window.onload = function () {
     window.webkitSpeechRecognition ||
     window.mozSpeechRecognition ||
     window.msSpeechRecognition)();
+    let alreadyPrinted = false;
 
     recognition.lang = 'ru';
     recognition.interimResults = false;
@@ -31,7 +32,12 @@ window.onload = function () {
 
     recognition.onresult = function (event) {
         if(mobileAndTabletcheck()) {
+            if(alreadyPrinted) {
+                recognition.stop();
+                return;
+            }
             detectCommand(event.results[event.results.length - 1][0].transcript);
+            alreadyPrinted = true;
             micButton.classList.remove('mdl-button--colored');
             recognition.stop();
         } else{
