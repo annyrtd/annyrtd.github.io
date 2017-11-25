@@ -26,7 +26,7 @@
     <main class="mdl-layout__content">
         <div class="mdl-grid">
             <div class="mdl-cell mdl-cell--12-col">
-                <div class="flex-row">
+                <div class="flex-row flex-wrap">
                     <div id="info">
                         Для выхода из программы скажите 'выход'. <br>
                         Пример фразы: "переведи 5 долларов в рубли" <br>
@@ -38,50 +38,44 @@
                 </div>
             </div>
             <div class="mdl-cell mdl-cell--6-col">
-                <div class="convertion-block flex-row">
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input class="mdl-textfield__input currency-value" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
-                               id="currencyFromValue">
-                        <label class="mdl-textfield__label" for="currencyFromValue">Сколько?</label>
-                        <span class="mdl-textfield__error">Введите число!</span>
-                    </div>
-                    <div class="mdl-textfield currency-type-container mdl-js-textfield mdl-textfield--floating-label getmdl-select">
-                        <input class="mdl-textfield__input currency-type" type="text" name="currency-from"
-                               id="currency-from" value="$" data-val="USD" readonly>
-                        <label for="currency-from">
-                            <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
-                        </label>
-                        <label for="currency-from" class="mdl-textfield__label">Валюта</label>
-                        <ul for="currency-from" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
-                            <li class="mdl-menu__item" data-val="USD">$</li>
-                            <li class="mdl-menu__item" data-val="EUR">€</li>
-                            <li class="mdl-menu__item" data-val="RUB">₽</li>
-                            <li class="mdl-menu__item" data-val="JPY">¥</li>
-                        </ul>
+                <div class="convertion-block flex-row flex-wrap">
+                    <div class="flex-row">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input currency-value" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                                   id="currencyFromValue">
+                            <label class="mdl-textfield__label" for="currencyFromValue">Сколько?</label>
+                            <span class="mdl-textfield__error">Введите число!</span>
+                        </div>
+                        <div class="mdl-textfield currency-type-container mdl-js-textfield mdl-textfield--floating-label getmdl-select">
+                            <input class="mdl-textfield__input currency-type" type="text" name="currency-from"
+                                   id="currency-from" value="$" data-val="USD" readonly>
+                            <label for="currency-from">
+                                <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                            </label>
+                            <label for="currency-from" class="mdl-textfield__label">Валюта</label>
+                            <ul for="currency-from" class="mdl-menu mdl-menu--bottom-left mdl-js-menu"></ul>
+                        </div>
                     </div>
                     <button id="convert-direction"
                             class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored right">
                         <i class="material-icons">keyboard_arrow_right</i>
                     </button>
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input class="mdl-textfield__input currency-value" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
-                               id="currencyToValue">
-                        <label class="mdl-textfield__label" for="currencyToValue">Сколько?</label>
-                        <span class="mdl-textfield__error">Введите число!</span>
-                    </div>
-                    <div class="mdl-textfield currency-type-container mdl-js-textfield mdl-textfield--floating-label getmdl-select">
-                        <input class="mdl-textfield__input currency-type" type="text" name="currency-to"
-                               id="currency-to" value="₽" data-val="RUB" readonly>
-                        <label for="currency-to">
-                            <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
-                        </label>
-                        <label for="currency-to" class="mdl-textfield__label">Валюта</label>
-                        <ul for="currency-to" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
-                            <li class="mdl-menu__item" data-val="USD">$</li>
-                            <li class="mdl-menu__item" data-val="EUR">€</li>
-                            <li class="mdl-menu__item" data-val="RUB">₽</li>
-                            <li class="mdl-menu__item" data-val="JPY">¥</li>
-                        </ul>
+                    <div class="flex-row">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input currency-value" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                                   id="currencyToValue">
+                            <label class="mdl-textfield__label" for="currencyToValue">Сколько?</label>
+                            <span class="mdl-textfield__error">Введите число!</span>
+                        </div>
+                        <div class="mdl-textfield currency-type-container mdl-js-textfield mdl-textfield--floating-label getmdl-select">
+                            <input class="mdl-textfield__input currency-type" type="text" name="currency-to"
+                                   id="currency-to" value="₽" data-val="RUB" readonly>
+                            <label for="currency-to">
+                                <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
+                            </label>
+                            <label for="currency-to" class="mdl-textfield__label">Валюта</label>
+                            <ul for="currency-to" class="mdl-menu mdl-menu--bottom-left mdl-js-menu"></ul>
+                        </div>
                     </div>
                 </div>
             </div>

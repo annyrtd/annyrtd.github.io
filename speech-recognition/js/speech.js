@@ -19,42 +19,65 @@ const WORD_FORMS = {
 
 window.onload = function () {
     const micButton = document.getElementById('start-recording');
-    const recognition = new (window.SpeechRecognition ||
-    window.webkitSpeechRecognition ||
-    window.mozSpeechRecognition ||
-    window.msSpeechRecognition)();
-    let alreadyPrinted = false;
+    const Recognition = window.SpeechRecognition ||
+        window.webkitSpeechRecognition ||
+        window.mozSpeechRecognition ||
+        window.msSpeechRecognition;
 
-    recognition.lang = 'ru';
-    recognition.interimResults = false;
-    recognition.continuous = true;
-    recognition.maxAlternatives = 5;
+    if(!Recognition) {
+        micButton.style.display = 'none';
+    } else {
+        const recognition = new Recognition();
+        let alreadyPrinted = false;
 
-    recognition.onresult = function (event) {
-        if(mobileAndTabletcheck()) {
-            if(alreadyPrinted) {
-                alreadyPrinted = false;
+        recognition.lang = 'ru';
+        recognition.interimResults = false;
+        recognition.continuous = true;
+        recognition.maxAlternatives = 5;
+
+        recognition.onresult = function (event) {
+            if (mobileAndTabletcheck()) {
+                if (alreadyPrinted) {
+                    alreadyPrinted = false;
+                } else {
+                    detectCommand(event.results[event.results.length - 1][0].transcript);
+                    alreadyPrinted = true;
+                }
+
+                micButton.classList.remove('mdl-button--colored');
+                recognition.stop();
             } else {
                 detectCommand(event.results[event.results.length - 1][0].transcript);
-                alreadyPrinted = true;
             }
+        };
 
-            micButton.classList.remove('mdl-button--colored');
-            recognition.stop();
-        } else{
-            detectCommand(event.results[event.results.length - 1][0].transcript);
-        }
-    };
+        micButton.onclick = function () {
+            micButton.classList.toggle('mdl-button--colored');
 
-    micButton.onclick = function() {
-        micButton.classList.toggle('mdl-button--colored');
+            if (micButton.classList.contains('mdl-button--colored')) {
+                recognition.start();
+            } else {
+                recognition.stop();
+            }
+        };
+    }
 
-        if(micButton.classList.contains('mdl-button--colored')) {
-            recognition.start();
-        } else {
-            recognition.stop();
-        }
-    };
+    const listFrom = document.querySelector('ul[for="currency-from"]');
+    const listTo = document.querySelector('ul[for="currency-to"]');
+
+    for(let currency in WORD_FORMS) {
+        const liFrom = document.createElement('li');
+        liFrom.setAttribute('class', 'mdl-menu__item');
+        liFrom.setAttribute('data-val', currency);
+        liFrom.innerText = WORD_FORMS[currency].symbol;
+        listFrom.appendChild(liFrom);
+
+        const liTo = document.createElement('li');
+        liTo.setAttribute('class', 'mdl-menu__item');
+        liTo.setAttribute('data-val', currency);
+        liTo.innerText = WORD_FORMS[currency].symbol;
+        listTo.appendChild(liTo);
+    }
 
     const buttonConvertDirection = document.getElementById('convert-direction');
 
@@ -113,7 +136,7 @@ function detectCommand(text) {
             document.getElementById('currencyToValue').value = convertedValue;
             document.getElementById('currencyToValue').parentNode.classList.add('is-dirty');
 
-            result.innerHTML += `${text}<br>Результат: ${convertedValue}<br><br>`;
+            result.innerHTML += `${text}<br>Результат: ${convertedValue + WORD_FORMS[currencyTo].symbol}<br><br>`;
         }
     }
 }
