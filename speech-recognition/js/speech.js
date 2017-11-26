@@ -1,4 +1,4 @@
-const WORD_FORMS = {
+const CURRENCY_INFO = {
     'USD': {
         names: ['доллар', 'доллары', 'долларов', 'доллара', 'долларах'],
         symbol: '$'
@@ -40,14 +40,14 @@ window.onload = function () {
                 if (alreadyPrinted) {
                     alreadyPrinted = false;
                 } else {
-                    detectCommand(event.results[event.results.length - 1][0].transcript);
+                    getCurrenciesFromVoice(event.results[event.results.length - 1][0].transcript);
                     alreadyPrinted = true;
                 }
 
                 micButton.classList.remove('mdl-button--colored');
                 recognition.stop();
             } else {
-                detectCommand(event.results[event.results.length - 1][0].transcript);
+                getCurrenciesFromVoice(event.results[event.results.length - 1][0].transcript);
             }
         };
 
@@ -65,21 +65,23 @@ window.onload = function () {
     const listFrom = document.querySelector('ul[for="currency-from"]');
     const listTo = document.querySelector('ul[for="currency-to"]');
 
-    for(let currency in WORD_FORMS) {
+    for(let currency in CURRENCY_INFO) {
         const liFrom = document.createElement('li');
         liFrom.setAttribute('class', 'mdl-menu__item');
         liFrom.setAttribute('data-val', currency);
-        liFrom.innerText = WORD_FORMS[currency].symbol;
+        liFrom.innerText = CURRENCY_INFO[currency].symbol;
         listFrom.appendChild(liFrom);
 
         const liTo = document.createElement('li');
         liTo.setAttribute('class', 'mdl-menu__item');
         liTo.setAttribute('data-val', currency);
-        liTo.innerText = WORD_FORMS[currency].symbol;
+        liTo.innerText = CURRENCY_INFO[currency].symbol;
         listTo.appendChild(liTo);
     }
 
     const buttonConvertDirection = document.getElementById('convert-direction');
+    const currencyFromInput = document.getElementById('currencyFromValue');
+    const currencyToInput = document.getElementById('currencyToValue');
 
     buttonConvertDirection.onclick = function() {
         let buttonIcon = buttonConvertDirection.querySelector('i');
@@ -95,9 +97,43 @@ window.onload = function () {
             buttonConvertDirection.classList.remove('right');
         }
     };
+
+    currencyFromInput.addEventListener('input', getCurrenciesFromInputs);
+    currencyToInput.addEventListener('input', getCurrenciesFromInputs);
+    buttonConvertDirection.addEventListener('click', getCurrenciesFromInputs);
 };
 
-function detectCommand(text) {
+function getCurrenciesFromInputs() {
+    const currencyToType = document.getElementById('currency-to');
+    const currencyToValue = document.getElementById('currencyToValue');
+    const currencyFromType = document.getElementById('currency-from');
+    const currencyFromValue = document.getElementById('currencyFromValue');
+    const buttonConvertDirection = document.getElementById('convert-direction');
+    let sum, currencyFrom, currencyTo, resultInput;
+
+    if(buttonConvertDirection.classList.contains('right')) {
+        // usual order
+        sum = currencyFromValue.value;
+        currencyFrom = currencyFromType.getAttribute('data-val');
+        currencyTo = currencyToType.getAttribute('data-val');
+        resultInput = currencyToValue;
+    } else {
+        // inverted order
+        sum = currencyToValue.value;
+        currencyFrom =  currencyToType.getAttribute('data-val');
+        currencyTo = currencyFromType.getAttribute('data-val');
+        resultInput = currencyFromValue;
+    }
+
+    if(!sum || !currencyFrom || !currencyTo) {
+        return;
+    }
+
+    resultInput.value = convertCurrency(sum, currencyFrom, currencyTo);
+    resultInput.parentNode.classList.add('is-dirty');
+}
+
+function getCurrenciesFromVoice(text) {
     const result = document.getElementById('result');
 
     const foundWords = text.match(/(переведи|сколько\s+будет)\s+([\d]+)\s+([а-я.]+)\s+в\s+([а-я]+)/i);
@@ -105,38 +141,27 @@ function detectCommand(text) {
         result.innerHTML += `Не удалось распознать команду: ${text}.<br><br>`;
     } else {
         const sum = parseFloat(foundWords[2]);
-        const currencyFrom = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].names.indexOf(foundWords[3]) >= 0);
-        const currencyTo = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].names.indexOf(foundWords[4]) >= 0);
+        const currencyFrom = Object.keys(CURRENCY_INFO).find(key => CURRENCY_INFO[key].names.indexOf(foundWords[3]) >= 0);
+        const currencyTo = Object.keys(CURRENCY_INFO).find(key => CURRENCY_INFO[key].names.indexOf(foundWords[4]) >= 0);
 
         if (!currencyFrom || !currencyTo || isNaN(sum)) {
             result.innerHTML += 'Невозможно сконвертировать данную валюту.<br><br>';
         } else {
-            let convertedValue;
-
-            if (currencyFrom === 'RUB') {
-                convertedValue = convertFromRub(currencyTo, sum);
-            } else if (currencyTo === 'RUB') {
-                convertedValue = convertToRub(currencyFrom, sum);
-            } else {
-                convertedValue = convertFromRub(
-                    currencyTo,
-                    convertToRub(currencyFrom, sum)
-                );
-            }
-
-            convertedValue = convertedValue.toFixed(2);
+            const convertedValue = convertCurrency(sum, currencyFrom, currencyTo);
 
             document.querySelector('#convert-direction i').innerText = 'keyboard_arrow_right';
 
-            document.getElementById('currency-to').value = WORD_FORMS[currencyTo].symbol;
-            document.getElementById('currency-from').value = WORD_FORMS[currencyFrom].symbol;
+            document.getElementById('currency-to').value = CURRENCY_INFO[currencyTo].symbol;
+            document.getElementById('currency-to').setAttribute('data-val', currencyTo);
+            document.getElementById('currency-from').value = CURRENCY_INFO[currencyFrom].symbol;
+            document.getElementById('currency-from').setAttribute('data-val', currencyFrom);
 
             document.getElementById('currencyFromValue').value = sum;
             document.getElementById('currencyFromValue').parentNode.classList.add('is-dirty');
             document.getElementById('currencyToValue').value = convertedValue;
             document.getElementById('currencyToValue').parentNode.classList.add('is-dirty');
 
-            result.innerHTML += `${text}<br>Результат: ${convertedValue + WORD_FORMS[currencyTo].symbol}<br><br>`;
+            result.innerHTML += `${text}<br>Результат: ${convertedValue + CURRENCY_INFO[currencyTo].symbol}<br><br>`;
         }
     }
 }
@@ -144,6 +169,23 @@ function detectCommand(text) {
 /*window.onload = function () {
  askUser();
  };*/
+
+function convertCurrency(sum, currencyFrom, currencyTo) {
+    let convertedValue;
+
+    if (currencyFrom === 'RUB') {
+        convertedValue = convertFromRub(currencyTo, sum);
+    } else if (currencyTo === 'RUB') {
+        convertedValue = convertToRub(currencyFrom, sum);
+    } else {
+        convertedValue = convertFromRub(
+            currencyTo,
+            convertToRub(currencyFrom, sum)
+        );
+    }
+
+    return convertedValue.toFixed(2);
+}
 
 function askUser(micButton) {
     return recognizeText()
@@ -166,8 +208,8 @@ function askUser(micButton) {
                 result.innerHTML += `Не удалось распознать команду: ${text}.<br><br>`;
             } else {
                 const sum = parseFloat(foundWords[1]);
-                const currencyFrom = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].indexOf(foundWords[2]) >= 0);
-                const currencyTo = Object.keys(WORD_FORMS).find(key => WORD_FORMS[key].indexOf(foundWords[3]) >= 0);
+                const currencyFrom = Object.keys(CURRENCY_INFO).find(key => CURRENCY_INFO[key].indexOf(foundWords[2]) >= 0);
+                const currencyTo = Object.keys(CURRENCY_INFO).find(key => CURRENCY_INFO[key].indexOf(foundWords[3]) >= 0);
 
                 if(!currencyFrom || !currencyTo || isNaN(sum)) {
                     result.innerHTML += 'Невозможно сконвертировать данную валюту.<br><br>';
