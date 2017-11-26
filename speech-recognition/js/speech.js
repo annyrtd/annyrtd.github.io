@@ -80,8 +80,10 @@ window.onload = function () {
     }
 
     const buttonConvertDirection = document.getElementById('convert-direction');
-    const currencyFromInput = document.getElementById('currencyFromValue');
-    const currencyToInput = document.getElementById('currencyToValue');
+    const currencyFromValueInput = document.getElementById('currencyFromValue');
+    const currencyFromTypeInput = document.getElementById('currency-from');
+    const currencyToValueInput = document.getElementById('currencyToValue');
+    const currencyToTypeInput = document.getElementById('currency-to');
 
     buttonConvertDirection.onclick = function() {
         let buttonIcon = buttonConvertDirection.querySelector('i');
@@ -98,8 +100,10 @@ window.onload = function () {
         }
     };
 
-    currencyFromInput.addEventListener('input', getCurrenciesFromInputs);
-    currencyToInput.addEventListener('input', getCurrenciesFromInputs);
+    currencyFromValueInput.addEventListener('input', getCurrenciesFromInputs);
+    currencyToValueInput.addEventListener('input', getCurrenciesFromInputs);
+    currencyFromTypeInput.addEventListener('change', getCurrenciesFromInputs);
+    currencyToTypeInput.addEventListener('change', getCurrenciesFromInputs);
     buttonConvertDirection.addEventListener('click', getCurrenciesFromInputs);
 };
 
@@ -166,10 +170,6 @@ function getCurrenciesFromVoice(text) {
     }
 }
 
-/*window.onload = function () {
- askUser();
- };*/
-
 function convertCurrency(sum, currencyFrom, currencyTo) {
     let convertedValue;
 
@@ -184,82 +184,7 @@ function convertCurrency(sum, currencyFrom, currencyTo) {
         );
     }
 
-    return convertedValue.toFixed(2);
-}
-
-function askUser(micButton) {
-    return recognizeText()
-        .then(text => {
-            const result = document.getElementById('result');
-
-            if(text.toLowerCase() === 'выход') {
-                result.innerHTML += 'Пока!';
-                recognition.stop();
-                return Promise.reject();
-            }
-
-            if(text.toLowerCase() === 'спасибо') {
-                result.innerHTML += 'Пожалуйста!<br><br>';
-                return Promise.resolve();
-            }
-
-            const foundWords = text.match( /переведи\s+([\d]+)\s+([а-я.]+)\s+в\s+([а-я]+)/i );
-            if(foundWords === null || foundWords[1] === undefined || foundWords[2] === undefined || foundWords[3] === undefined) {
-                result.innerHTML += `Не удалось распознать команду: ${text}.<br><br>`;
-            } else {
-                const sum = parseFloat(foundWords[1]);
-                const currencyFrom = Object.keys(CURRENCY_INFO).find(key => CURRENCY_INFO[key].indexOf(foundWords[2]) >= 0);
-                const currencyTo = Object.keys(CURRENCY_INFO).find(key => CURRENCY_INFO[key].indexOf(foundWords[3]) >= 0);
-
-                if(!currencyFrom || !currencyTo || isNaN(sum)) {
-                    result.innerHTML += 'Невозможно сконвертировать данную валюту.<br><br>';
-                } else {
-                    let convertedValue;
-
-                    if (currencyFrom === 'RUB') {
-                        convertedValue = convertFromRub(currencyTo, sum);
-                    } else if (currencyTo === 'RUB') {
-                        convertedValue = convertToRub(currencyFrom, sum);
-                    } else {
-                        convertedValue = convertFromRub(
-                            currencyTo,
-                            convertToRub(currencyFrom, sum)
-                        );
-                    }
-
-                    result.innerHTML += `${text}<br>Результат: ${convertedValue}<br><br>`;
-                }
-            }
-        })
-        .then(askUser)
-        .catch(() => {});
-}
-
-function recognizeText() {
-    return new Promise((resolve, reject) => {
-        const recognition = new (window.SpeechRecognition ||
-        window.webkitSpeechRecognition ||
-        window.mozSpeechRecognition ||
-        window.msSpeechRecognition)();
-
-        /*const speechRecognitionList = new (window.SpeechGrammarList ||
-         window.webkitSpeechGrammarList ||
-         window.mozSpeechGrammarList ||
-         window.msSpeechGrammarList)();
-
-         speechRecognitionList.addFromString(grammar, 1);
-         recognition.grammars = speechRecognitionList;*/
-
-        recognition.lang = 'ru';
-        recognition.interimResults = false;
-        recognition.continuous = true;
-        recognition.maxAlternatives = 5;
-        recognition.start();
-
-        recognition.onresult = function (event) {
-            resolve(event.results[0][0].transcript);
-        };
-    });
+    return parseFloat(convertedValue.toFixed(2)).toString();
 }
 
 function convertFromRub(currencyTo, sum) {
