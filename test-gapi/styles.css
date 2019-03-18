@@ -1,0 +1,38 @@
+* {
+	box-sizing: border-box;
+}
+
+.authorize-buttons {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 16px;
+}
+
+#file-content {
+    width: 100%;
+    height: 250px;
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    padding: 16px;
+	margin-bottom: 16px;
+}
+
+.search-word-wrapper {
+	margin-bottom: 16px;
+}
+
+.highlighted-text {
+	background: #ffff59;
+}
+
+ul {
+	padding: 0;
+	margin: 0;
+}
+
+li {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}

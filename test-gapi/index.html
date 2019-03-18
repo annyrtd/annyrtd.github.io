@@ -1,1 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Google Sheets API Quickstart</title>
+    <meta charset="utf-8" />
+	<link rel="stylesheet" type="text/css" href="styles.css"> 
+  </head>
+  <body>
+    <p>Google Sheets API Quickstart</p>
+	
+	<form enctype="multipart/form-data" method="post">
+		<p>
+			<input type="file" name="createSpreadsheetFileUploader" id="create-spreadsheet-file-uploader">
+			<input id="create-spreadsheet-button" type="button" value="Загрузить" disabled>
+		</p>
+	</form> 
 
+	<div id="file-content-wrapper" style="display: none;">
+		<div class="search-word-wrapper" >
+			<input id="search-word" type="text" placeholder="Введите слово...">	
+		</div>
+		<div id="file-content"></div>
+		<form enctype="multipart/form-data" method="post">
+			<ul id="sentenses"></ul>
+			<p>
+				<input id="create-form" type="button" value="Создать вопросы" style="display: none;">
+				<span id="form-link"></span>
+			</p>
+		</form>
+	</div>
+    <!--Add buttons to initiate auth sequence and sign out-->
+    <div class="authorize-buttons">
+		<button id="authorize_button" style="display: none;">Authorize</button>
+		<button id="signout_button" style="display: none;">Sign Out</button>
+	</div>
+    <pre id="content" style="white-space: pre-wrap;"></pre>
+    <script type="text/javascript" src="index.js"></script>
+
+    <script async defer src="https://apis.google.com/js/api.js"
+      onload="this.onload=function(){};handleClientLoad()"
+      onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
+  </body>
+</html>
