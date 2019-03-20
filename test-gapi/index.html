@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Google Sheets API Quickstart</title>
+    <title>Word Analysis</title>
     <meta charset="utf-8" />
 	<link rel="stylesheet" type="text/css" href="styles.css"> 
   </head>
   <body>
-    <p>Google Sheets API Quickstart</p>
-	
 	<form enctype="multipart/form-data" method="post">
 		<p>
 			<input type="file" name="createSpreadsheetFileUploader" id="create-spreadsheet-file-uploader">
@@ -19,14 +17,18 @@
 		<div class="search-word-wrapper" >
 			<input id="search-word" type="text" placeholder="Введите слово...">	
 		</div>
-		<div id="file-content"></div>
-		<form enctype="multipart/form-data" method="post">
-			<ul id="sentenses"></ul>
-			<p>
-				<input id="create-form" type="button" value="Создать вопросы" style="display: none;">
-				<span id="form-link"></span>
-			</p>
-		</form>
+		<div class="two-column-row">
+			<div class="two-column-row__column" id="file-content"></div>
+			<div class="two-column-row__column two-column-row__column--second">
+				<form enctype="multipart/form-data" method="post">
+					<div class="create-form-controls">
+						<input id="create-form" type="button" value="Создать вопросы" style="display: none;">
+						<span id="form-link"></span>
+					</div>
+					<ul id="sentenses"></ul>
+				</form>
+			</div>
+		</div>
 	</div>
     <!--Add buttons to initiate auth sequence and sign out-->
     <div class="authorize-buttons">

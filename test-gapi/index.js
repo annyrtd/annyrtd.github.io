@@ -237,7 +237,8 @@ window.onload = function() {
 			
 			if(sentenses) {
 				sentenses.forEach((sentence, i) => {
-					const value = sentence.replace(/<\w+>/g, '');
+					const value = sentence.replace(/<\w+>/g, '').replace(/([А-Я0-9]+)/gi, '<span class="one-word">$1</span>');
+					const selectedWord = value.match(new RegExp('[А-Я0-9]*' + word + '[А-Я0-9]*', 'gi'))[0];
 					const li = document.createElement('li');
 					
 					const tick = document.createElement('input');
@@ -248,9 +249,14 @@ window.onload = function() {
 					li.appendChild(tick);
 					
 					const label = document.createElement('label');
-					label.innerText = value;
+					label.innerHTML = value;
 					label.setAttribute('for', 'sentence' + i);
 					li.appendChild(label);
+					
+					const wordContainer = document.createElement('span');
+					wordContainer.innerHTML = selectedWord;
+					wordContainer.className = 'one-word one-word--selected';
+					li.appendChild(wordContainer);
 					
 					sentencesList.appendChild(li);
 				});

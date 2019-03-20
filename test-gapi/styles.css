@@ -9,15 +9,6 @@
 	padding: 16px;
 }
 
-#file-content {
-    width: 100%;
-    height: 250px;
-    overflow-y: scroll;
-    border: 1px solid #ccc;
-    padding: 16px;
-	margin-bottom: 16px;
-}
-
 .search-word-wrapper {
 	margin-bottom: 16px;
 }
@@ -35,4 +26,40 @@ li {
 	list-style: none;
 	padding: 0;
 	margin: 0;
+	line-height: 24px
+}
+
+.two-column-row {
+	display: flex;    
+	justify-content: space-between;
+}
+
+.two-column-row__column {	
+    width: calc(50% - 8px);
+    max-height: calc(100vh - 120px);
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    padding: 16px;
+	margin-bottom: 16px;
+}
+
+.two-column-row__column--second {
+    padding-top: 48px;
+    position: relative;
+}
+
+.create-form-controls {
+	position: absolute;
+	top: 16px;
+	left: 16px;
+}
+
+.one-word {
+    background-color: #fefefe;
+    border: 1px solid #ddd;
+    padding: 2px;
+}
+
+.one-word--selected {
+    background-color: #fffed3;
 }
