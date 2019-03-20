@@ -14,7 +14,7 @@
 }
 
 .highlighted-text {
-	background: #fffed3;
+	background: #fffc90;
 }
 
 ul {
@@ -62,7 +62,7 @@ li {
 }
 
 .one-word--selected {
-    background-color: #fffed3;
+    background-color: #fffc90;
 }
 
 input[type="checkbox"] {
