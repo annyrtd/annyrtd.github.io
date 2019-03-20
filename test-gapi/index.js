@@ -3,11 +3,21 @@ var CLIENT_ID = '671158753684-b1440ujev2s16htck0976pao9d2ieg51.apps.googleuserco
 var API_KEY = 'AIzaSyB37flCw46f5vorJ7CtULaMMND9Wy2FJlI';
 
 // Array of API discovery doc URLs for APIs used by the quickstart
-var DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4", "https://script.googleapis.com/$discovery/rest?version=v1"];
+var DISCOVERY_DOCS = [
+	"https://sheets.googleapis.com/$discovery/rest?version=v4", 
+	"https://script.googleapis.com/$discovery/rest?version=v1"
+];
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-var SCOPES = "https://www.googleapis.com/auth/forms https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/script.projects https://www.googleapis.com/auth/script.deployments https://www.googleapis.com/auth/script.external_request";
+var SCOPES = [
+	"https://www.googleapis.com/auth/forms", 
+	"https://www.googleapis.com/auth/spreadsheets", 
+	"https://www.googleapis.com/auth/script.projects", 
+	"https://www.googleapis.com/auth/script.deployments", 
+	"https://www.googleapis.com/auth/script.external_request", 
+	"https://www.googleapis.com/auth/script.scriptapp"
+].join(' ');
 
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
@@ -50,8 +60,6 @@ function updateSigninStatus(isSignedIn) {
 	if (isSignedIn) {
 		authorizeButton.style.display = 'none';
 		signoutButton.style.display = 'block';
-		//listMajors();	
-		//callAppsScript();
 	} else {
 		authorizeButton.style.display = 'block';
 		signoutButton.style.display = 'none';
@@ -84,38 +92,7 @@ function appendPre(message) {
 	pre.appendChild(textContent);
 }
 
-/**
- * Print the names and majors of students in a sample spreadsheet:
- * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
- */
-function listMajors() {
-	gapi.client.sheets.spreadsheets.values.get({
-		spreadsheetId: '1Rd5_iw3c0ia7LgppThx8wGrFx0jP2P4tS5xYCVBoTow',
-		range: 'Conference Setup!A2:E',
-	}).then(function(response) {
-		var range = response.result;
-		if (range.values.length > 0) {
-			appendPre('Name, Major:');
-            for (i = 0; i < range.values.length; i++) {
-				var row = range.values[i];
-				// Print columns A and E, which correspond to indices 0 and 4.
-				appendPre(row[0] + ', ' + row[4]);
-            }
-		} else {
-			appendPre('No data found.');
-		}
-	}, function(response) {
-		appendPre('Error: ' + response.result.error.message);
-	});
-}
-
-/**
- * Shows basic usage of the Apps Script API.
- *
- * Call the Apps Script API to create a new script project, upload files
- * to the project, and log the script's URL to the user.
- */
-function callAppsScript(spreadsheetId, word, formLink) {
+function callAppsScript(spreadsheetId, formLink) {
 	const scriptId = '1EYnoaCsF8vgAHeC53GpGUU3Tqfgrjlp7EhKhzSt0OxMwPk78MlmVbwn8';
 	
 	return gapi.client.script.scripts.run({
@@ -123,8 +100,7 @@ function callAppsScript(spreadsheetId, word, formLink) {
 		'resource': {
 			'function': 'createForm',
 			'parameters': [
-				spreadsheetId,
-				word
+				spreadsheetId
 			]
 		}			
 	}).then((resp) => {
@@ -134,26 +110,9 @@ function callAppsScript(spreadsheetId, word, formLink) {
 		if (result.error) throw result.error;
 		
 		const resultLink = result.response.result;
-		formLink.innerHTML = 'Ссылка: <a href="' + resultLink + '">' + resultLink + '</a>';
+		formLink.innerHTML = 'Ссылка: <a target="_blank" href="' + resultLink + '" >Открыть форму</a>';
 		
-		console.log(resultLink);
-		
-		/*
-		// The structure of the result will depend upon what the Apps
-		// Script function returns. Here, the function returns an Apps
-		// Script Object with String keys and values, and so the result
-		// is treated as a JavaScript object (folderSet).
-
-		var folderSet = result.response.result;
-		if (Object.keys(folderSet).length == 0) {
-			appendPre('No folders returned!');
-		} else {
-			appendPre('Folders under your root folder:');
-			Object.keys(folderSet).forEach(function(id){
-				appendPre('\t' + folderSet[id] + ' (' + id  + ')');
-			});
-		}*/
-			
+		console.log(resultLink);			
 	}).catch((error) => {
 		// The API encountered a problem.
 		formLink.innerHtml = 'Ошибка! См. консоль (f12): ';
@@ -161,12 +120,17 @@ function callAppsScript(spreadsheetId, word, formLink) {
 	});
 }	
 
-function createSpreadsheet(fileName, values) {
+function createSpreadsheet(values) {
 	if(gapi.auth2.getAuthInstance().isSignedIn.get()) {
 		var spreadsheetBody = {
 			'properties': {
-				'title': 'Spreadsheet for ' + fileName
-			}
+				'title': 'Spreadsheet X'
+			},
+			'sheets': [{
+				'properties': {
+					'title': 'Config'
+				},
+			}]
 		};
 		
 		var body = {
@@ -179,7 +143,7 @@ function createSpreadsheet(fileName, values) {
 			
 			return gapi.client.sheets.spreadsheets.values.update({
 				spreadsheetId: result.spreadsheetId,
-				range: "!A1:A" + values.length,
+				range: "Config!A1:B" + body.values.length,
 				valueInputOption: 'RAW',
 				resource: body
 			})
@@ -198,6 +162,16 @@ window.onload = function() {
 	const fileContentWrapper = document.getElementById('file-content-wrapper');
 	const sentencesList = document.getElementById('sentenses');
 	const formLink = document.getElementById('form-link');
+	let originalContent = '';
+	let fileName = '';
+	
+	const checkIfEnableCreateFormButton = () => {
+		if(document.querySelectorAll('[name="sentence"]:checked').length > 0) {
+			createFormButton.removeAttribute('disabled');
+		} else {
+			createFormButton.setAttribute('disabled', true);
+		}
+	};
 		
 	fileUploader.onchange = () => {
 		if(fileUploader.files.length > 0) {
@@ -211,9 +185,6 @@ window.onload = function() {
 		createFormButton.style.display = 'none';
 	}
 		
-	let originalContent = '';
-	let fileName = '';
-	
 	createSheetButton.onclick = () => {
 		const file = fileUploader.files[0];
 		fileName = file.name;
@@ -236,9 +207,16 @@ window.onload = function() {
 			const sentenses = originalContent.match(new RegExp('[^.!?\\r\\n]*' + word + '[^.!?\\r\\n]*[.!?]', 'gi'));
 			
 			if(sentenses) {
-				sentenses.forEach((sentence, i) => {
-					const value = sentence.replace(/<\w+>/g, '').replace(/([А-Я0-9]+)/gi, '<span class="one-word">$1</span>');
+				sentenses.forEach((sentence, i) => {	
+					const wordClass = 'one-word';
+					const wordSelectedClass = wordClass + '--selected';
+					const value = sentence.replace(/<\w+>/g, '');
+					const markedText = value.replace(/([А-Я0-9]+)/gi, '<span class="' + wordClass + '">$1</span>');
 					const selectedWord = value.match(new RegExp('[А-Я0-9]*' + word + '[А-Я0-9]*', 'gi'))[0];
+					/*value = value.replace(
+						'<span class="one-word">' + selectedWord + '</span>', 
+						'<span class="one-word one-word--selected">' + selectedWord + '</span>'
+					);*/
 					const li = document.createElement('li');
 					
 					const tick = document.createElement('input');
@@ -249,14 +227,27 @@ window.onload = function() {
 					li.appendChild(tick);
 					
 					const label = document.createElement('label');
-					label.innerHTML = value;
-					label.setAttribute('for', 'sentence' + i);
+					label.innerHTML = markedText;
+					//label.setAttribute('for', 'sentence' + i);
+					label.setAttribute('data-sentence', 'sentence' + i);
 					li.appendChild(label);
 					
-					const wordContainer = document.createElement('span');
+					const spans = [...li.getElementsByClassName(wordClass)];
+					spans.forEach(span => {
+						if(span.innerText === selectedWord) {
+							span.classList.add(wordSelectedClass);
+						}
+						
+						span.onclick = () => {
+							spans.forEach(spanInner => spanInner.classList.remove(wordSelectedClass));
+							span.classList.add(wordSelectedClass);
+						}
+					});
+					
+					/*const wordContainer = document.createElement('span');
 					wordContainer.innerHTML = selectedWord;
 					wordContainer.className = 'one-word one-word--selected';
-					li.appendChild(wordContainer);
+					li.appendChild(wordContainer);*/
 					
 					sentencesList.appendChild(li);
 				});
@@ -272,13 +263,17 @@ window.onload = function() {
 	}
 	
 	createFormButton.onclick = () => {
-		const values = [...document.querySelectorAll('[name="sentence"]:checked')].map(item => [item.value]);
+		const values = [...document.querySelectorAll('[name="sentence"]:checked')]
+			.map(item => [
+				document.querySelector('[data-sentence="' + item.id + '"] .one-word--selected').innerText,
+				item.value
+			]);
 		
 		if(values.length > 0) {
 			formLink.innerHTML = 'Ждите...'
-			createSpreadsheet(fileName, values).then(({result}) => {
+			createSpreadsheet(values).then(({result}) => {
 				console.log('gapi.client.sheets.spreadsheets.create - success');
-				return callAppsScript(result.spreadsheetId, searchWordInput.value, formLink);
+				return callAppsScript(result.spreadsheetId, formLink);
 			})	
 		} else {
 			console.log('nothing selected');

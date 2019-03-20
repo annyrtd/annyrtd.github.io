@@ -14,7 +14,7 @@
 }
 
 .highlighted-text {
-	background: #ffff59;
+	background: #fffed3;
 }
 
 ul {
@@ -32,15 +32,14 @@ li {
 .two-column-row {
 	display: flex;    
 	justify-content: space-between;
+    max-height: calc(100vh - 100px);
 }
 
 .two-column-row__column {	
     width: calc(50% - 8px);
-    max-height: calc(100vh - 120px);
     overflow-y: scroll;
     border: 1px solid #ccc;
     padding: 16px;
-	margin-bottom: 16px;
 }
 
 .two-column-row__column--second {
@@ -58,8 +57,14 @@ li {
     background-color: #fefefe;
     border: 1px solid #ddd;
     padding: 2px;
+	cursor: pointer;
+	border-radius: 2px;
 }
 
 .one-word--selected {
     background-color: #fffed3;
+}
+
+input[type="checkbox"] {
+	cursor: pointer;
 }
