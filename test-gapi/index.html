@@ -9,11 +9,12 @@
 	<form enctype="multipart/form-data" method="post">
 		<p>
 			<input type="file" name="createSpreadsheetFileUploader" id="create-spreadsheet-file-uploader">
-			<input id="create-spreadsheet-button" type="button" value="Загрузить" disabled>
+			<input class="classic-button" id="create-spreadsheet-button" type="button" value="Загрузить" disabled>
+			<button class="classic-button" id="clear-all" type="button" >Очистить все</button>
 		</p>
 	</form> 
 
-	<div id="file-content-wrapper" style="display: none;">
+	<div id="file-content-wrapper">
 		<div class="search-word-wrapper" >
 			<input id="search-word" type="text" placeholder="Введите слово...">	
 		</div>
@@ -25,7 +26,7 @@
 				</div>
 				<div class="half-column half-column--second">
 					<div class="create-form-controls">
-						<button id="create-form" type="button" style="display: none;">Создать вопросы</button>
+						<button class="classic-button" id="create-form" type="button" >Создать форму</button>						
 						<span id="form-link"></span>
 					</div>					
 					<ul id="selected-sentenses"></ul>
@@ -36,8 +37,8 @@
     
 	<!--Add buttons to initiate auth sequence and sign out-->
     <div class="authorize-buttons">
-		<button id="authorize_button" style="display: none;">Authorize</button>
-		<button id="signout_button" style="display: none;">Sign Out</button>
+		<button class="classic-button" id="authorize_button" style="display: none;">Authorize</button>
+		<button class="classic-button"id="signout_button" style="display: none;">Sign Out</button>
 	</div>
     <script type="text/javascript" src="index.js"></script>
 

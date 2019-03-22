@@ -174,17 +174,20 @@ window.onload = function() {
 	const fileContentWrapper = document.getElementById('file-content-wrapper');
 	const foundSentencesList = document.getElementById('found-sentenses');
 	const selectedSentencesList = document.getElementById('selected-sentenses');
+	const clearAllButton = document.getElementById('clear-all');
 	const formLink = document.getElementById('form-link');
 	let originalContent = '';
 	let fileName = '';
-	
-	const checkIfEnableCreateFormButton = () => {
-		if(document.querySelectorAll('[name="sentence"]:checked').length > 0) {
-			createFormButton.removeAttribute('disabled');
-		} else {
-			createFormButton.setAttribute('disabled', true);
-		}
-	};
+		
+	clearAllButton.onclick = () => {		
+		fileContentDiv.innerHTML = '';
+		foundSentencesList.innerHTML = '';
+		selectedSentencesList.innerHTML = '';
+		formLink.innerHTML = '';
+		searchWordInput.value = '';
+		fileUploader.value = '';
+		createSheetButton.setAttribute('disabled', true);
+	}
 		
 	fileUploader.onchange = () => {
 		if(fileUploader.files.length > 0) {
@@ -192,15 +195,10 @@ window.onload = function() {
 		} else {
 			createSheetButton.setAttribute('disabled', true);
 		}
-		
-		fileContentDiv.innerHTML = '';
-		foundSentencesList.innerHTML = '';
-		createFormButton.style.display = 'none';
 	}
 		
 	createSheetButton.onclick = () => {
 		const file = fileUploader.files[0];
-		fileName = file.name;
 		var reader = new FileReader();
 		reader.onload=function(){
 			fileContentDiv.innerText = reader.result; // display file contents
@@ -208,6 +206,8 @@ window.onload = function() {
 			fileContentWrapper.style.display = '';
 		}
 		reader.readAsText(file);
+		foundSentencesList.innerHTML = '';
+		searchWordInput.value = '';
 	};
 		
 	searchWordInput.oninput = () => {
@@ -229,7 +229,6 @@ window.onload = function() {
 					
 					const li = document.createElement('li');
 					li.classList.add('sentence-column');
-					// li.setAttribute('data-sentence', 'sentence' + i);
 					li.setAttribute('data-value', value);
 					
 					const flexRow = document.createElement('div');
@@ -238,8 +237,8 @@ window.onload = function() {
 					
 					const buttonSelectSentence = document.createElement('button');
 					buttonSelectSentence.setAttribute('type', 'button');
-					buttonSelectSentence.classList.add('button');					
-					buttonSelectSentence.classList.add('button--select-sentense');	
+					buttonSelectSentence.classList.add('icon-button');					
+					buttonSelectSentence.classList.add('icon-button--select-sentense');	
 					buttonSelectSentence.innerText = '+';					
 					flexRow.appendChild(buttonSelectSentence);
 
@@ -279,8 +278,8 @@ window.onload = function() {
 					
 					const buttonAddContext = document.createElement('button');
 					buttonAddContext.setAttribute('type', 'button');
-					buttonAddContext.classList.add('button');					
-					buttonAddContext.classList.add('button--add-context');	
+					buttonAddContext.classList.add('icon-button');					
+					buttonAddContext.classList.add('icon-button--add-context');	
 					buttonAddContext.innerHTML = '&#x2935;';
 					flexRow2.appendChild(buttonAddContext);
 					
@@ -295,8 +294,8 @@ window.onload = function() {
 						
 						const buttonRemoveContext = document.createElement('button');
 						buttonRemoveContext.setAttribute('type', 'button');
-						buttonRemoveContext.classList.add('button');					
-						buttonRemoveContext.classList.add('button--remove-context');	
+						buttonRemoveContext.classList.add('icon-button');					
+						buttonRemoveContext.classList.add('icon-button--remove-context');	
 						buttonRemoveContext.innerText = '-';					
 						buttonRemoveContext.setAttribute('tabindex', '-1');
 						contextLi.appendChild(buttonRemoveContext);
@@ -317,14 +316,9 @@ window.onload = function() {
 					
 					foundSentencesList.appendChild(li);
 				});
-				
-				createFormButton.style.display = '';
-			} else {
-				createFormButton.style.display = 'none';
 			}
 		} else {
 			fileContentDiv.innerHTML = originalContent;
-			createFormButton.style.display = 'none';
 		}
 	}
 	
@@ -344,6 +338,7 @@ window.onload = function() {
 			})	
 		} else {
 			console.log('nothing selected');
+			formLink.innerHTML = 'Вы не выбрали вопросы!'
 		}
 	}
 }

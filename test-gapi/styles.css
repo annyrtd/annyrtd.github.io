@@ -1,10 +1,10 @@
 * {
 	box-sizing: border-box;
+	font-size: 14px;
 }
 
 body {
 	font-family: 'Open Sans', sans-serif;
-	font-size: 14px;
 }
 
 .authorize-buttons {
@@ -42,7 +42,31 @@ ul {
 	flex-direction: row;
 }
 
-.button {
+.classic-button {
+    border: none;
+    background: #f9789b;
+    color: white;
+    padding: 8px;
+    margin: 0;
+    border-radius: 4px;
+    box-shadow: 0px 0px 2px #aaa;
+	outline: none;
+	cursor: pointer;
+	transition: all 0.15s ease-in-out;
+}
+
+.classic-button:hover {	
+	background: #d8406a;
+	box-shadow: 0px 0px 8px #aaa;	
+}
+
+.classic-button[disabled] {
+    background: #f5dcf1;
+    box-shadow: 0px 0px 2px #aaa;
+	cursor: default;
+}
+
+.icon-button {
     background: #888888;
     border: none;
     color: white;
@@ -58,35 +82,36 @@ ul {
 	outline: none;
     margin-right: 8px;	
 	cursor: pointer;
+	transition: all 0.15s ease-in-out;
 }
 
-.button:hover {	
+.icon-button:hover {	
     background: #555555;
 	box-shadow: 0px 0px 8px #aaa;	
 }
 
-.button--select-sentense {	
+.icon-button--select-sentense {	
     background: #8fca00;
 }
 
-.button--select-sentense:hover {
+.icon-button--select-sentense:hover {
     background: #3f9001;
 }
 
-.button--add-context {	
+.icon-button--add-context {	
     background: #ffa217;
 }
 
-.button--add-context:hover {
+.icon-button--add-context:hover {
     background: #e28800;
 }
 
-.button--remove-context {	
-    background: #ffa217;
+.icon-button--remove-context {	
+    background: #53c1da;
 }
 
-.button--remove-context:hover {
-    background: #e28800;
+.icon-button--remove-context:hover {
+    background: #03add4;
 }
 
 .list-item--context {
@@ -115,7 +140,7 @@ ul {
 .two-column-row {
 	display: flex;    
 	justify-content: space-between;
-    max-height: calc(100vh - 100px);
+    height: calc(100vh - 108px);
 }
 
 .two-column-row__column {	
@@ -143,7 +168,7 @@ ul {
 }
 
 .half-column--second {
-    padding-top: 40px;	
+    padding-top: 48px;	
 }
 
 .create-form-controls {
@@ -160,7 +185,12 @@ ul {
 	border-radius: 2px;
 }
 
-.one-word--selected {
+.one-word:hover {
+    background-color: #efefef;
+}
+
+.one-word--selected,
+.one-word--selected:hover {
     background-color: #fffc90;
 }
 
