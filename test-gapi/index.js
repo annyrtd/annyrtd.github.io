@@ -110,7 +110,7 @@ function callAppsScript(spreadsheetId, formLink) {
 		if (result.error) throw result.error;
 		
 		const {link, formId} = result.response.result;
-		formLink.innerHTML = 'Ссылка: <a target="_blank" href="' + link + '" >Открыть форму</a>';
+		formLink.innerHTML = 'Ссылка: <a target="_blank" href="' + link + '" >Открыть форму</a> <br>Сохраните ID формы, чтобы восстановить данные: ' + formId;
 		
 		console.log(link);			
 	}).catch((error) => {
