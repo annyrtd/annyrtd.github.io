@@ -168,7 +168,11 @@ ul {
 }
 
 .half-column--second {
-    padding-top: 48px;	
+    padding-top: 64px;	
+}
+
+#form-link {
+	line-height: 24px;
 }
 
 .create-form-controls {
