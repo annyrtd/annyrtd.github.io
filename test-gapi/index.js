@@ -109,10 +109,10 @@ function callAppsScript(spreadsheetId, formLink) {
 		let result = resp.result;
 		if (result.error) throw result.error;
 		
-		const resultLink = result.response.result;
-		formLink.innerHTML = 'Ссылка: <a target="_blank" href="' + resultLink + '" >Открыть форму</a>';
+		const {link, formId} = result.response.result;
+		formLink.innerHTML = 'Ссылка: <a target="_blank" href="' + link + '" >Открыть форму</a>';
 		
-		console.log(resultLink);			
+		console.log(link);			
 	}).catch((error) => {
 		// The API encountered a problem.
 		formLink.innerHtml = 'Ошибка! См. консоль (f12): ';
@@ -216,29 +216,34 @@ window.onload = function() {
 					const selectedWord = value.match(new RegExp('[А-Я0-9]*' + word + '[А-Я0-9]*', 'gi'))[0];
 					
 					const li = document.createElement('li');
-					li.classList.add('sentence-row');
+					li.classList.add('sentence-column');
 					// li.setAttribute('data-sentence', 'sentence' + i);
 					li.setAttribute('data-value', value);
 					
-					const buttonAddContext = document.createElement('button');
-					buttonAddContext.setAttribute('type', 'button');
-					buttonAddContext.innerText = '+';	
-					buttonAddContext.classList.add('button-add-context');					
-					li.appendChild(buttonAddContext);
+					const flexRow = document.createElement('div');
+					flexRow.classList.add('flex-row');
+					li.appendChild(flexRow);
+					
+					const buttonSelectSentence = document.createElement('button');
+					buttonSelectSentence.setAttribute('type', 'button');
+					buttonSelectSentence.classList.add('button');					
+					buttonSelectSentence.classList.add('button--select-sentense');	
+					buttonSelectSentence.innerText = '+';					
+					flexRow.appendChild(buttonSelectSentence);
 
-					buttonAddContext.onclick = () => {
-						if(buttonAddContext.getAttribute('data-selected')) {
+					buttonSelectSentence.onclick = () => {
+						if(buttonSelectSentence.getAttribute('data-selected')) {
 							selectedSentencesList.removeChild(li);
 						} else {							
 							selectedSentencesList.appendChild(li);
-							buttonAddContext.setAttribute('data-selected', true);
-							buttonAddContext.innerText = '-';							
+							buttonSelectSentence.setAttribute('data-selected', true);
+							buttonSelectSentence.innerText = '-';							
 						}
 					}
 					
 					const label = document.createElement('label');
 					label.innerHTML = markedText;
-					li.appendChild(label);
+					flexRow.appendChild(label);
 					
 					const spans = [...li.getElementsByClassName(wordClass)];
 					spans.forEach(span => {
@@ -251,6 +256,27 @@ window.onload = function() {
 							span.classList.add(wordSelectedClass);
 						}
 					});
+					
+					const contextList = document.createElement('ul');
+					contextList.classList.add('context-list');
+					
+					const flexRow2 = document.createElement('div');
+					flexRow2.classList.add('flex-row');
+					flexRow2.classList.add('flex-row--add-context');
+					contextList.appendChild(flexRow2);
+					
+					const buttonAddContext = document.createElement('button');
+					buttonAddContext.setAttribute('type', 'button');
+					buttonAddContext.classList.add('button');					
+					buttonAddContext.classList.add('button--add-context');	
+					buttonAddContext.innerHTML = '&#x2934;';
+					flexRow2.appendChild(buttonAddContext);
+					
+					const label2 = document.createElement('label');
+					label2.innerHTML = 'Добавить контекст';
+					flexRow2.appendChild(label2);
+					
+					li.appendChild(contextList);
 					
 					foundSentencesList.appendChild(li);
 				});
