@@ -323,22 +323,43 @@ window.onload = function() {
 	}
 	
 	createFormButton.onclick = () => {
-		const values = [...selectedSentencesList.querySelectorAll('[data-value]')]
-			.map(item => [
-				item.querySelector('.one-word--selected').innerText,
-				item.getAttribute('data-value'),
-				...[...item.querySelectorAll('.context-input')].map(input => input.value)
-			]);
+		let values;
+		let isSuccessful = true;
 		
-		if(values.length > 0) {
-			formLink.innerHTML = 'Ждите...'
-			createSpreadsheet(values).then(({result}) => {
-				console.log('gapi.client.sheets.spreadsheets.create - success');
-				return callAppsScript(result.spreadsheetId, formLink);
-			})	
-		} else {
-			console.log('nothing selected');
-			formLink.innerHTML = 'Вы не выбрали вопросы!'
+		try {
+			values = [...selectedSentencesList.querySelectorAll('[data-value]')]
+			.map((item, i) => {
+				const word = item.querySelector('.one-word--selected').innerText;
+				const sentence = item.getAttribute('data-value');
+				const contexts = [...item.querySelectorAll('.context-input')].map(input => input.value);
+				let substr = sentence.substr(0, 25);
+				
+				if(substr.length < sentence.length) {
+					substr += '...';
+				}
+				
+				if(!contexts.length) {
+					throw new Error('Для предложения ' + (i + 1) + ': "' + substr + '" - отсутсвуют введенные варианты ответов!')
+				}
+				
+				return [word, sentence, ...contexts];
+			});
+		} catch(e) {	
+			isSuccessful = false;
+			formLink.innerHTML = e.message;
+		}
+		
+		if(isSuccessful) {
+			if(values.length > 0) {
+				formLink.innerHTML = 'Ждите...'
+				createSpreadsheet(values).then(({result}) => {
+					console.log('gapi.client.sheets.spreadsheets.create - success');
+					return callAppsScript(result.spreadsheetId, formLink);
+				})	
+			} else {
+				console.log('nothing selected');
+				formLink.innerHTML = 'Вы не выбрали вопросы!'
+			}
 		}
 	}
 }
