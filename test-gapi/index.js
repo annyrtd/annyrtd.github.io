@@ -140,10 +140,11 @@ function createSpreadsheet(values) {
 		return gapi.client.sheets.spreadsheets.create({}, spreadsheetBody).then(response => {
 			let {result} = response;
 			console.log(`https://docs.google.com/spreadsheets/d/${result.spreadsheetId}/edit`);
+			let colLetter = columnToLetter(Math.max(...body.values.map(arr => arr.length)));
 			
 			return gapi.client.sheets.spreadsheets.values.update({
 				spreadsheetId: result.spreadsheetId,
-				range: "Config!A1:B" + body.values.length,
+				range: "Config!A1:" + colLetter + body.values.length,
 				valueInputOption: 'RAW',
 				resource: body
 			})
@@ -151,6 +152,17 @@ function createSpreadsheet(values) {
 	}
 }
 
+
+function columnToLetter(column) {
+  var temp, letter = '';
+  while (column > 0)
+  {
+    temp = (column - 1) % 26;
+    letter = String.fromCharCode(temp + 65) + letter;
+    column = (column - temp - 1) / 26;
+  }
+  return letter;
+}
 
 
 window.onload = function() {
@@ -269,12 +281,37 @@ window.onload = function() {
 					buttonAddContext.setAttribute('type', 'button');
 					buttonAddContext.classList.add('button');					
 					buttonAddContext.classList.add('button--add-context');	
-					buttonAddContext.innerHTML = '&#x2934;';
+					buttonAddContext.innerHTML = '&#x2935;';
 					flexRow2.appendChild(buttonAddContext);
 					
 					const label2 = document.createElement('label');
-					label2.innerHTML = 'Добавить контекст';
+					label2.innerHTML = 'Добавить значение';
+					label2.classList.add('label--add-context');
 					flexRow2.appendChild(label2);
+					
+					buttonAddContext.onclick = () => {
+						const contextLi = document.createElement('li');
+						contextLi.classList.add('list-item--context');
+						
+						const buttonRemoveContext = document.createElement('button');
+						buttonRemoveContext.setAttribute('type', 'button');
+						buttonRemoveContext.classList.add('button');					
+						buttonRemoveContext.classList.add('button--remove-context');	
+						buttonRemoveContext.innerText = '-';					
+						buttonRemoveContext.setAttribute('tabindex', '-1');
+						contextLi.appendChild(buttonRemoveContext);
+						
+						buttonRemoveContext.onclick = () => {
+							contextList.removeChild(contextLi);
+						}
+						
+						const input = document.createElement('input');
+						input.setAttribute('type', 'text');						
+						input.classList.add('context-input');	
+						contextLi.appendChild(input);
+						
+						contextList.appendChild(contextLi);
+					}
 					
 					li.appendChild(contextList);
 					
@@ -295,7 +332,8 @@ window.onload = function() {
 		const values = [...selectedSentencesList.querySelectorAll('[data-value]')]
 			.map(item => [
 				item.querySelector('.one-word--selected').innerText,
-				item.getAttribute('data-value')
+				item.getAttribute('data-value'),
+				...[...item.querySelectorAll('.context-input')].map(input => input.value)
 			]);
 		
 		if(values.length > 0) {
