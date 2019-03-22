@@ -20,13 +20,16 @@
 		<div class="two-column-row">
 			<div class="two-column-row__column" id="file-content"></div>
 			<div class="two-column-row__column two-column-row__column--second">
-				<form enctype="multipart/form-data" method="post">
+				<div class="half-column">
+					<ul id="found-sentenses"></ul>
+				</div>
+				<div class="half-column half-column--second">
 					<div class="create-form-controls">
-						<input id="create-form" type="button" value="Создать вопросы" style="display: none;">
+						<button id="create-form" type="button" style="display: none;">Создать вопросы</button>
 						<span id="form-link"></span>
-					</div>
-					<ul id="sentenses"></ul>
-				</form>
+					</div>					
+					<ul id="selected-sentenses"></ul>
+				</div>
 			</div>
 		</div>
 	</div>

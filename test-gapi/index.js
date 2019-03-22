@@ -160,7 +160,8 @@ window.onload = function() {
 	const fileContentDiv = document.getElementById('file-content');
 	const searchWordInput = document.getElementById('search-word');
 	const fileContentWrapper = document.getElementById('file-content-wrapper');
-	const sentencesList = document.getElementById('sentenses');
+	const foundSentencesList = document.getElementById('found-sentenses');
+	const selectedSentencesList = document.getElementById('selected-sentenses');
 	const formLink = document.getElementById('form-link');
 	let originalContent = '';
 	let fileName = '';
@@ -181,7 +182,7 @@ window.onload = function() {
 		}
 		
 		fileContentDiv.innerHTML = '';
-		sentencesList.innerHTML = '';
+		foundSentencesList.innerHTML = '';
 		createFormButton.style.display = 'none';
 	}
 		
@@ -199,7 +200,7 @@ window.onload = function() {
 		
 	searchWordInput.oninput = () => {
 		const word = searchWordInput.value;
-		sentencesList.innerHTML = '';
+		foundSentencesList.innerHTML = '';
 		
 		if(word.length > 0) { 
 			fileContentDiv.innerHTML = originalContent.replace(new RegExp('(' + word + ')', 'gi'), '<span class="highlighted-text">$1</span>');
@@ -213,23 +214,30 @@ window.onload = function() {
 					const value = sentence.replace(/<\w+>/g, '');
 					const markedText = value.replace(/([А-Я0-9]+)/gi, '<span class="' + wordClass + '">$1</span>');
 					const selectedWord = value.match(new RegExp('[А-Я0-9]*' + word + '[А-Я0-9]*', 'gi'))[0];
-					/*value = value.replace(
-						'<span class="one-word">' + selectedWord + '</span>', 
-						'<span class="one-word one-word--selected">' + selectedWord + '</span>'
-					);*/
-					const li = document.createElement('li');
 					
-					const tick = document.createElement('input');
-					tick.setAttribute('type', 'checkbox');
-					tick.setAttribute('id', 'sentence' + i);
-					tick.name = 'sentence';
-					tick.value = value;
-					li.appendChild(tick);
+					const li = document.createElement('li');
+					li.classList.add('sentence-row');
+					// li.setAttribute('data-sentence', 'sentence' + i);
+					li.setAttribute('data-value', value);
+					
+					const buttonAddContext = document.createElement('button');
+					buttonAddContext.setAttribute('type', 'button');
+					buttonAddContext.innerText = '+';	
+					buttonAddContext.classList.add('button-add-context');					
+					li.appendChild(buttonAddContext);
+
+					buttonAddContext.onclick = () => {
+						if(buttonAddContext.getAttribute('data-selected')) {
+							selectedSentencesList.removeChild(li);
+						} else {							
+							selectedSentencesList.appendChild(li);
+							buttonAddContext.setAttribute('data-selected', true);
+							buttonAddContext.innerText = '-';							
+						}
+					}
 					
 					const label = document.createElement('label');
 					label.innerHTML = markedText;
-					//label.setAttribute('for', 'sentence' + i);
-					label.setAttribute('data-sentence', 'sentence' + i);
 					li.appendChild(label);
 					
 					const spans = [...li.getElementsByClassName(wordClass)];
@@ -244,12 +252,7 @@ window.onload = function() {
 						}
 					});
 					
-					/*const wordContainer = document.createElement('span');
-					wordContainer.innerHTML = selectedWord;
-					wordContainer.className = 'one-word one-word--selected';
-					li.appendChild(wordContainer);*/
-					
-					sentencesList.appendChild(li);
+					foundSentencesList.appendChild(li);
 				});
 				
 				createFormButton.style.display = '';
@@ -263,10 +266,10 @@ window.onload = function() {
 	}
 	
 	createFormButton.onclick = () => {
-		const values = [...document.querySelectorAll('[name="sentence"]:checked')]
+		const values = [...selectedSentencesList.querySelectorAll('[data-value]')]
 			.map(item => [
-				document.querySelector('[data-sentence="' + item.id + '"] .one-word--selected').innerText,
-				item.value
+				item.querySelector('.one-word--selected').innerText,
+				item.getAttribute('data-value')
 			]);
 		
 		if(values.length > 0) {
