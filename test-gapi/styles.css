@@ -31,7 +31,7 @@ ul {
 	list-style: none;
 	padding: 0;
 	margin: 0;
-	line-height: 24px;
+	/*line-height: 24px;*/
     display: flex;
     align-items: flex-start;
     flex-direction: column;
@@ -40,6 +40,7 @@ ul {
 .flex-row {
 	display: flex;
 	flex-direction: row;
+	align-items: baseline;
 }
 
 .classic-button {
@@ -200,4 +201,33 @@ ul {
 
 input[type="checkbox"] {
 	cursor: pointer;
+}
+
+.sentence-label {
+	line-height: 26px;
+}
+
+#statistics {
+	display: flex;
+    flex-wrap: wrap;
+}
+
+.answer-row {
+    display: flex;
+}
+
+.answer-row__word {
+    border: 1px solid #dddd;
+    padding: 8px;
+    width: 200px
+}
+
+.answer-row__count {
+    padding: 8px;
+    border: 1px solid #ddd;
+    width: 50px
+}
+
+.question-container {
+    margin-left: 16px;
 }

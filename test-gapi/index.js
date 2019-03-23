@@ -92,34 +92,6 @@ function appendPre(message) {
 	pre.appendChild(textContent);
 }
 
-function callAppsScript(spreadsheetId, formLink) {
-	const scriptId = '1EYnoaCsF8vgAHeC53GpGUU3Tqfgrjlp7EhKhzSt0OxMwPk78MlmVbwn8';
-	
-	return gapi.client.script.scripts.run({
-		'scriptId': scriptId,
-		'resource': {
-			'function': 'createForm',
-			'parameters': [
-				spreadsheetId
-			]
-		}			
-	}).then((resp) => {
-		console.log('gapi.client.script.scripts.run - success');
-		
-		let result = resp.result;
-		if (result.error) throw result.error;
-		
-		const {link, formId} = result.response.result;
-		formLink.innerHTML = 'Ссылка: <a target="_blank" href="' + link + '" >Открыть форму</a> <br>Сохраните ID формы, чтобы восстановить данные: ' + formId;
-		
-		console.log(link);			
-	}).catch((error) => {
-		// The API encountered a problem.
-		formLink.innerHtml = 'Ошибка! См. консоль (f12): ';
-		return console.log(error);
-	});
-}	
-
 function createSpreadsheet(values) {
 	if(gapi.auth2.getAuthInstance().isSignedIn.get()) {
 		var spreadsheetBody = {
@@ -150,6 +122,159 @@ function createSpreadsheet(values) {
 			})
 		});
 	}
+}
+
+function callAppsScript(spreadsheetId, formLink) {
+	const scriptId = '1EYnoaCsF8vgAHeC53GpGUU3Tqfgrjlp7EhKhzSt0OxMwPk78MlmVbwn8';
+	
+	return gapi.client.script.scripts.run({
+		'scriptId': scriptId,
+		'resource': {
+			'function': 'createForm',
+			'parameters': [
+				spreadsheetId
+			]
+		}			
+	}).then((resp) => {
+		console.log('gapi.client.script.scripts.run - success');
+		const statContainer = document.getElementById('statistics');
+		
+		let result = resp.result;
+		if (result.error) throw result.error;
+		
+		const {link, formId} = result.response.result;
+		//formLink.innerHTML = 'Ссылка: <a target="_blank" href="' + link + '" >Открыть форму</a> <br>Сохраните ID формы, чтобы восстановить данные: ' + formId;
+		formLink.innerHTML = 'Ссылка: ' +
+			'<a target="_blank" href="' + link + '" >Открыть форму</a>' +
+			'<a type="button" id="statistics-link" href="#statistics">Посмотреть статистику</a>' +
+			'<a id="statistics-link-hidden" href="#statistics" style="display:none;"></a>' + 
+			'<br>Сохраните ID формы: ' + formId;
+			
+		document.getElementById('statistics-link').addEventListener('click', () => {
+			gapi.client.script.scripts.run({
+				'scriptId': scriptId,
+				'resource': {
+					'function': 'getResponses',
+					'parameters': [
+						formId
+					]
+				}			
+			}).then(response => {
+				statContainer.innerHTML = '';
+				
+				const {result} = response.result.response;
+				const stats = [];
+				
+				for(let i = 0; i < result.length; i++) {
+					for(let k = 0; k < result[i].length; k++) {
+						const word = result[i][k];
+						stats[k] = stats[k] || {};
+						
+						if(stats[k][word]) {
+							stats[k][word] += 1;
+						} else {
+							stats[k][word] = 1;
+						}
+					}
+				}
+				
+				/*Highcharts.chart('statistics', {
+					chart: {
+						type: 'column'
+					},
+					xAxis: {
+						categories: [
+							'Jan',
+							'Feb',
+							'Mar',
+							'Apr',
+							'May',
+							'Jun',
+							'Jul',
+							'Aug',
+							'Sep',
+							'Oct',
+							'Nov',
+							'Dec'
+						]
+					},
+					series: [{
+						name: 'Tokyo',
+						data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+
+					}, {
+						name: 'New York',
+						data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
+
+					}, {
+						name: 'London',
+						data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
+
+					}, {
+						name: 'Berlin',
+						data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
+
+					}]
+				});*/
+				
+				
+				/*const stats = result.map(question => {
+					return question.reduce((res, ans) => {
+						if(res[ans]) {
+							res[ans] += 1;
+						} else {
+							res[ans] = 1;
+						}
+						
+						return res;
+					}, {});
+				});*/
+				
+				console.log(stats);
+				
+				
+				stats.forEach((question, i) => {
+					const qHeader = document.createElement('h1');
+					qHeader.innerText = 'Вопрос ' + (i + 1);
+					
+					const qContent = document.createElement('div');
+					qContent.classList.add('question-content');
+					
+					const qContainer = document.createElement('div');
+					qContainer.classList.add('question-container');
+					
+					qContainer.appendChild(qHeader);
+					qContainer.appendChild(qContent);
+					statContainer.appendChild(qContainer);
+					
+					Object.entries(question).forEach(([word, count]) => {
+						const aRow = document.createElement('div');
+						aRow.classList.add('answer-row');
+					
+						const qWord = document.createElement('div');
+						qWord.classList.add('answer-row__word');
+						qWord.innerText = word;
+						aRow.appendChild(qWord);
+						
+						const qCount = document.createElement('div');
+						qCount.classList.add('answer-row__count');
+						qCount.innerText = count;
+						aRow.appendChild(qCount);
+						
+						qContainer.appendChild(aRow);
+					});
+				})
+				
+				document.getElementById('statistics-link-hidden').click();
+			});
+		})
+		
+		console.log(link);			
+	}).catch((error) => {
+		// The API encountered a problem.
+		formLink.innerHtml = 'Ошибка! См. консоль (f12): ';
+		return console.log(error);
+	});
 }
 
 
@@ -253,6 +378,7 @@ window.onload = function() {
 					}
 					
 					const label = document.createElement('label');
+					label.classList.add('sentence-label')
 					label.innerHTML = markedText;
 					flexRow.appendChild(label);
 					
