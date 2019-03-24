@@ -87,79 +87,46 @@ function handleSignoutClick(event) {
  * @param {string} message Text to be placed in pre element.
  */
 function appendPre(message) {
-	var pre = document.getElementById('content');
-	var textContent = document.createTextNode(message + '\n');
-	pre.appendChild(textContent);
+	console.log(message);
 }
 
-function createSpreadsheet(values) {
-	if(gapi.auth2.getAuthInstance().isSignedIn.get()) {
-		var spreadsheetBody = {
-			'properties': {
-				'title': 'Spreadsheet X'
-			},
-			'sheets': [{
-				'properties': {
-					'title': 'Config'
-				},
-			}]
-		};
-		
-		var body = {
-			values: values
-		};
-
-		return gapi.client.sheets.spreadsheets.create({}, spreadsheetBody).then(response => {
-			let {result} = response;
-			console.log(`https://docs.google.com/spreadsheets/d/${result.spreadsheetId}/edit`);
-			let colLetter = columnToLetter(Math.max(...body.values.map(arr => arr.length)));
-			
-			return gapi.client.sheets.spreadsheets.values.update({
-				spreadsheetId: result.spreadsheetId,
-				range: "Config!A1:" + colLetter + body.values.length,
-				valueInputOption: 'RAW',
-				resource: body
-			})
-		});
-	}
-}
-
-function callAppsScript(spreadsheetId, formLink) {
+function callAppsScript(values, formLink) {
 	const scriptId = '1EYnoaCsF8vgAHeC53GpGUU3Tqfgrjlp7EhKhzSt0OxMwPk78MlmVbwn8';
+	const statContainer = document.getElementById('statistics');
 	
-	return gapi.client.script.scripts.run({
-		'scriptId': scriptId,
-		'resource': {
-			'function': 'createForm',
-			'parameters': [
-				spreadsheetId
-			]
-		}			
-	}).then((resp) => {
+	return createFormGAPI(scriptId, values).then(resp => {
 		console.log('gapi.client.script.scripts.run - success');
-		const statContainer = document.getElementById('statistics');
+		formLink.innerHTML = '';
 		
-		let result = resp.result;
+		let {result} = resp;
 		if (result.error) throw result.error;
 		
 		const {link, formId} = result.response.result;
-		//formLink.innerHTML = 'Ссылка: <a target="_blank" href="' + link + '" >Открыть форму</a> <br>Сохраните ID формы, чтобы восстановить данные: ' + formId;
-		formLink.innerHTML = 'Ссылка: ' +
-			'<a target="_blank" href="' + link + '" >Открыть форму</a>' +
-			'<a type="button" id="statistics-link" href="#statistics">Посмотреть статистику</a>' +
-			'<a id="statistics-link-hidden" href="#statistics" style="display:none;"></a>' + 
-			'<br>Сохраните ID формы: ' + formId;
 			
-		document.getElementById('statistics-link').addEventListener('click', () => {
-			gapi.client.script.scripts.run({
-				'scriptId': scriptId,
-				'resource': {
-					'function': 'getResponses',
-					'parameters': [
-						formId
-					]
-				}			
-			}).then(response => {
+		const openFormLink = document.createElement('a');
+		openFormLink.setAttribute('target', '_blank');
+		openFormLink.setAttribute('href', link);
+		openFormLink.innerText = 'Открыть форму';
+		formLink.appendChild(openFormLink);
+		
+		const showStatsLink = document.createElement('a');
+		showStatsLink.setAttribute('id', 'statistics-link');
+		showStatsLink.setAttribute('href', '#statistics');
+		showStatsLink.innerText = 'Посмотреть статистику';
+		formLink.appendChild(showStatsLink);
+		
+		const hiddenStatsLink = document.createElement('a');
+		hiddenStatsLink.setAttribute('id', 'statistics-link-hidden');
+		hiddenStatsLink.setAttribute('href', '#statistics');
+		hiddenStatsLink.style.display = 'none';
+		formLink.appendChild(hiddenStatsLink);
+		
+		const saveIdText = document.createElement('div');
+		saveIdText.innerText = 'Сохраните ID формы: ' + formId;
+		formLink.appendChild(saveIdText);
+			
+		showStatsLink.addEventListener('click', () => {
+			getStatsGAPI(scriptId, formId).then(response => {
 				statContainer.innerHTML = '';
 				
 				const {result} = response.result.response;
@@ -178,61 +145,6 @@ function callAppsScript(spreadsheetId, formLink) {
 					}
 				}
 				
-				/*Highcharts.chart('statistics', {
-					chart: {
-						type: 'column'
-					},
-					xAxis: {
-						categories: [
-							'Jan',
-							'Feb',
-							'Mar',
-							'Apr',
-							'May',
-							'Jun',
-							'Jul',
-							'Aug',
-							'Sep',
-							'Oct',
-							'Nov',
-							'Dec'
-						]
-					},
-					series: [{
-						name: 'Tokyo',
-						data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-
-					}, {
-						name: 'New York',
-						data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
-
-					}, {
-						name: 'London',
-						data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
-
-					}, {
-						name: 'Berlin',
-						data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
-
-					}]
-				});*/
-				
-				
-				/*const stats = result.map(question => {
-					return question.reduce((res, ans) => {
-						if(res[ans]) {
-							res[ans] += 1;
-						} else {
-							res[ans] = 1;
-						}
-						
-						return res;
-					}, {});
-				});*/
-				
-				console.log(stats);
-				
-				
 				stats.forEach((question, i) => {
 					const qHeader = document.createElement('h1');
 					qHeader.innerText = 'Вопрос ' + (i + 1);
@@ -247,6 +159,8 @@ function callAppsScript(spreadsheetId, formLink) {
 					qContainer.appendChild(qContent);
 					statContainer.appendChild(qContainer);
 					
+					const sum = Object.values(question).reduce((res,cur) => res + cur, 0);
+					
 					Object.entries(question).forEach(([word, count]) => {
 						const aRow = document.createElement('div');
 						aRow.classList.add('answer-row');
@@ -258,18 +172,16 @@ function callAppsScript(spreadsheetId, formLink) {
 						
 						const qCount = document.createElement('div');
 						qCount.classList.add('answer-row__count');
-						qCount.innerText = count;
+						qCount.innerText = count + ' (' + parseFloat((count/sum*100).toFixed(2)) + '%)';
 						aRow.appendChild(qCount);
 						
 						qContainer.appendChild(aRow);
 					});
 				})
 				
-				document.getElementById('statistics-link-hidden').click();
+				hiddenStatsLink.click();
 			});
-		})
-		
-		console.log(link);			
+		});			
 	}).catch((error) => {
 		// The API encountered a problem.
 		formLink.innerHtml = 'Ошибка! См. консоль (f12): ';
@@ -277,18 +189,29 @@ function callAppsScript(spreadsheetId, formLink) {
 	});
 }
 
-
-function columnToLetter(column) {
-  var temp, letter = '';
-  while (column > 0)
-  {
-    temp = (column - 1) % 26;
-    letter = String.fromCharCode(temp + 65) + letter;
-    column = (column - temp - 1) / 26;
-  }
-  return letter;
+function createFormGAPI(scriptId, values) {
+	return gapi.client.script.scripts.run({
+		'scriptId': scriptId,
+		'resource': {
+			'function': 'createFormWithoutSpreadsheet',
+			'parameters': [
+				values
+			]
+		}			
+	})
 }
 
+function getStatsGAPI(scriptId, formId) {
+	return gapi.client.script.scripts.run({
+		'scriptId': scriptId,
+		'resource': {
+			'function': 'getResponses',
+			'parameters': [
+				formId
+			]
+		}			
+	});
+}
 
 window.onload = function() {
 	const fileUploader = document.getElementById('create-spreadsheet-file-uploader');
@@ -477,11 +400,8 @@ window.onload = function() {
 		
 		if(isSuccessful) {
 			if(values.length > 0) {
-				formLink.innerHTML = 'Ждите...'
-				createSpreadsheet(values).then(({result}) => {
-					console.log('gapi.client.sheets.spreadsheets.create - success');
-					return callAppsScript(result.spreadsheetId, formLink);
-				})	
+				formLink.innerHTML = 'Ждите...'				
+				callAppsScript(values, formLink);
 			} else {
 				console.log('nothing selected');
 				formLink.innerHTML = 'Вы не выбрали вопросы!'

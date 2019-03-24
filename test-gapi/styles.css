@@ -219,15 +219,26 @@ input[type="checkbox"] {
 .answer-row__word {
     border: 1px solid #dddd;
     padding: 8px;
-    width: 200px
+    width: 200px;
+    border-bottom: 0;
 }
 
 .answer-row__count {
     padding: 8px;
     border: 1px solid #ddd;
-    width: 50px
+    width: 130px;
+    border-left: 0;
+    border-bottom: 0;
+}
+
+.answer-row:last-child {
+    border-bottom: 1px solid #ddd;
 }
 
 .question-container {
     margin-left: 16px;
+}
+
+#statistics-link { 
+	margin-left: 8px; 
 }
