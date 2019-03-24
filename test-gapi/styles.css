@@ -239,6 +239,6 @@ input[type="checkbox"] {
     margin-left: 16px;
 }
 
-#statistics-link { 
-	margin-left: 8px; 
+.action-link {
+	margin-right: 8px;
 }

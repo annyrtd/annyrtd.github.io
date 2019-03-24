@@ -107,18 +107,27 @@ function callAppsScript(values, formLink) {
 		let {result} = resp;
 		if (result.error) throw result.error;
 		
-		const {link, formId} = result.response.result;
+		const {editLink, publishLink, formId} = result.response.result;
 			
 		const openFormLink = document.createElement('a');
 		openFormLink.setAttribute('target', '_blank');
-		openFormLink.setAttribute('href', link);
+		openFormLink.setAttribute('href', publishLink);
 		openFormLink.innerText = 'Открыть форму';
+		openFormLink.classList.add('action-link');
 		formLink.appendChild(openFormLink);
+			
+		const editFormLink = document.createElement('a');
+		editFormLink.setAttribute('target', '_blank');
+		editFormLink.setAttribute('href', editLink);
+		editFormLink.innerText = 'Редактировать форму';
+		editFormLink.classList.add('action-link');
+		formLink.appendChild(editFormLink);
 		
 		const showStatsLink = document.createElement('a');
 		showStatsLink.setAttribute('id', 'statistics-link');
 		showStatsLink.setAttribute('href', '#statistics');
 		showStatsLink.innerText = 'Посмотреть статистику';
+		showStatsLink.classList.add('action-link');
 		formLink.appendChild(showStatsLink);
 		
 		const hiddenStatsLink = document.createElement('a');
@@ -278,8 +287,8 @@ window.onload = function() {
 					const wordClass = 'one-word';
 					const wordSelectedClass = wordClass + '--selected';
 					const value = sentence.replace(/<\w+>/g, '');
-					const markedText = value.replace(/([А-Я0-9]+)/gi, '<span class="' + wordClass + '">$1</span>');
-					const selectedWord = value.match(new RegExp('[А-Я0-9]*' + word + '[А-Я0-9]*', 'gi'))[0];
+					const markedText = value.replace(/([А-ЯA-Z0-9]+)/gi, '<span class="' + wordClass + '">$1</span>');
+					const selectedWord = value.match(new RegExp('[А-ЯA-Z0-9]*' + word + '[А-ЯA-Z0-9]*', 'gi'))[0];
 					
 					const li = document.createElement('li');
 					li.classList.add('sentence-column');
