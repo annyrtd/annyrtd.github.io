@@ -137,6 +137,7 @@ function callAppsScript(values, formLink) {
 		formLink.appendChild(hiddenStatsLink);
 		
 		const saveIdText = document.createElement('div');
+		saveIdText.classList.add('save-id-text');
 		saveIdText.innerText = 'Сохраните ID формы: ' + formId;
 		formLink.appendChild(saveIdText);
 			
@@ -274,7 +275,7 @@ window.onload = function() {
 	};
 		
 	searchWordInput.oninput = () => {
-		const word = searchWordInput.value;
+		const word = searchWordInput.value.trim();
 		foundSentencesList.innerHTML = '';
 		
 		if(word.length > 0) { 
