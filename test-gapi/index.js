@@ -21,6 +21,8 @@ var SCOPES = [
 
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
+var actionPart = document.getElementById('action-part');
+var authInfo = document.getElementById('auth-info');
 
 /**
  *  On load, called to load the auth2 library and API client library.
@@ -59,10 +61,14 @@ function initClient() {
 function updateSigninStatus(isSignedIn) {
 	if (isSignedIn) {
 		authorizeButton.style.display = 'none';
+		authInfo.style.display = 'none';
 		signoutButton.style.display = 'block';
+		actionPart.style.display = 'block';
 	} else {
 		authorizeButton.style.display = 'block';
+		authInfo.style.display = 'block';
 		signoutButton.style.display = 'none';
+		actionPart.style.display = 'none';
 	}
 }
 

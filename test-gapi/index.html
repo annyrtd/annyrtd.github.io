@@ -8,38 +8,40 @@
 	<script src="https://code.highcharts.com/modules/exporting.js"></script>
 	<script src="https://code.highcharts.com/modules/export-data.js"></script>
   </head>
-  <body>
-	<form enctype="multipart/form-data" method="post">
-		<p>
-			<input type="file" name="createSpreadsheetFileUploader" id="create-spreadsheet-file-uploader">
-			<input class="classic-button" id="create-spreadsheet-button" type="button" value="Загрузить" disabled>
-			<button class="classic-button" id="clear-all" type="button" >Очистить все</button>
-		</p>
-	</form> 
+  <body>		
+	<span id="auth-info" style="display: none;">Нажмите кнопку справа для авторизации!</span>
+	<div id="action-part" style="display: none;">
+		<form enctype="multipart/form-data" method="post">
+			<p>
+				<input type="file" name="createSpreadsheetFileUploader" id="create-spreadsheet-file-uploader">
+				<input class="classic-button" id="create-spreadsheet-button" type="button" value="Загрузить" disabled>
+				<button class="classic-button" id="clear-all" type="button" >Очистить все</button>
+			</p>
+		</form> 
 
-	<div id="file-content-wrapper">
-		<div class="search-word-wrapper" >
-			<input id="search-word" type="text" placeholder="Введите слово...">	
-		</div>
-		<div class="two-column-row">
-			<div class="two-column-row__column" id="file-content"></div>
-			<div class="two-column-row__column two-column-row__column--second">
-				<div class="half-column">
-					<ul id="found-sentenses"></ul>
-				</div>
-				<div class="half-column half-column--second">
-					<div class="create-form-controls">
-						<button class="classic-button" id="create-form" type="button" >Создать форму</button>						
-						<span id="form-link"></span>
-					</div>					
-					<ul id="selected-sentenses"></ul>
+		<div id="file-content-wrapper">
+			<div class="search-word-wrapper" >
+				<input id="search-word" type="text" placeholder="Введите слово...">	
+			</div>
+			<div class="two-column-row">
+				<div class="two-column-row__column" id="file-content"></div>
+				<div class="two-column-row__column two-column-row__column--second">
+					<div class="half-column">
+						<ul id="found-sentenses"></ul>
+					</div>
+					<div class="half-column half-column--second">
+						<div class="create-form-controls">
+							<button class="classic-button" id="create-form" type="button" >Создать форму</button>						
+							<span id="form-link"></span>
+						</div>					
+						<ul id="selected-sentenses"></ul>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	
-	<div id="statistics"></div>
-    
+		
+		<div id="statistics"></div>
+    </div>
 	<!--Add buttons to initiate auth sequence and sign out-->
     <div class="authorize-buttons">
 		<button class="classic-button" id="authorize_button" style="display: none;">Authorize</button>
