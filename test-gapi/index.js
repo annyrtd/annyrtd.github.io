@@ -107,7 +107,7 @@ function callAppsScript(values, formLink) {
 		let {result} = resp;
 		if (result.error) throw result.error;
 		
-		const {editLink, publishLink, formId} = result.response.result;
+		const {editLink, publishLink, summaryLink, formId} = result.response.result;
 			
 		const openFormLink = document.createElement('a');
 		openFormLink.setAttribute('target', '_blank');
@@ -124,8 +124,10 @@ function callAppsScript(values, formLink) {
 		formLink.appendChild(editFormLink);
 		
 		const showStatsLink = document.createElement('a');
-		showStatsLink.setAttribute('id', 'statistics-link');
-		showStatsLink.setAttribute('href', '#statistics');
+		//showStatsLink.setAttribute('id', 'statistics-link');
+		//showStatsLink.setAttribute('href', '#statistics');
+		showStatsLink.setAttribute('target', '_blank');
+		showStatsLink.setAttribute('href', summaryLink);
 		showStatsLink.innerText = 'Посмотреть статистику';
 		showStatsLink.classList.add('action-link');
 		formLink.appendChild(showStatsLink);
@@ -141,7 +143,7 @@ function callAppsScript(values, formLink) {
 		saveIdText.innerText = 'Сохраните ID формы: ' + formId;
 		formLink.appendChild(saveIdText);
 			
-		showStatsLink.addEventListener('click', () => {
+		/*showStatsLink.addEventListener('click', () => {
 			getStatsGAPI(scriptId, formId).then(response => {
 				statContainer.innerHTML = '';
 				
@@ -197,7 +199,7 @@ function callAppsScript(values, formLink) {
 				
 				hiddenStatsLink.click();
 			});
-		});			
+		});	*/		
 	}).catch((error) => {
 		// The API encountered a problem.
 		formLink.innerHtml = 'Ошибка! См. консоль (f12): ';
@@ -416,8 +418,15 @@ window.onload = function() {
 		
 		if(isSuccessful) {
 			if(values.length > 0) {
+				const config = values.reduce((res, cur) => {
+					const word = cur.shift().toUpperCase();
+					res[word] = res[word] || [];
+					res[word].push(cur);
+					return res;
+				}, {}); 
+				
 				formLink.innerHTML = 'Ждите...'				
-				callAppsScript(values, formLink);
+				callAppsScript(config, formLink);
 			} else {
 				console.log('nothing selected');
 				formLink.innerHTML = 'Вы не выбрали вопросы!'
